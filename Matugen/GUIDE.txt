@@ -1,0 +1,17 @@
+## Matugen Only Installation Guide
+
+### Customizing Theme Settings:
+
+You can modify the theme's settings directly from the `Settings.qml` file located in this directory. After making your desired changes, run Matugen to apply the new colors, background, and settings.
+
+### Applying SDDM Theme Settings (Standalone):
+
+To apply only the SDDM theme settings, you can execute the `sddm-theme-apply.sh` script with superuser privileges:
+
+```bash
+sudo ~/.config/hypr/custom/scripts/ii-sddm-theme/sddm-theme-apply.sh
+```
+
+### Advanced SDDM Configurations:
+
+For additional customization options, please review the `ii-sddm.conf` file in this directory. Note that to apply any changes made to this file, you will still need to run matugen or the sddm-theme-apply.sh script

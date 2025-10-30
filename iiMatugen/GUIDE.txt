@@ -1,0 +1,17 @@
+## ii + Matugen Post Installation Guide
+
+Your `ii` settings should be already configured.
+
+To apply your color scheme and background, simply change your background or toggle light/dark mode within your `ii` Settings application.
+
+### Applying SDDM Theme Settings:
+
+If you only want to apply the SDDM theme settings you can run the provided script:
+
+```bash
+sudo ~/.config/hypr/custom/scripts/ii-sddm-theme/sddm-theme-apply.sh
+```
+
+### Additional ii-sddm-theme Configurations:
+
+For further customization, check the `ii-sddm.conf` file located in this directory. Remember that after making changes to this file, you'll still need to adjust your background or light/dark mode in the `ii` settings app to ensure the new configurations

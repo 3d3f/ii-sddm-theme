@@ -1,0 +1,10 @@
+## No Matugen Installation
+
+To change your SDDM wallpaper, place an image or video named "background" in the same folder as this script.
+Example filenames: background.png, background.jpg, background.mp4
+
+Modify theme settings by editing the Settings.qml file in this directory.
+
+Change the color scheme by editing the Colors.qml file in this directory.
+
+To apply your settings, run the sddm-theme-apply.sh script located in this folder.

@@ -1,0 +1,15 @@
+[SddmGreeterTheme]
+Name=ii-sddm-theme
+Description=ii-sddm-theme
+Author=3d3f
+Website=https://github.com/3d3f/ii-sddm-theme
+License=GPL-3.0-or-later
+Type=sddm-theme
+Version=0.6
+ConfigFile=Themes/ii-sddm.conf
+Screenshot=Previews/preview1.png
+MainScript=Main.qml
+TranslationsDirectory=translations
+Theme-Id=ii-sddm
+Theme-API=2.0
+QtVersion=6
