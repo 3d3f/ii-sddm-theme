@@ -530,7 +530,7 @@ main() {
     echo -e "${GREEN}╚══════════════════════════════════════════════════╝${NC}"
     echo
     
-    # Suggest testing the theme
+    # Suggest to test the theme
     local test_script="$SDDM_THEME_DEST/test.sh"
     if [[ -f "$test_script" ]]; then
     echo -e "${BLUE}━━━ Optional: Test the theme ━━━${NC}"
