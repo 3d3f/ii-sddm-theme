@@ -69,7 +69,6 @@ Item {
                 console.log("DigitalClock:updateTime error:", e);
             }
         }
-
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         anchors.topMargin: 0
@@ -77,7 +76,10 @@ Item {
         font.pixelSize: 90
         font.weight: Font.DemiBold
         color: Colors.primary_fixed_dim
-        renderType: Text.QtRendering
+        renderType: Text.NativeRendering
+        font.hintingPreference: Font.PreferDefaultHinting
+        style: Text.Raised
+        styleColor: Colors.colShadow
     }
 
     Label {
