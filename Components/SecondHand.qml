@@ -1,3 +1,6 @@
+// Adapted from end-4's Hyprland dotfiles (https://github.com/end-4/dots-hyprland)
+// Modified by 3d3f for "ii-sddm-theme" (2025)
+
 import QtQuick
 
 Item {

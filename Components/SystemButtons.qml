@@ -1,3 +1,11 @@
+// Config created by Keyitdev https://github.com/Keyitdev/sddm-astronaut-theme
+// Copyright (C) 2022-2025 Keyitdev
+// Distributed under the GPLv3+ License https://www.gnu.org/licenses/gpl-3.0.html
+// Modified by 3d3f for the "ii-sddm-theme" project (2025)
+// Licensed under the GNU General Public License v3.0
+// See: https://www.gnu.org/licenses/gpl-3.0.txt
+
+
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
