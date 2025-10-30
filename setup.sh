@@ -17,12 +17,6 @@ readonly HYPR_SCRIPTS_BASE="$HOME/.config/hypr/custom/scripts"
 # The destination inside HYPR_SCRIPTS_BASE for theme-related files
 readonly HYPR_THEME_SCRIPTS_DEST="$HYPR_SCRIPTS_BASE/$THEME_NAME" 
 
-# Source directories for different installation types
-readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
-readonly SOURCE_DIR_II_MATUGEN="$SCRIPT_DIR/iiMatugen"
-readonly SOURCE_DIR_MATUGEN_ONLY="$SCRIPT_DIR/Matugen"
-readonly SOURCE_DIR_NO_MATUGEN="$SCRIPT_DIR/noMatugen"
-
 # Temp directory
 readonly DATE=$(date +%s)
 readonly CLONE_DIR="/tmp/$THEME_NAME-repo-$DATE" 
@@ -237,18 +231,19 @@ copy_specific_files_to_hypr() {
     
     mkdir -p "$HYPR_THEME_SCRIPTS_DEST"
 
+    # Source directories are now relative to CLONE_DIR
     local source_dir=""
     case "$INSTALLATION_TYPE" in
         "ii-matugen")
-            source_dir="$SOURCE_DIR_II_MATUGEN"
+            source_dir="$CLONE_DIR/iiMatugen"
             info "Copying files for 'ii + Matugen Integration' from $source_dir..."
             ;;
         "matugen-only")
-            source_dir="$SOURCE_DIR_MATUGEN_ONLY"
+            source_dir="$CLONE_DIR/Matugen"
             info "Copying files for 'Matugen Integration Only' from $source_dir..."
             ;;
         "no-matugen")
-            source_dir="$SOURCE_DIR_NO_MATUGEN"
+            source_dir="$CLONE_DIR/noMatugen"
             info "Copying files for 'No Matugen Integration' from $source_dir..."
             ;;
         *)
@@ -470,7 +465,7 @@ main() {
     get_aur_helper 
     check_sddm_installation 
     
-    # Clone the repository to make source files available for modification and copying
+    # Clone the repository FIRST to make source files available
     clone_repo_to_temp
     
     # Now, detect configurations and select the installation type
