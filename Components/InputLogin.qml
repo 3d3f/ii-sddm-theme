@@ -199,15 +199,10 @@ Item {
 
                     }
 
-                    MouseArea {
-                        anchors.fill: parent
-                        onPressed: {
-                            mouse.accepted = false;
-                            password.forceActiveFocus();
-                        }
-                        cursorShape: Qt.IBeamCursor
-                        preventStealing: false
-                    }
+TapHandler {
+    onTapped: password.forceActiveFocus()
+}
+
 
                 }
 
