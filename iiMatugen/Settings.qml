@@ -1,224 +1,24 @@
-pragma Singleton
 import QtQuick
+pragma Singleton
+
+// Here you can edit your theme settings, be sure to check ii-sddm.conf from this same folder for more settings
+// On the comment on the right there are all possible options
 QtObject {
-    property string ai_extraModels: "[{\"api_format\":\"openai\",\"description\":\"This is a custom model. Edit the config to add more! | Anyway, this is DeepSeek R1 Distill LLaMA 70B\",\"endpoint\":\"https://openrouter.ai/api/v1/chat/completions\",\"homepage\":\"https://openrouter.ai/deepseek/deepseek-r1-distill-llama-70b:free\",\"icon\":\"spark-symbolic\",\"key_get_link\":\"https://openrouter.ai/settings/keys\",\"key_id\":\"openrouter\",\"model\":\"deepseek/deepseek-r1-distill-llama-70b:free\",\"name\":\"Custom: DS R1 Dstl. LLaMA 70B\",\"requires_key\":true}]"
-    property string ai_systemPrompt: "## Style\n- Use casual tone, don't be formal! Make sure you answer precisely without hallucination and prefer bullet points over walls of text. You can have a friendly greeting at the beginning of the conversation, but don't repeat the user's question\n\n## Context (ignore when irrelevant)\n- You are a helpful and inspiring sidebar assistant on a {DISTRO} Linux system\n- Desktop environment: {DE}\n- Current date & time: {DATETIME}\n- Focused app: {WINDOWCLASS}\n\n## Presentation\n- Use Markdown features in your response: \n  - **Bold** text to **highlight keywords** in your response\n  - **Split long information into small sections** with h2 headers and a relevant emoji at the start of it (for example `## 🐧 Linux`). Bullet points are preferred over long paragraphs, unless you're offering writing support or instructed otherwise by the user.\n- Asked to compare different options? You should firstly use a table to compare the main aspects, then elaborate or include relevant comments from online forums *after* the table. Make sure to provide a final recommendation for the user's use case!\n- Use LaTeX formatting for mathematical and scientific notations whenever appropriate. Enclose all LaTeX '$$' delimiters. NEVER generate LaTeX code in a latex block unless the user explicitly asks for it. DO NOT use LaTeX for regular documents (resumes, letters, essays, CVs, etc.).\n"
-    property string ai_tool: "functions"
-    property bool appearance_extraBackgroundTint: true
-    property int appearance_fakeScreenRounding: 2
-    property string appearance_palette_type: "auto"
-    property bool appearance_transparency_automatic: true
-    property real appearance_transparency_backgroundTransparency: 0.11
-    property real appearance_transparency_contentTransparency: 0.57
-    property bool appearance_transparency_enable: false
-    property bool appearance_wallpaperTheming_enableAppsAndShell: true
-    property bool appearance_wallpaperTheming_enableQtApps: true
-    property bool appearance_wallpaperTheming_enableTerminal: true
-    property bool appearance_wallpaperTheming_terminalGenerationProps_forceDarkMode: false
-    property int appearance_wallpaperTheming_terminalGenerationProps_harmonizeThreshold: 100
-    property real appearance_wallpaperTheming_terminalGenerationProps_harmony: 0.6
-    property real appearance_wallpaperTheming_terminalGenerationProps_termFgBoost: 0.35
-    property string apps_bluetooth: "kcmshell6 kcm_bluetooth"
-    property string apps_network: "kitty -1 fish -c nmtui"
-    property string apps_networkEthernet: "kcmshell6 kcm_networkmanagement"
-    property string apps_taskManager: "plasma-systemmonitor --page-name Processes"
-    property string apps_terminal: "kitty -1"
-    property string apps_volumeMixer: "~/.config/hypr/hyprland/scripts/launch_first_available.sh \"pavucontrol-qt\" \"pavucontrol\""
-    property bool audio_protection_enable: false
-    property int audio_protection_maxAllowed: 99
-    property int audio_protection_maxAllowedIncrease: 10
-    property bool background_clock_cookie_aiStyling: false
-    property bool background_clock_cookie_constantlyRotate: false
-    property bool background_clock_cookie_dateInClock: true
-    property string background_clock_cookie_dateStyle: "bubble"
-    property string background_clock_cookie_dialNumberStyle: "full"
-    property string background_clock_cookie_hourHandStyle: "hollow"
-    property bool background_clock_cookie_hourMarks: false
-    property string background_clock_cookie_minuteHandStyle: "thin"
-    property string background_clock_cookie_secondHandStyle: "classic"
-    property int background_clock_cookie_sides: 14
-    property bool background_clock_cookie_timeIndicators: true
-    property bool background_clock_digital_animateChange: true
-    property bool background_clock_fixedPosition: false
-    property int background_clock_scale: 1
-    property bool background_clock_show: true
-    property string background_clock_style: "digital"
-    property int background_clock_x: -500
-    property int background_clock_y: -500
-    property bool background_hideWhenFullscreen: true
-    property bool background_parallax_autoVertical: false
-    property real background_parallax_clockFactor: 1.13
-    property bool background_parallax_enableSidebar: true
-    property bool background_parallax_enableWorkspace: true
-    property bool background_parallax_vertical: false
-    property real background_parallax_workspaceZoom: 1.07
-    property string background_quote: "Welcome to ii-sddm-theme"
-    property bool background_showQuote: true
-    property string background_thumbnailPath: "/ii/sddm/theme.png"
-    property string background_wallpaperPath: "/ii/sddm/theme.png"
-    property bool bar_autoHide_enable: false
-    property int bar_autoHide_hoverRegionWidth: 2
-    property bool bar_autoHide_pushWindows: false
-    property int bar_autoHide_showWhenPressingSuper_delay: 140
-    property bool bar_autoHide_showWhenPressingSuper_enable: true
-    property bool bar_borderless: false
-    property bool bar_bottom: false
-    property int bar_cornerStyle: 0
-    property bool bar_floatStyleShadow: true
-    property bool bar_indicators_notifications_showUnreadCount: false
-    property bool bar_resources_alwaysShowCpu: true
-    property bool bar_resources_alwaysShowSwap: true
-    property int bar_resources_cpuWarningThreshold: 90
-    property int bar_resources_memoryWarningThreshold: 95
-    property int bar_resources_swapWarningThreshold: 85
-    property string bar_screenList: "[]"
-    property bool bar_showBackground: true
-    property string bar_topLeftIcon: "spark"
-    property bool bar_tray_filterPassive: true
-    property bool bar_tray_invertPinnedItems: true
-    property bool bar_tray_monochromeIcons: true
-    property string bar_tray_pinnedItems: "[]"
-    property bool bar_tray_showItemId: false
-    property bool bar_utilButtons_showColorPicker: true
-    property bool bar_utilButtons_showDarkModeToggle: false
-    property bool bar_utilButtons_showKeyboardToggle: false
-    property bool bar_utilButtons_showMicToggle: true
-    property bool bar_utilButtons_showPerformanceProfileToggle: false
-    property bool bar_utilButtons_showScreenRecord: true
-    property bool bar_utilButtons_showScreenSnip: true
-    property bool bar_verbose: true
-    property bool bar_vertical: false
-    property string bar_weather_city: ""
-    property bool bar_weather_enable: false
-    property bool bar_weather_enableGPS: true
-    property int bar_weather_fetchInterval: 10
-    property bool bar_weather_useUSCS: false
-    property bool bar_workspaces_alwaysShowNumbers: false
-    property bool bar_workspaces_monochromeIcons: true
-    property string bar_workspaces_numberMap: "[\"1\",\"2\"]"
-    property bool bar_workspaces_showAppIcons: true
-    property int bar_workspaces_showNumberDelay: 300
-    property int bar_workspaces_shown: 10
-    property bool bar_workspaces_useNerdFont: false
-    property bool battery_automaticSuspend: true
-    property int battery_critical: 5
-    property int battery_full: 101
-    property int battery_low: 20
-    property int battery_suspend: 3
-    property bool conflictKiller_autoKillNotificationDaemons: false
-    property bool conflictKiller_autoKillTrays: false
-    property string crosshair_code: "0;P;d;1;0l;10;0o;2;1b;0"
-    property bool dock_enable: false
-    property int dock_height: 60
-    property int dock_hoverRegionHeight: 2
-    property bool dock_hoverToReveal: true
-    property string dock_ignoredAppRegexes: "[]"
-    property bool dock_monochromeIcons: true
-    property string dock_pinnedApps: "[\"kitty\",\"zen\",\"org.kde.dolphin\"]"
-    property bool dock_pinnedOnStartup: false
-    property int hacks_arbitraryRaceConditionDelay: 20
-    property bool interactions_deadPixelWorkaround_enable: false
-    property bool interactions_scrolling_fasterTouchpadScroll: false
-    property int interactions_scrolling_mouseScrollDeltaThreshold: 120
-    property int interactions_scrolling_mouseScrollFactor: 120
-    property int interactions_scrolling_touchpadScrollFactor: 450
-    property string language_translator_engine: "auto"
-    property string language_translator_sourceLanguage: "auto"
-    property string language_translator_targetLanguage: "auto"
-    property string language_ui: "auto"
-    property bool light_antiFlashbang_enable: false
-    property bool light_night_automatic: false
-    property int light_night_colorTemperature: 5000
-    property string light_night_from: "19:00"
-    property string light_night_to: "06:30"
-    property bool lock_blur_enable: false
-    property real lock_blur_extraZoom: 1.1
-    property int lock_blur_radius: 100
-    property bool lock_centerClock: true
-    property bool lock_launchOnStartup: false
-    property bool lock_security_requirePasswordToPower: false
-    property bool lock_security_unlockKeyring: true
-    property bool lock_showLockedText: true
-    property bool lock_useHyprlock: false
-    property bool media_filterDuplicatePlayers: true
-    property int musicRecognition_interval: 4
-    property int musicRecognition_timeout: 16
-    property string networking_userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
-    property int notifications_timeout: 7000
-    property int osd_timeout: 1000
-    property string osk_layout: "English"
-    property bool osk_pinnedOnStartup: false
-    property int overview_columns: 5
-    property bool overview_enable: true
-    property int overview_rows: 2
-    property real overview_scale: 0.18
-    property int policies_ai: 1
-    property int policies_weeb: 0
-    property int regionSelector_circle_padding: 10
-    property int regionSelector_circle_strokeWidth: 6
-    property bool regionSelector_rect_showAimLines: true
-    property bool regionSelector_targetRegions_content: true
-    property real regionSelector_targetRegions_contentRegionOpacity: 0.8
-    property bool regionSelector_targetRegions_layers: false
-    property real regionSelector_targetRegions_opacity: 0.3
-    property bool regionSelector_targetRegions_showLabel: false
-    property bool regionSelector_targetRegions_windows: true
-    property int resources_updateInterval: 3000
-    property string search_engineBaseUrl: "https://www.google.com/search?q="
-    property string search_excludedSites: "[\"quora.com\"]"
-    property string search_imageSearch_imageSearchEngineBaseUrl: "https://lens.google.com/uploadbyurl?url="
-    property bool search_imageSearch_useCircleSelection: false
-    property int search_nonAppResultDelay: 30
-    property string search_prefix_action: "/"
-    property string search_prefix_app: ">"
-    property string search_prefix_clipboard: ";"
-    property string search_prefix_emojis: ":"
-    property string search_prefix_math: "="
-    property string search_prefix_shellCommand: "$"
-    property bool search_prefix_showDefaultActionsWithoutPrefix: true
-    property string search_prefix_webSearch: "?"
-    property bool search_sloppy: false
-    property bool sidebar_ai_textFadeIn: true
-    property bool sidebar_booru_allowNsfw: false
-    property string sidebar_booru_defaultProvider: "yandere"
-    property int sidebar_booru_limit: 20
-    property string sidebar_booru_zerochan_username: "[unset]"
-    property bool sidebar_cornerOpen_bottom: false
-    property bool sidebar_cornerOpen_clickless: false
-    property bool sidebar_cornerOpen_clicklessCornerEnd: false
-    property int sidebar_cornerOpen_clicklessCornerVerticalOffset: 1
-    property int sidebar_cornerOpen_cornerRegionHeight: 2
-    property int sidebar_cornerOpen_cornerRegionWidth: 60
-    property bool sidebar_cornerOpen_enable: false
-    property bool sidebar_cornerOpen_valueScroll: false
-    property bool sidebar_cornerOpen_visualize: false
-    property bool sidebar_keepRightSidebarLoaded: true
-    property bool sidebar_quickSliders_enable: true
-    property bool sidebar_quickSliders_showBrightness: true
-    property bool sidebar_quickSliders_showMic: false
-    property bool sidebar_quickSliders_showVolume: true
-    property int sidebar_quickToggles_android_columns: 5
-    property string sidebar_quickToggles_android_toggles: "[{\"size\":2,\"type\":\"network\"},{\"size\":2,\"type\":\"bluetooth\"},{\"size\":1,\"type\":\"audio\"},{\"size\":1,\"type\":\"mic\"},{\"size\":1,\"type\":\"easyEffects\"},{\"size\":1,\"type\":\"colorPicker\"},{\"size\":1,\"type\":\"screenSnip\"},{\"size\":1,\"type\":\"idleInhibitor\"}]"
-    property string sidebar_quickToggles_style: "android"
-    property int sidebar_translator_delay: 300
-    property bool sidebar_translator_enable: true
-    property bool sounds_battery: false
-    property bool sounds_pomodoro: false
-    property string sounds_theme: "freedesktop"
-    property string time_dateFormat: "ddd, dd/MM"
-    property string time_format: "h:mm ap"
-    property int time_pomodoro_breakTime: 300
-    property int time_pomodoro_cyclesBeforeLongBreak: 4
-    property int time_pomodoro_focus: 1500
-    property int time_pomodoro_longBreak: 900
-    property bool time_secondPrecision: true
-    property string time_shortDateFormat: "dd/MM"
-    property bool wallpaperSelector_useSystemFileDialog: true
-    property bool windows_centerTitle: true
-    property bool windows_showTitlebar: true
-    property bool workSafety_enable_clipboard: true
-    property bool workSafety_enable_wallpaper: true
-    property string workSafety_triggerCondition_fileKeywords: "[\"anime\",\"ecchi\",\"hentai\",\"yande.re\",\"konachan\",\"breast\",\"nipples\",\"pussy\",\"nsfw\",\"spoiler\",\"girl\"]"
-    property string workSafety_triggerCondition_linkKeywords: "[\"hentai\",\"porn\",\"sukebei\",\"hitomi.la\",\"rule34\",\"gelbooru\",\"fanbox\",\"dlsite\"]"
-    property string workSafety_triggerCondition_networkNameKeywords: "[\"airport\",\"cafe\",\"college\",\"company\",\"eduroam\",\"free\",\"guest\",\"public\",\"school\",\"university\"]"
+    property string time_format: "h:mm ap" // "h:mm","h:mm ap","h:mm AP"
+    property string background_clock_style: "digital" // "none", "digital", "cookie"
+    property bool background_clock_cookie_constantlyRotate: false // true, false
+    property string background_clock_cookie_dateStyle: "bubble" // "hide", "rect", "bubble", "border"
+    property string background_clock_cookie_dialNumberStyle: "full" // "full", "dots", "numbers", "none"
+    property string background_clock_cookie_hourHandStyle: "hollow" // "fill", "hollow", "classic", "hide"
+    property bool background_clock_cookie_hourMarks: false // true, false
+    property string background_clock_cookie_minuteHandStyle: "thin" // "thin", "medium", "bold", "classic", "hide"
+    property string background_clock_cookie_secondHandStyle: "line" // "dot", "classic", "line", "hide"
+    property int background_clock_cookie_sides: 14 // 0 to i dont know what is the limit, i wouldn't go too high
+    property bool background_clock_cookie_timeIndicators: true // true, false
+    property string background_quote: "Welcome to ii-sddm-theme" // "you can write anything you want"
+    property bool background_showQuote: true // true, false
+    property bool lock_blur_enable: false // true, false
+    property bool lock_showLockedText: true // true, false
+    property bool time_secondPrecision: true // true, false
+    property bool lock_materialShapeChars: true // true, false
 }

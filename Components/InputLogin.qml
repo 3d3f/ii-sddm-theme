@@ -15,7 +15,7 @@ Item {
 
     property bool loginFailed: false
     property bool isLoggingIn: false
-    property bool usePasswordChars: true
+    property bool usePasswordChars: Settings.lock_materialShapeChars
     property var customShapeSequence: [4, 6, 5, 8, 7]
 
     Layout.preferredHeight: Appearance.formRowHeight
@@ -199,10 +199,9 @@ Item {
 
                     }
 
-TapHandler {
-    onTapped: password.forceActiveFocus()
-}
-
+                    TapHandler {
+                        onTapped: password.forceActiveFocus()
+                    }
 
                 }
 
