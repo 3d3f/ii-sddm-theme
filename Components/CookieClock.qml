@@ -7,29 +7,15 @@ import QtQuick.Shapes
 Item {
     id: root
 
-    // ========================================
-    // PUBLIC PROPERTIES
-    // ========================================
-    
-    // Dimensions
-    width: 230
-    height: 230
-    
     // Time properties
     property int clockHour: 0
     property int clockMinute: 0
     property int clockSecond: 0
-    
     // Date properties
     property string dateText: ""
     property string dayNumber: ""
     property string monthNumber: ""
     property string fullDateString: ""
-    
-    // ========================================
-    // COLOR SCHEME
-    // ========================================
-    
     property color colShadow: Colors.colShadow
     property color colBackground: Colors.secondary_container
     property color colOnBackground: Colors.mix(Colors.secondary, Colors.secondary_container, 0.15)
@@ -38,41 +24,22 @@ Item {
     property color colSecondHand: Colors.tertiary
     property color colDateBackground: Colors.mix(Colors.primary, Colors.secondary_container, 0.55)
     property color colColumnTime: Colors.mix(Colors.primary, Colors.secondary_container, 0.55)
-    
-    // ========================================
-    // COMPUTED PROPERTIES
-    // ========================================
-    
     property string time_format: Settings.time_format
-    
     readonly property bool is12HourFormat: {
         return (time_format.indexOf("ap") !== -1) || (time_format.indexOf("AP") !== -1);
     }
-    
     readonly property string timeString: _formatTimeString()
-    
     readonly property int baseMargin: 47
-    
     readonly property bool sessionLockedActive: {
-        return Settings.lock_showLockedText && 
-               config.ShowSessionLockedText === "true" && 
-               config.SessionLockedText !== "";
+        return Settings.lock_showLockedText && config.ShowSessionLockedText === "true" && config.SessionLockedText !== "";
     }
-    
     readonly property bool quoteActive: {
-        return config.CookieClockQuote === "true" && 
-               Settings.background_showQuote && 
-               Settings.background_quote !== "";
+        return config.CookieClockQuote === "true" && Settings.background_showQuote && Settings.background_quote !== "";
     }
-    
-    // ========================================
-    // PRIVATE METHODS
-    // ========================================
-    
+
     function _formatTimeString() {
         var h = clockHour;
         var m = clockMinute;
-        
         // Format hour
         var hourStr = "";
         if (is12HourFormat) {
@@ -82,24 +49,18 @@ Item {
             var usePadding = (time_format.indexOf("hh") !== -1);
             hourStr = usePadding ? h.toString().padStart(2, "0") : h.toString();
         }
-        
         // Format minute (always padded)
         var minStr = m.toString().padStart(2, "0");
-        
         // Format AM/PM
         var ampm = "";
-        if (time_format.indexOf("ap") !== -1) {
+        if (time_format.indexOf("ap") !== -1)
             ampm = (h < 12 ? "am" : "pm");
-        } else if (time_format.indexOf("AP") !== -1) {
+        else if (time_format.indexOf("AP") !== -1)
             ampm = (h < 12 ? "AM" : "PM");
-        }
-        
         // Combine parts
-        return (ampm !== "") 
-            ? (hourStr + " " + minStr + " " + ampm) 
-            : (hourStr + " " + minStr);
+        return (ampm !== "") ? (hourStr + " " + minStr + " " + ampm) : (hourStr + " " + minStr);
     }
-    
+
     function _updateDateTime() {
         var now = new Date();
         clockHour = now.getHours();
@@ -110,21 +71,15 @@ Item {
         fullDateString = Qt.formatDate(now, "ddd dd");
         monthNumber = Qt.formatDate(now, "M");
     }
-    
-    // ========================================
-    // LIFECYCLE
-    // ========================================
-    
+
+    // Dimensions
+    width: 230
+    height: 230
     Component.onCompleted: {
         lockScreen.alignItem(root, Config.clockPosition);
     }
-    
     anchors.topMargin: 20
-    
-    // ========================================
-    // VISUAL ELEMENTS
-    // ========================================
-    
+
     // Shadow effect
     DropShadow {
         source: cookieShape
@@ -150,6 +105,7 @@ Item {
         // Minute marks (outermost)
         MinuteMarks {
             id: minuteMarks
+
             anchors.fill: parent
             z: 0
             color: root.colOnBackground
@@ -159,6 +115,7 @@ Item {
         // Hour marks
         HourMarks {
             id: hourMarks
+
             anchors.centerIn: parent
             implicitSize: 135
             color: root.colOnBackground
@@ -213,8 +170,7 @@ Item {
             dayOfMonth: root.dayNumber
             monthNumber: root.monthNumber
             clockSecond: root.clockSecond
-            secondHandVisible: Settings.time_secondPrecision && 
-                             Settings.background_clock_cookie_secondHandStyle !== "hide"
+            secondHandVisible: Settings.time_secondPrecision && Settings.background_clock_cookie_secondHandStyle !== "hide"
         }
 
         // Center dot
@@ -224,63 +180,56 @@ Item {
             width: 6
             height: 6
             radius: width / 2
-            color: Settings.background_clock_cookie_minuteHandStyle === "medium" 
-                ? root.colBackground 
-                : root.colMinuteHand
+            color: Settings.background_clock_cookie_minuteHandStyle === "medium" ? root.colBackground : root.colMinuteHand
             visible: Settings.background_clock_cookie_minuteHandStyle !== "bold"
         }
+
     }
 
-    // ========================================
-    // OPTIONAL OVERLAYS
-    // ========================================
-    
     // Session locked text
     Loader {
         id: sessionLockedTextLoader
+
         active: root.sessionLockedActive
         source: "CookieSessionLocked.qml"
-        anchors {
-            bottom: parent.bottom
-            horizontalCenter: parent.horizontalCenter
-            bottomMargin: -root.baseMargin
-        }
         z: 11
-        
         onLoaded: {
             item.text = config.SessionLockedText;
             item.backgroundColor = Colors.secondary_container;
             item.textColor = Colors.on_secondary_container;
             item.shadowColor = Colors.colShadow;
         }
+
+        anchors {
+            bottom: parent.bottom
+            horizontalCenter: parent.horizontalCenter
+            bottomMargin: -root.baseMargin
+        }
+
     }
 
     // Quote text
     Loader {
         id: quoteLoader
+
         active: root.quoteActive
         source: "CookieQuote.qml"
-        anchors {
-            bottom: parent.bottom
-            horizontalCenter: parent.horizontalCenter
-            bottomMargin: root.sessionLockedActive 
-                ? -(root.baseMargin + 13) 
-                : -root.baseMargin
-        }
         z: 10
-        
         onLoaded: {
             item.text = Settings.background_quote;
             item.backgroundColor = Colors.secondary_container;
             item.textColor = Colors.on_secondary_container;
             item.shadowColor = Colors.colShadow;
         }
+
+        anchors {
+            bottom: parent.bottom
+            horizontalCenter: parent.horizontalCenter
+            bottomMargin: root.sessionLockedActive ? -(root.baseMargin + 13) : -root.baseMargin
+        }
+
     }
 
-    // ========================================
-    // UPDATE TIMER
-    // ========================================
-    
     Timer {
         interval: 1000
         repeat: true
@@ -288,4 +237,5 @@ Item {
         triggeredOnStart: true
         onTriggered: root._updateDateTime()
     }
+
 }

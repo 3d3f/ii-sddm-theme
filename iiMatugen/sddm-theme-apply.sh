@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+
+## TODO: Video wallpaper path from matugen points to thumbnail from matugen in ii, find a way to get the original video path
 set -euo pipefail
 
 # --- Security: Validate and sanitize paths ---

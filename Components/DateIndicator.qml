@@ -34,7 +34,7 @@ Item {
                     sides: 5
                     amplitude: 2
                     constantlyRotate: false
-                    rotation: -18  // Ruota il pentagono per avere il lato base orizzontale
+                    rotation: -18
                 }
 
                 StyledText {
@@ -57,13 +57,13 @@ Item {
                 anchors.bottomMargin: 33
 
                 MaterialCookie {
-                    anchors.fill:parent
+                    anchors.fill: parent
                     implicitSize: Appearance.date_square_size
                     color: Colors.primary_container
-                    sides: 2 
-                    amplitude: 3 
+                    sides: 2
+                    amplitude: 3
                     constantlyRotate: false
-                    rotation: -45 
+                    rotation: -45
                 }
 
                 StyledText {
@@ -88,21 +88,20 @@ Item {
             anchors.fill: parent
 
             Rectangle {
-                property color colCustom: Colors.mix(Colors.primary, Colors.colLayer1, 0.45)
-
+                // i can't get the right color
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.horizontalCenterOffset: 85
                 width: 45
                 height: 30
-                radius: 12
-                color: colCustom
+                radius: Appearance.rounding_small
+                color: Colors.inverse_primary
 
-                Text {
+                StyledText {
                     anchors.centerIn: parent
                     text: root.dayOfMonth
                     font.pixelSize: 20
-                    font.weight: Font.Bold
+                    font.weight: 1000
                     font.family: Appearance.font_family_expressive
                     color: Colors.secondary_fixed_dim
                 }
@@ -143,7 +142,7 @@ Item {
                     text: root.dateText.charAt(index)
 
                     font {
-                        family: "Gabarito"
+                        family: Appearance.font_family_title
                         pixelSize: 30
                         weight: Font.Bold
                         hintingPreference: Font.PreferNoHinting
