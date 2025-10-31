@@ -111,31 +111,26 @@ Pane {
 
             Component.onCompleted: {
                 if (isVideo) {
-                    // Gestione video
                     if (config.BackgroundPlaceholder && config.BackgroundPlaceholder.length > 0) {
                         backgroundPlaceholderImage.visible = true;
                     }
                     player.source = Qt.resolvedUrl(config.Background);
                     player.play();
                 } else {
-                    // Gestione immagine statica/animata
                     backgroundImage.source = config.background || config.Background || "";
                 }
             }
 
             onStatusChanged: {
-                // Sistema di fallback intelligente per le immagini
                 if (status === Image.Error) {
                     console.log("Background image failed to load:", source);
                     if (source !== "" && !displayColor) {
-                        // Mostra colore di fallback
                         displayColor = true;
                         console.log("Switching to fallback color background");
                     }
                 }
             }
 
-            // Colore di fallback se tutto fallisce
             Rectangle {
                 id: backgroundColor
                 anchors.fill: parent
@@ -176,7 +171,6 @@ Pane {
                 anchors.fill: parent
             }
 
-            // Cleanup per prevenire memory leak
             Component.onDestruction: {
                 if (player) {
                     player.stop();
@@ -235,7 +229,6 @@ Pane {
 
     }
 
-    // Transizioni fluide per effetti (opzionale, se vuoi animazioni)
     Behavior on opacity {
         enabled: config.EnableAnimations == "true"
         NumberAnimation {
