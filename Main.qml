@@ -4,11 +4,9 @@
 // Modified by 3d3f for the "ii-sddm-theme" project (2025)
 // Enhanced with advanced screen management and error handling
 // Licensed under the GNU General Public License v3.0
-
 // Adapted from uiriansan SilentSDDM (https://github.com/uiriansan/SilentSDDM)
 // Modified by 3d3f for "ii-sddm-Theme" (2025)
 // See LICENSE in project root for full GPLv3 text
-
 
 import "."
 import "Components"
@@ -21,15 +19,15 @@ import SddmComponents
 
 Pane {
     id: root
+
     property bool partialBlur: Settings.lock_blur_enable
     property variant screenGeometry: screenModel.geometry(screenModel.primary)
-    
+
     padding: 0
     font.family: Appearance.font_family_main
     focus: true
-    
     height: screenGeometry.height
-    width: screenGeometry.width 
+    width: screenGeometry.width
     x: screenGeometry.x || 0
     y: screenGeometry.y || 0
 
@@ -86,13 +84,14 @@ Pane {
                 var bg = config.Background;
                 if (!bg || bg.toString().length === 0)
                     return false;
+
                 var parts = bg.toString().split(".");
                 if (parts.length === 0)
                     return false;
+
                 var ext = parts[parts.length - 1].toLowerCase();
                 return ["avi", "mp4", "mov", "mkv", "m4v", "webm"].indexOf(ext) !== -1;
             }
-
             property bool displayColor: false
 
             height: parent.height
@@ -108,19 +107,17 @@ Pane {
             cache: true
             clip: true
             mipmap: true
-
             Component.onCompleted: {
                 if (isVideo) {
-                    if (config.BackgroundPlaceholder && config.BackgroundPlaceholder.length > 0) {
+                    if (config.BackgroundPlaceholder && config.BackgroundPlaceholder.length > 0)
                         backgroundPlaceholderImage.visible = true;
-                    }
+
                     player.source = Qt.resolvedUrl(config.Background);
                     player.play();
                 } else {
                     backgroundImage.source = config.background || config.Background || "";
                 }
             }
-
             onStatusChanged: {
                 if (status === Image.Error) {
                     console.log("Background image failed to load:", source);
@@ -130,9 +127,16 @@ Pane {
                     }
                 }
             }
+            Component.onDestruction: {
+                if (player) {
+                    player.stop();
+                    player.source = "";
+                }
+            }
 
             Rectangle {
                 id: backgroundColor
+
                 anchors.fill: parent
                 color: config.DimBackgroundColor || "#000000"
                 visible: parent.displayColor || (player.playbackState !== MediaPlayer.PlayingState && parent.isVideo && config.BackgroundPlaceholder.length === 0)
@@ -146,20 +150,18 @@ Pane {
                 autoPlay: false
                 playbackRate: config.BackgroundSpeed == "" ? 1 : config.BackgroundSpeed
                 loops: MediaPlayer.Infinite
-
                 onPlaybackStateChanged: {
                     if (playbackState === MediaPlayer.PlayingState) {
                         console.log("Video started playing");
                         backgroundPlaceholderImage.visible = false;
                     }
                 }
-
                 onErrorOccurred: function(error, errorString) {
                     if (error !== MediaPlayer.NoError) {
                         console.log("Video error:", errorString);
-                        if (!config.BackgroundPlaceholder || config.BackgroundPlaceholder.length === 0) {
+                        if (!config.BackgroundPlaceholder || config.BackgroundPlaceholder.length === 0)
                             backgroundImage.displayColor = true;
-                        }
+
                     }
                 }
             }
@@ -171,12 +173,6 @@ Pane {
                 anchors.fill: parent
             }
 
-            Component.onDestruction: {
-                if (player) {
-                    player.stop();
-                    player.source = "";
-                }
-            }
         }
 
         MouseArea {
@@ -202,11 +198,9 @@ Pane {
             width: (config.FullBlur == "true" && partialBlur == "false" && config.FormPosition != "center") ? parent.width - formBackground.width : config.FullBlur == "true" ? parent.width : form.width
             anchors.centerIn: config.FullBlur == "true" ? backgroundImage : form
             source: config.FullBlur == "true" ? backgroundImage : blurMask
-            
-            // Miglioramento: blur solo se immagine visibile
             blurEnabled: (config.FullBlur == "true" || partialBlur == "true") && backgroundImage.visible && !backgroundImage.displayColor
             autoPaddingEnabled: false
-            blur: (config.Blur == "" ? 2 : config.Blur) > 0 ? 1.0 : 0.0
+            blur: (config.Blur == "" ? 2 : config.Blur) > 0 ? 1 : 0
             blurMax: config.BlurMax == "" ? 48 : config.BlurMax
             visible: config.FullBlur == "true" || partialBlur == "true" ? true : false
         }
@@ -231,10 +225,12 @@ Pane {
 
     Behavior on opacity {
         enabled: config.EnableAnimations == "true"
+
         NumberAnimation {
             duration: 150
             easing.type: Easing.InOutQuad
         }
+
     }
 
 }
