@@ -53,7 +53,7 @@ Item {
         background: Item {
             Rectangle {
                 anchors.fill: parent
-                radius: 1000
+                radius: Appearance.rounding_full
                 color: selectSession.hovered ? Colors.surface_container_highest : Colors.surface_container
 
                 MouseArea {
@@ -94,7 +94,7 @@ Item {
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
                 color: Colors.on_surface_variant
-                font.family: "Rubik"
+                font.family: Appearance.font_family_main
                 font.pixelSize: Appearance.font_size_normal
                 elide: Text.ElideRight
             }
@@ -141,7 +141,7 @@ Item {
                         id: textContent
 
                         text: model.name
-                        font.family: "Rubik"
+                        font.family: Appearance.font_family_main
                         font.pixelSize: Appearance.font_size_normal
                         verticalAlignment: Text.AlignVCenter
                         horizontalAlignment: Text.AlignHCenter

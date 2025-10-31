@@ -16,19 +16,10 @@ import SddmComponents
 
 Pane {
     id: root
-
-    property bool leftleft: config.HaveFormBackground == "true" && partialBlur == "false" && config.FormPosition == "left" && config.BackgroundHorizontalAlignment == "left"
-    property bool leftcenter: config.HaveFormBackground == "true" && partialBlur == "false" && config.FormPosition == "left" && config.BackgroundHorizontalAlignment == "center"
-    property bool rightright: config.HaveFormBackground == "true" && partialBlur == "false" && config.FormPosition == "right" && config.BackgroundHorizontalAlignment == "right"
-    property bool rightcenter: config.HaveFormBackground == "true" && partialBlur == "false" && config.FormPosition == "right" && config.BackgroundHorizontalAlignment == "center"
     property bool partialBlur: Settings.lock_blur_enable
 
     padding: 0
-    palette.window: config.BackgroundColor
-    palette.highlight: config.HighlightBackgroundColor
-    palette.highlightedText: config.HighlightTextColor
-    palette.buttonText: config.HoverSystemButtonsIconsColor
-    font.family: "Rubik"
+    font.family: Appearance.font_family_main
     focus: true
     height: config.ScreenHeight || Screen.height
     width: config.ScreenWidth || Screen.ScreenWidth

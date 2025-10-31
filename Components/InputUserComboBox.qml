@@ -34,7 +34,7 @@ ComboBox {
         Rectangle {
             anchors.fill: parent
             anchors.margins: 8
-            radius: 1000
+            radius: Appearance.rounding_full
             color: selectUser.hovered ? Colors.surface_container_highest : Colors.surface_container
 
             MouseArea {
@@ -97,7 +97,7 @@ ComboBox {
             Layout.alignment: Qt.AlignVCenter
             text: selectUser.displayText
             color: Colors.on_surface_variant
-            font.family: "Rubik"
+            font.family: Appearance.font_family_main
             font.pixelSize: Appearance.font_size_normal
             font.bold: false
             font.capitalization: Font.MixedCase
@@ -150,7 +150,7 @@ ComboBox {
                     id: textCont
 
                     text: model.name
-                    font.family: "Rubik"
+                    font.family: Appearance-font_family_main
                     font.pixelSize: Appearance.font_size_normal
                     color: selectUser.highlightedIndex === index ? Colors.on_primary : Colors.on_primary_container
                     verticalAlignment: Text.AlignVCenter

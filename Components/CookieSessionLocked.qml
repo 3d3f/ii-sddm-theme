@@ -64,7 +64,7 @@ Item {
                 verticalAlignment: Text.AlignVCenter
                 renderType: Text.NativeRendering
                 color: textColor
-                font.family: "Rubik"
+                font.family: Appearance.font_family_main
                 font.pixelSize: 16
                 font.weight: Font.Normal
                 anchors.verticalCenter: parent.verticalCenter

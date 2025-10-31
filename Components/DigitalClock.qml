@@ -72,7 +72,7 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         anchors.topMargin: 0
-        font.family: "Space Grotesk"
+        font.family: Appearance.font_family_expressive
         font.pixelSize: 90
         font.weight: Font.DemiBold
         color: Colors.primary_fixed_dim
@@ -100,7 +100,7 @@ Item {
         anchors.top: timeLabel.bottom
         anchors.horizontalCenter: timeLabel.horizontalCenter
         anchors.topMargin: 4
-        font.family: "Space Grotesk"
+        font.family: Appearance.font_family_expressive
         font.pixelSize: 20
         font.weight: Font.DemiBold
         color: Colors.primary_fixed_dim
@@ -126,7 +126,7 @@ Item {
 
                     text: clock.background_quote
                     anchors.horizontalCenter: parent.horizontalCenter
-                    font.family: "Rubik"
+                    font.family: Appearance.font_family_main
                     font.pixelSize: 16
                     font.weight: Font.Light
                     font.italic: true
@@ -181,7 +181,7 @@ Item {
                         verticalAlignment: Text.AlignVCenter
                         renderType: Text.NativeRendering
                         color: Colors.primary_fixed_dim
-                        font.family: "Rubik"
+                        font.family: Appearance.font_family_main
                         font.pixelSize: 16
                         font.weight: Font.Normal
                         anchors.verticalCenter: parent.verticalCenter

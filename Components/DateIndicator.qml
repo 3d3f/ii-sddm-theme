@@ -41,7 +41,7 @@ Item {
                     color: Colors.primary
                     font.pixelSize: 28
                     font.weight: Font.Bold
-                    font.family: "Space Grotesk"
+                    font.family: Appearance.font_family_expressive
                 }
 
             }
@@ -70,7 +70,7 @@ Item {
                     color: Colors.primary
                     font.pixelSize: 28
                     font.weight: Font.Bold
-                    font.family: "Space Grotesk"
+                    font.family: Appearance.font_family_expressive
                 }
 
             }
@@ -101,7 +101,7 @@ Item {
                     text: root.dayOfMonth
                     font.pixelSize: 20
                     font.weight: Font.Bold
-                    font.family: "Space Grotesk"
+                    font.family: Appearance.font_family_expressive
                     color: Colors.secondary_fixed_dim
                 }
 

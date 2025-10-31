@@ -30,7 +30,7 @@ RowLayout {
 
             anchors.fill: parent
             color: Colors.surface_container
-            radius: 1000
+            radius: Appearance.rounding_full
         }
 
         InputUserComboBox {

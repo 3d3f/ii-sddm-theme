@@ -33,7 +33,7 @@ Item {
                 color: root.color
 
                 font {
-                    family: "Space Grotesk"
+                    family: Appearance.font_family_expressive
                     weight: Font.Bold
                     pixelSize: finalSize
                 }

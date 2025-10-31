@@ -48,7 +48,7 @@ Item {
 
                 Layout.topMargin: 2
                 text: keyboard && keyboard.layouts && keyboard.layouts.length > 0 ? keyboard.layouts[keyboard.currentLayout].shortName.toLowerCase() : "en"
-                font.family: "Rubik"
+                font.family: Appearance.font_family_main
                 font.pixelSize: Appearance.font_size_normal
                 color: Colors.on_surface_variant
                 rightPadding: 15

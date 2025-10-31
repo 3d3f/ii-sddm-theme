@@ -76,7 +76,7 @@ Item {
         background: Rectangle {
             id: virtualKeyboardButtonBackground
 
-            radius: 1000
+            radius: Appearance.rounding_full
             color: virtualKeyboardButton.checked ? Colors.colPrimaryContainer : Colors.surface_container
 
             Rectangle {

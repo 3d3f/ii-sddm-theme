@@ -24,7 +24,7 @@ Item {
 
         anchors.fill: parent
         color: Colors.surface_container
-        radius: 1000
+        radius: Appearance.rounding_full
     }
 
     RowLayout {
@@ -47,7 +47,7 @@ Item {
                 rightPadding: keyboard.capsLock ? 50 : 20
                 verticalAlignment: TextInput.AlignVCenter
                 horizontalAlignment: TextInput.AlignLeft
-                font.family: "Rubik"
+                font.family: Appearance.font_family_main
                 font.pixelSize: Appearance.font_size_normal
                 font.bold: false
                 color: Colors.on_surface_variant
@@ -76,7 +76,7 @@ Item {
 
                 background: Rectangle {
                     color: Colors.surface_container_low
-                    radius: 1000
+                    radius: Appearance.rounding_full
                     anchors.fill: parent
                     anchors.margins: 8
 
