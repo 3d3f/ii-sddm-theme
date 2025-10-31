@@ -22,24 +22,26 @@ Item {
             Item {
                 id: dayBubble
 
-                x: 15
-                y: 15
-                width: 36
-                height: 36
+                anchors.left: parent.left
+                anchors.top: parent.top
+                anchors.leftMargin: 28
+                anchors.topMargin: 33
 
                 MaterialCookie {
                     anchors.fill: parent
-                    implicitSize: 63
+                    implicitSize: Appearance.date_square_size
                     color: Colors.tertiary_container
-                    sides: 4
+                    sides: 5
+                    amplitude: 2
                     constantlyRotate: false
+                    rotation: -18  // Ruota il pentagono per avere il lato base orizzontale
                 }
 
-                Text {
+                StyledText {
                     anchors.centerIn: parent
                     text: root.dayOfMonth
-                    color: Colors.primary
-                    font.pixelSize: 28
+                    color: Colors.tertiary
+                    font.pixelSize: 30
                     font.weight: Font.Bold
                     font.family: Appearance.font_family_expressive
                 }
@@ -51,25 +53,25 @@ Item {
 
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom
-                anchors.rightMargin: 15
-                anchors.bottomMargin: 15
-                width: 28
-                height: 28
+                anchors.rightMargin: 28
+                anchors.bottomMargin: 33
 
                 MaterialCookie {
-                    anchors.fill: parent
-                    implicitSize: 60
+                    anchors.fill:parent
+                    implicitSize: Appearance.date_square_size
                     color: Colors.primary_container
-                    sides: 0
+                    sides: 2 
+                    amplitude: 3 
                     constantlyRotate: false
+                    rotation: -45 
                 }
 
-                Text {
+                StyledText {
                     anchors.centerIn: parent
                     text: root.monthNumber
                     color: Colors.primary
-                    font.pixelSize: 28
-                    font.weight: Font.Bold
+                    font.pixelSize: 30
+                    font.weight: Font.Black
                     font.family: Appearance.font_family_expressive
                 }
 

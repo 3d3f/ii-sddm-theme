@@ -7,6 +7,29 @@ import QtQuick.Shapes
 Item {
     id: root
 
+    // ========================================
+    // PUBLIC PROPERTIES
+    // ========================================
+    
+    // Dimensions
+    width: 230
+    height: 230
+    
+    // Time properties
+    property int clockHour: 0
+    property int clockMinute: 0
+    property int clockSecond: 0
+    
+    // Date properties
+    property string dateText: ""
+    property string dayNumber: ""
+    property string monthNumber: ""
+    property string fullDateString: ""
+    
+    // ========================================
+    // COLOR SCHEME
+    // ========================================
+    
     property color colShadow: Colors.colShadow
     property color colBackground: Colors.secondary_container
     property color colOnBackground: Colors.mix(Colors.secondary, Colors.secondary_container, 0.15)
@@ -15,49 +38,94 @@ Item {
     property color colSecondHand: Colors.tertiary
     property color colDateBackground: Colors.mix(Colors.primary, Colors.secondary_container, 0.55)
     property color colColumnTime: Colors.mix(Colors.primary, Colors.secondary_container, 0.55)
-    property int clockHour: 0
-    property int clockMinute: 0
-    property int clockSecond: 0
-    property string dateText: ""
-    property string dayNumber: ""
-    property string fullDateString: ""
+    
+    // ========================================
+    // COMPUTED PROPERTIES
+    // ========================================
+    
     property string time_format: Settings.time_format
-    property string monthNumber: ""
-    property string timeString: {
-        var h = root.clockHour;
-        var m = root.clockMinute;
-        var is12 = (root.time_format.indexOf("ap") !== -1) || (root.time_format.indexOf("AP") !== -1);
-        var hour12 = (h % 12 === 0 ? 12 : h % 12);
-        var hourStr = "";
-        if (is12) {
-            if (root.time_format.indexOf("hh") !== -1)
-                hourStr = hour12.toString().padStart(2, "0");
-            else
-                hourStr = hour12.toString();
-        } else {
-            if (root.time_format.indexOf("hh") !== -1)
-                hourStr = h.toString().padStart(2, "0");
-            else
-                hourStr = h.toString();
-        }
-        var minStr = m.toString().padStart(2, "0");
-        var ampm = "";
-        if (root.time_format.indexOf("ap") !== -1)
-            ampm = (h < 12 ? "am" : "pm");
-        else if (root.time_format.indexOf("AP") !== -1)
-            ampm = (h < 12 ? "AM" : "PM");
-        return (ampm !== "") ? (hourStr + " " + minStr + " " + ampm) : (hourStr + " " + minStr);
+    
+    readonly property bool is12HourFormat: {
+        return (time_format.indexOf("ap") !== -1) || (time_format.indexOf("AP") !== -1);
     }
+    
+    readonly property string timeString: _formatTimeString()
+    
     readonly property int baseMargin: 47
-    readonly property bool sessionLockedActive: Settings.lock_showLockedText && config.ShowSessionLockedText === "true" && config.SessionLockedText !== ""
-    readonly property bool quoteActive: config.CookieClockQuote === "true" && Settings.background_showQuote && Settings.background_quote !== ""
-
-    width: 230
-    height: 230
+    
+    readonly property bool sessionLockedActive: {
+        return Settings.lock_showLockedText && 
+               config.ShowSessionLockedText === "true" && 
+               config.SessionLockedText !== "";
+    }
+    
+    readonly property bool quoteActive: {
+        return config.CookieClockQuote === "true" && 
+               Settings.background_showQuote && 
+               Settings.background_quote !== "";
+    }
+    
+    // ========================================
+    // PRIVATE METHODS
+    // ========================================
+    
+    function _formatTimeString() {
+        var h = clockHour;
+        var m = clockMinute;
+        
+        // Format hour
+        var hourStr = "";
+        if (is12HourFormat) {
+            var hour12 = (h % 12 === 0 ? 12 : h % 12);
+            hourStr = hour12.toString().padStart(2, "0");
+        } else {
+            var usePadding = (time_format.indexOf("hh") !== -1);
+            hourStr = usePadding ? h.toString().padStart(2, "0") : h.toString();
+        }
+        
+        // Format minute (always padded)
+        var minStr = m.toString().padStart(2, "0");
+        
+        // Format AM/PM
+        var ampm = "";
+        if (time_format.indexOf("ap") !== -1) {
+            ampm = (h < 12 ? "am" : "pm");
+        } else if (time_format.indexOf("AP") !== -1) {
+            ampm = (h < 12 ? "AM" : "PM");
+        }
+        
+        // Combine parts
+        return (ampm !== "") 
+            ? (hourStr + " " + minStr + " " + ampm) 
+            : (hourStr + " " + minStr);
+    }
+    
+    function _updateDateTime() {
+        var now = new Date();
+        clockHour = now.getHours();
+        clockMinute = now.getMinutes();
+        clockSecond = now.getSeconds();
+        dateText = Qt.formatDate(now, "dd");
+        dayNumber = Qt.formatDate(now, "dd");
+        fullDateString = Qt.formatDate(now, "ddd dd");
+        monthNumber = Qt.formatDate(now, "M");
+    }
+    
+    // ========================================
+    // LIFECYCLE
+    // ========================================
+    
     Component.onCompleted: {
         lockScreen.alignItem(root, Config.clockPosition);
     }
-
+    
+    anchors.topMargin: 20
+    
+    // ========================================
+    // VISUAL ELEMENTS
+    // ========================================
+    
+    // Shadow effect
     DropShadow {
         source: cookieShape
         anchors.fill: source
@@ -69,6 +137,7 @@ Item {
         transparentBorder: true
     }
 
+    // Main clock shape
     MaterialCookie {
         id: cookieShape
 
@@ -78,18 +147,18 @@ Item {
         color: root.colBackground
         constantlyRotate: Settings.background_clock_cookie_constantlyRotate
 
+        // Minute marks (outermost)
         MinuteMarks {
             id: minuteMarks
-
             anchors.fill: parent
             z: 0
             color: root.colOnBackground
             dialNumberStyle: Settings.background_clock_cookie_dialNumberStyle
         }
 
+        // Hour marks
         HourMarks {
             id: hourMarks
-
             anchors.centerIn: parent
             implicitSize: 135
             color: root.colOnBackground
@@ -97,6 +166,7 @@ Item {
             visible: Settings.background_clock_cookie_hourMarks
         }
 
+        // Digital time display
         TimeColumn {
             anchors.fill: parent
             color: root.colColumnTime
@@ -105,6 +175,7 @@ Item {
             isCompact: Settings.background_clock_cookie_hourMarks
         }
 
+        // Hour hand
         HourHand {
             anchors.fill: parent
             z: 1
@@ -114,6 +185,7 @@ Item {
             clockMinute: root.clockMinute
         }
 
+        // Minute hand
         MinuteHand {
             anchors.fill: parent
             z: 2
@@ -122,6 +194,7 @@ Item {
             clockMinute: root.clockMinute
         }
 
+        // Second hand
         SecondHand {
             anchors.fill: parent
             z: 3
@@ -131,6 +204,7 @@ Item {
             visible: Settings.time_secondPrecision
         }
 
+        // Date indicator
         DateIndicator {
             anchors.fill: parent
             color: root.colDateBackground
@@ -139,30 +213,40 @@ Item {
             dayOfMonth: root.dayNumber
             monthNumber: root.monthNumber
             clockSecond: root.clockSecond
-            secondHandVisible: Settings.time_secondPrecision && Settings.background_clock_cookie_secondHandStyle !== "hide"
+            secondHandVisible: Settings.time_secondPrecision && 
+                             Settings.background_clock_cookie_secondHandStyle !== "hide"
         }
 
+        // Center dot
         Rectangle {
             anchors.centerIn: parent
             z: 4
             width: 6
             height: 6
             radius: width / 2
-            color: Settings.background_clock_cookie_minuteHandStyle === "medium" ? root.colBackground : root.colMinuteHand
+            color: Settings.background_clock_cookie_minuteHandStyle === "medium" 
+                ? root.colBackground 
+                : root.colMinuteHand
             visible: Settings.background_clock_cookie_minuteHandStyle !== "bold"
         }
-
     }
 
+    // ========================================
+    // OPTIONAL OVERLAYS
+    // ========================================
+    
+    // Session locked text
     Loader {
         id: sessionLockedTextLoader
-
         active: root.sessionLockedActive
         source: "CookieSessionLocked.qml"
-        anchors.bottom: parent.bottom
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottomMargin: -root.baseMargin
+        anchors {
+            bottom: parent.bottom
+            horizontalCenter: parent.horizontalCenter
+            bottomMargin: -root.baseMargin
+        }
         z: 11
+        
         onLoaded: {
             item.text = config.SessionLockedText;
             item.backgroundColor = Colors.secondary_container;
@@ -171,15 +255,20 @@ Item {
         }
     }
 
+    // Quote text
     Loader {
         id: quoteLoader
-
         active: root.quoteActive
         source: "CookieQuote.qml"
-        anchors.bottom: parent.bottom
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottomMargin: root.sessionLockedActive ? -(root.baseMargin + 13) : -root.baseMargin
+        anchors {
+            bottom: parent.bottom
+            horizontalCenter: parent.horizontalCenter
+            bottomMargin: root.sessionLockedActive 
+                ? -(root.baseMargin + 13) 
+                : -root.baseMargin
+        }
         z: 10
+        
         onLoaded: {
             item.text = Settings.background_quote;
             item.backgroundColor = Colors.secondary_container;
@@ -188,25 +277,15 @@ Item {
         }
     }
 
+    // ========================================
+    // UPDATE TIMER
+    // ========================================
+    
     Timer {
         interval: 1000
         repeat: true
         running: true
         triggeredOnStart: true
-        onTriggered: {
-            var now = new Date();
-            root.clockHour = now.getHours();
-            root.clockMinute = now.getMinutes();
-            root.clockSecond = now.getSeconds();
-            root.dateText = Qt.formatDate(now, "dd");
-            root.dayNumber = Qt.formatDate(now, "dd");
-            root.fullDateString = Qt.formatDate(now, "ddd dd");
-            root.monthNumber = Qt.formatDate(now, "M");
-        }
+        onTriggered: root._updateDateTime()
     }
-
-    anchors {
-        topMargin: 20
-    }
-
 }

@@ -8,6 +8,7 @@ QtObject {
     property string font_family_reading: "Readex Pro"
     property real font_size_normal: 15
     property real font_size_small: 12
+    property real date_square_size: 64
     property real formRowHeight: 57
     property real formRowBottomMargin: 20
     property real rounding_full: 1000
