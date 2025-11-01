@@ -31,21 +31,21 @@ Depending on your setup, you can choose from one to three different installation
 Settings, wallpaper, and colors automatically synced from ii configuration
 
 <p align="left">
-  <img src="https://github.com/3d3f/ii-sddm-theme/raw/main/iiMatugen/default-background/background.png" width="50%" alt="ii + Matugen" />
+  <img src="https://github.com/3d3f/ii-sddm-theme/raw/main/Previews/iiMatugen-preview.png" width="50%" alt="ii + Matugen" />
 </p>
 
 ### Matugen Integration Only
 Wallpaper and colors generated via Matugen, with manual settings configuration
 
 <p align="left">
-  <img src="https://github.com/3d3f/ii-sddm-theme/raw/main/Matugen/default-background/background.png" width="50%" alt="Matugen Only" />
+  <img src="https://github.com/3d3f/ii-sddm-theme/raw/main/Previews/Matugen-preview.png" width="50%" alt="Matugen Only" />
 </p>
 
 ### No Matugen Integration
 Manually configure your background, colors, and settings
 
 <p align="left">
-  <img src="https://github.com/3d3f/ii-sddm-theme/raw/main/noMatugen/background.png" width="50%" alt="Manual Configuration" />
+  <img src="https://github.com/3d3f/ii-sddm-theme/raw/main/Previews/noMatugen-preview.png" width="50%" alt="Manual Configuration" />
 </p>
 
 ---
