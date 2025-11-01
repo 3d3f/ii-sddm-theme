@@ -103,7 +103,7 @@ Item {
                     font.pixelSize: 20
                     font.weight: 1000
                     font.family: Appearance.font_family_expressive
-                    color: Colors.secondary_fixed_dim
+                    color: Colors.inverse_on_surface
                 }
 
             }
