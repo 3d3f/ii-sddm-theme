@@ -7,7 +7,7 @@ Item {
     id: root
 
     required property int clockSecond
-    property string style: "classic" // "dot", "classic", "line", "hide"
+    property string style: "classic" 
     property color color: "black"
     property real handWidth: 2
     property real handLength: 100

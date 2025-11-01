@@ -1,3 +1,5 @@
+// ToDo - improve capslock look
+
 import QtQml.Models
 // Config created by Keyitdev https://github.com/Keyitdev/sddm-astronaut-theme
 // Copyright (C) 2022-2025 Keyitdev
@@ -92,14 +94,6 @@ Item {
                         } else if (newLength < currentLength) {
                             while (passwordCharsModel.count > newLength)passwordCharsModel.remove(passwordCharsModel.count - 1)
                         }
-                        
-                        // <<< RIMOSSO >>>
-                        // La gestione dello scorrimento è ora dichiarativa nel Flickable,
-                        // non è più necessario impostarla qui in modo imperativo.
-                        // Questo risolve il problema dello scatto durante la cancellazione.
-                        //
-                        // if (usePasswordChars && passwordCharsFlickable.contentWidth > passwordCharsFlickable.width)
-                        //     passwordCharsFlickable.contentX = passwordCharsFlickable.contentWidth - passwordCharsFlickable.width;
                     }
                     onAccepted: {
                         if (!loginContainer.isLoggingIn && (config.AllowEmptyPassword == "true" || password.text !== "")) {
@@ -151,20 +145,12 @@ Item {
                     contentWidth: dotsRow.implicitWidth + 20
                     flickableDirection: Flickable.HorizontalFlick
                     contentX: Math.max(contentWidth - 6 - width, 0)
-                    Behavior on contentX {
-                        NumberAnimation {
-                            duration: Appearance.animation.elementMoveFast.duration
-                            easing.type: Appearance.animation.elementMoveFast.type
-                            easing.bezierCurve: Appearance.animation.elementMoveFast.bezierCurve
-                        }
-                    }
 
                     Row {
                         id: dotsRow
 
                         anchors.verticalCenter: parent.verticalCenter
                         spacing: 2
-                        
 
                         Repeater {
                             model: passwordCharsModel
@@ -217,6 +203,15 @@ Item {
 
                     TapHandler {
                         onTapped: password.forceActiveFocus()
+                    }
+
+                    Behavior on contentX {
+                        NumberAnimation {
+                            duration: Appearance.animation.elementMoveFast.duration
+                            easing.type: Appearance.animation.elementMoveFast.type
+                            easing.bezierCurve: Appearance.animation.elementMoveFast.bezierCurve
+                        }
+
                     }
 
                 }
@@ -500,8 +495,15 @@ Item {
     }
 
     Timer {
+        // <<< RIMOSSO >>>
+        // La gestione dello scorrimento è ora dichiarativa nel Flickable,
+        // non è più necessario impostarla qui in modo imperativo.
+        // Questo risolve il problema dello scatto durante la cancellazione.
+
         id: cursorBlinkTimer
 
+        // if (usePasswordChars && passwordCharsFlickable.contentWidth > passwordCharsFlickable.width)
+        //     passwordCharsFlickable.contentX = passwordCharsFlickable.contentWidth - passwordCharsFlickable.width;
         interval: 530
         running: password.activeFocus && loginContainer.usePasswordChars && password.text.length === 0
         repeat: true

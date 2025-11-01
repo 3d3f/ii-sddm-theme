@@ -6,7 +6,7 @@ Item {
     id: root
 
     property color color: "black"
-    property string dialNumberStyle: Settings.background_clock_cookie_dialNumberStyle // "full", "dots", "numbers", "none"
+    property string dialNumberStyle: Settings.background_clock_cookie_dialNumberStyle
 
     Component {
         id: fullMarksComponent

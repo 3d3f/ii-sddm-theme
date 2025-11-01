@@ -6,7 +6,7 @@ Item {
     id: root
 
     required property int clockMinute
-    property string style: "classic" //Settings.background_clock_cookie_minuteHandStyle // "thin", "medium", "bold", "classic", "hide"
+    property string style: "classic"
     property color color: "black"
     property real handLength: 95
     property real handWidth: {

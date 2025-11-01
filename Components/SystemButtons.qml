@@ -5,7 +5,6 @@
 // Licensed under the GNU General Public License v3.0
 // See: https://www.gnu.org/licenses/gpl-3.0.txt
 
-
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
@@ -31,6 +30,7 @@ Item {
 
     RowLayout {
         id: buttonRow
+
         anchors.centerIn: parent
         spacing: 2
 

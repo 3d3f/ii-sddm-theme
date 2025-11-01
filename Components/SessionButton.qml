@@ -31,7 +31,6 @@ Item {
         indicator: null
         clip: true
         focusPolicy: Qt.StrongFocus
-        // Altezza fissa per coerenza
         height: Appearance.formRowHeight
         width: animatedWidth
         Keys.onPressed: function(event) {
