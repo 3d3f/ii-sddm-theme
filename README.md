@@ -1,5 +1,7 @@
 # ii-sddm-theme
 
+https://github.com/user-attachments/assets/2af3d30f-c288-4a32-a9bf-4bec4c31490e
+
 ## Overview
 
 [ii-sddm-theme](https://github.com/3d3f/ii-sddm-theme) is a custom theme for the [SDDM](https://github.com/sddm/sddm/) display manager that replicates the lockscreen aesthetic and settings of [illogical impulse](https://github.com/end-4/dots-hyprland). It can be used with ii dotfiles, with [Matugen](https://github.com/InioX/matugen) only, or as a standalone theme.
