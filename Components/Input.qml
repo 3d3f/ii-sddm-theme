@@ -4,7 +4,6 @@
 // Modified by 3d3f for the "ii-sddm-theme" project (2025)
 // Licensed under the GNU General Public License v3.0
 // See: https://www.gnu.org/licenses/gpl-3.0.txt
-
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
@@ -18,12 +17,13 @@ RowLayout {
     Layout.preferredHeight: 400
     spacing: 10
 
-    RowLayout {
-        id: usernameField
+    Item {
+        id: usernameFieldContainer
 
         Layout.alignment: Qt.AlignBottom
         Layout.preferredHeight: Appearance.formRowHeight
-        spacing: 0
+        implicitWidth: usernameField.implicitWidth
+        Layout.preferredWidth: implicitWidth
 
         Rectangle {
             id: usernameBackground
@@ -33,14 +33,22 @@ RowLayout {
             radius: Appearance.rounding_full
         }
 
-        InputUserComboBox {
-            id: selectUser
-        }
+        RowLayout {
+            id: usernameField
 
-        LayoutButton {
-            id: layoutSelect
+            anchors.fill: parent
+            spacing: 0
 
-            Layout.alignment: Qt.AlignVCenter
+            InputUserComboBox {
+                id: selectUser
+            }
+
+            LayoutButton {
+                id: layoutSelect
+
+                Layout.alignment: Qt.AlignVCenter
+            }
+
         }
 
     }

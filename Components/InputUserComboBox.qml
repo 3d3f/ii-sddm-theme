@@ -51,7 +51,7 @@ ComboBox {
             Behavior on color {
                 ColorAnimation {
                     duration: 200
-                    easing.type: Easing.InOut
+                    easing.type: Easing.InOutQuad
                 }
 
             }
@@ -73,22 +73,19 @@ ComboBox {
 
             property real fill: 1
             property real truncatedFill: Math.round(fill * 100) / 100
+            property int iconSize: 24 
 
             font.family: "Material Symbols Outlined"
-            font.pixelSize: 24
+            font.pixelSize: iconSize
             color: Colors.on_surface_variant
             Layout.alignment: Qt.AlignVCenter
             text: "account_circle"
             renderType: fill !== 0 ? Text.CurveRendering : Text.NativeRendering
-
-            font {
-                hintingPreference: Font.PreferFullHinting
-                variableAxes: {
-                    "FILL": truncatedFill,
-                    "opsz": font.pixelSize
-                }
+            font.hintingPreference: Font.PreferFullHinting
+            font.variableAxes: {
+                "FILL": truncatedFill,
+                "opsz": iconSize  
             }
-
         }
 
         Text {
@@ -150,7 +147,7 @@ ComboBox {
                     id: textCont
 
                     text: model.name
-                    font.family: Appearance-font_family_main
+                    font.family: Appearance.font_family_main
                     font.pixelSize: Appearance.font_size_normal
                     color: selectUser.highlightedIndex === index ? Colors.on_primary : Colors.on_primary_container
                     verticalAlignment: Text.AlignVCenter
@@ -161,11 +158,10 @@ ComboBox {
                     color: selectUser.highlightedIndex === index ? Colors.primary : (parent.hovered ? Colors.colPrimaryContainerHover : Colors.primary_container)
                     radius: 12
 
-                    // Animazione colore MD3
                     Behavior on color {
                         ColorAnimation {
                             duration: 200
-                            easing.type: Easing.InOut
+                            easing.type: Easing.InOutQuad
                         }
 
                     }

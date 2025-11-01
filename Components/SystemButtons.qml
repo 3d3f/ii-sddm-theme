@@ -10,15 +10,16 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
-RowLayout {
+Item {
     property var shutdown: ["power_settings_new", config.TranslateShutdown || textConstants.shutdown, sddm.canPowerOff]
     property var reboot: ["restart_alt", config.TranslateReboot || textConstants.reboot, sddm.canReboot]
     property var suspend: ["dark_mode", config.TranslateSuspend || textConstants.suspend, sddm.canSuspend]
     property var hibernate: ["bedtime", config.TranslateHibernate || textConstants.hibernate, sddm.canHibernate]
     property ComboBox exposedSession
 
-    spacing: 13
     Layout.preferredHeight: Appearance.formRowHeight
+    implicitWidth: buttonRow.implicitWidth + 10
+    Layout.preferredWidth: implicitWidth
 
     Rectangle {
         anchors.fill: parent
@@ -29,6 +30,7 @@ RowLayout {
     }
 
     RowLayout {
+        id: buttonRow
         anchors.centerIn: parent
         spacing: 2
 
@@ -67,7 +69,6 @@ RowLayout {
                             return "transparent";
                         }
 
-                        // Ripple effect migliorato
                         Rectangle {
                             id: ripple
 

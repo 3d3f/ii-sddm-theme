@@ -5,6 +5,7 @@ pragma Singleton
 // {{image}}
 QtObject {
     property real contentTransparency: 0.57
+    property real backgroundTransparency: 0
     property color background: "{{colors.background.default.hex}}"
     property color error: "{{colors.error.default.hex}}"
     property color error_container: "{{colors.error_container.default.hex}}"
@@ -55,7 +56,7 @@ QtObject {
     property color tertiary_fixed: "{{colors.tertiary_fixed.default.hex}}"
     property color tertiary_fixed_dim: "{{colors.tertiary_fixed_dim.default.hex}}"
     property color colSubtext: outline
-    property color colLayer0: mix(transparentize(background, backgroundTransparency), primary, Config.options.appearance.extraBackgroundTint ? 0.99 : 1)
+    property color colLayer0: mix(transparentize(background, backgroundTransparency), primary, 0.99)
     property color colOnLayer0: on_background
     property color colLayer0Hover: transparentize(mix(colLayer0, colOnLayer0, 0.9), contentTransparency)
     property color colLayer0Active: transparentize(mix(colLayer0, colOnLayer0, 0.8), contentTransparency)

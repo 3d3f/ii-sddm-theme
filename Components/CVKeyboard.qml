@@ -14,7 +14,7 @@ InputPanel {
 
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.bottom: mainRow.bottom
-    anchors.bottomMargin: keyboardOpen ? systemButtons.Layout.preferredHeight + 20 : -height - 20
+    anchors.bottomMargin: keyboardOpen ? Appearance.formRowBottomMargin + Appearance.formRowHeight : -300
     width: 750
     opacity: keyboardOpen ? 1 : 0
     active: keyboardOpen

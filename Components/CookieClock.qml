@@ -75,9 +75,6 @@ Item {
     // Dimensions
     width: 230
     height: 230
-    Component.onCompleted: {
-        lockScreen.alignItem(root, Config.clockPosition);
-    }
     anchors.topMargin: 20
 
     // Shadow effect

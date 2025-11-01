@@ -15,7 +15,8 @@ Item {
     Button {
         id: virtualKeyboardButton
 
-        anchors.fill: parent
+        width: parent.width
+        height: parent.height
         z: 1
         flat: true
         visible: true
@@ -52,7 +53,6 @@ Item {
             color: virtualKeyboardButton.checked ? Colors.on_primary_container : Colors.on_surface_variant
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
-            anchors.centerIn: parent
             rotation: virtualKeyboardButton.checked ? 180 : 0
 
             Behavior on rotation {
@@ -92,7 +92,6 @@ Item {
                 id: hoverOverlay
 
                 anchors.fill: parent
-                implicitHeight: Appearance.formRowHeight
                 radius: parent.radius
                 color: Colors.colOnLayer3
                 opacity: 0

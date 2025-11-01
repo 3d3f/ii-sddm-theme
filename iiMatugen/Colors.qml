@@ -56,7 +56,7 @@ QtObject {
     property color tertiary_fixed: "#f7daef"
     property color tertiary_fixed_dim: "#dabfd2"
     property color colSubtext: outline
-    property color colLayer0: mix(transparentize(background, backgroundTransparency), primary, Config.options.appearance.extraBackgroundTint ? 0.99 : 1)
+    property color colLayer0: mix(transparentize(background, backgroundTransparency), primary, 0.99)
     property color colOnLayer0: on_background
     property color colLayer0Hover: transparentize(mix(colLayer0, colOnLayer0, 0.9), contentTransparency)
     property color colLayer0Active: transparentize(mix(colLayer0, colOnLayer0, 0.8), contentTransparency)
