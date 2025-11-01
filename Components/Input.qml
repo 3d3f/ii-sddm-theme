@@ -21,7 +21,7 @@ RowLayout {
     RowLayout {
         id: usernameField
 
-        anchors.bottom: inputContainer.bottom
+        Layout.alignment: Qt.AlignBottom
         Layout.preferredHeight: Appearance.formRowHeight
         spacing: 0
 

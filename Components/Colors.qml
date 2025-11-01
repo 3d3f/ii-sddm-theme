@@ -4,7 +4,8 @@ pragma Singleton
 // Don't edit this file or the script won't pick up the right background
 // ~/.config/hypr/custom/scripts/ii-sddm-theme/default-backgorund/background.png
 QtObject {
-    property real contentTransparency: 0.57
+    property real contentTransparency: 0.57 
+    property real backgroundTransparency: 0
     property color background: "#151314"
     property color error: "#ffb4ab"
     property color error_container: "#93000a"

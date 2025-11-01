@@ -69,6 +69,7 @@ Item {
                     placeholderTextColor: loginContainer.loginFailed ? Colors.error : Qt.rgba(Colors.on_surface.r, Colors.on_surface.g, Colors.on_surface.b, 0.6)
                     font.family: Appearance.font_family_main
                     font.pixelSize: Appearance.font_size_normal
+                    cursorVisible: usePasswordChars ? false : true
                     selectByMouse: true
                     selectionColor: Colors.primary_container
                     selectedTextColor: Colors.on_primary_container
@@ -91,9 +92,14 @@ Item {
                         } else if (newLength < currentLength) {
                             while (passwordCharsModel.count > newLength)passwordCharsModel.remove(passwordCharsModel.count - 1)
                         }
-                        if (usePasswordChars && passwordCharsFlickable.contentWidth > passwordCharsFlickable.width)
-                            passwordCharsFlickable.contentX = passwordCharsFlickable.contentWidth - passwordCharsFlickable.width;
-
+                        
+                        // <<< RIMOSSO >>>
+                        // La gestione dello scorrimento è ora dichiarativa nel Flickable,
+                        // non è più necessario impostarla qui in modo imperativo.
+                        // Questo risolve il problema dello scatto durante la cancellazione.
+                        //
+                        // if (usePasswordChars && passwordCharsFlickable.contentWidth > passwordCharsFlickable.width)
+                        //     passwordCharsFlickable.contentX = passwordCharsFlickable.contentWidth - passwordCharsFlickable.width;
                     }
                     onAccepted: {
                         if (!loginContainer.isLoggingIn && (config.AllowEmptyPassword == "true" || password.text !== "")) {
@@ -119,8 +125,8 @@ Item {
                     height: password.height * 0.8
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.verticalCenterOffset: -1
-                    anchors.left: passwordCharsFlickable.left
-                    anchors.leftMargin: 0
+                    anchors.left: password.left
+                    anchors.leftMargin: 4
                     enabled: false
 
                     Behavior on opacity {
@@ -139,16 +145,26 @@ Item {
 
                     visible: usePasswordChars
                     anchors.fill: parent
-                    anchors.margins: 8
+                    anchors.topMargin: 8
+                    anchors.bottomMargin: 8
                     anchors.leftMargin: 13
                     contentWidth: dotsRow.implicitWidth + 20
                     flickableDirection: Flickable.HorizontalFlick
+                    contentX: Math.max(contentWidth - 6 - width, 0)
+                    Behavior on contentX {
+                        NumberAnimation {
+                            duration: Appearance.animation.elementMoveFast.duration
+                            easing.type: Appearance.animation.elementMoveFast.type
+                            easing.bezierCurve: Appearance.animation.elementMoveFast.bezierCurve
+                        }
+                    }
 
                     Row {
                         id: dotsRow
 
                         anchors.verticalCenter: parent.verticalCenter
-                        spacing: 3
+                        spacing: 2
+                        
 
                         Repeater {
                             model: passwordCharsModel
