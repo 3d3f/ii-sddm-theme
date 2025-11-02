@@ -19,6 +19,7 @@ This theme wouldn't exist without these projects:
 - **[illogical impulse](https://github.com/end-4/dots-hyprland)** – All the widgets code, the design and the creativeness comes from [end-4](https://github.com/end-4) repo
 - **[sddm-astronaut-theme](https://github.com/Keyitdev/sddm-astronaut-theme)** – The starting point for this theme
 - **[SilentSDDM](https://github.com/uiriansan/SilentSDDM)** – Custom virtual keyboard implementation and various improvements
+- **[matugen](https://github.com/InioX/matugen)** - Material You color palette generator
 - **[qt/qtvirtualkeyboard](https://github.com/qt/qtvirtualkeyboard)** – Default virtual keyboard style template
 
 ---
