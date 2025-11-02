@@ -13,7 +13,7 @@ readonly SDDM_THEMES_DIR="/usr/share/sddm/themes"
 readonly SDDM_THEME_DEST="$SDDM_THEMES_DIR/$THEME_NAME"
 
 # Theme's local copy directory (for specific files)
-readonly HYPR_SCRIPTS_BASE="$HOME/.config/hypr/custom/scripts"
+readonly HYPR_SCRIPTS_BASE="$HOME/.config"
 # The destination inside HYPR_SCRIPTS_BASE for theme-related files
 readonly HYPR_THEME_SCRIPTS_DEST="$HYPR_SCRIPTS_BASE/$THEME_NAME" 
 
@@ -76,7 +76,7 @@ introduction() {
     echo -e "${NC}"
     echo -e "This script will install the ii-sddm-theme."
     echo
-    echo -e "${YELLOW}Note:${NC} Please check what the scripts will do before running it."
+    echo -e "${YELLOW}Note:${NC} Please check what the script will do before running it."
     echo
     read -p "Do you want to proceed with the installation? (y/n): " -n 1 -r
     echo
