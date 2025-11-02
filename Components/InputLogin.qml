@@ -1,6 +1,5 @@
-// ToDo - improve capslock look
+// ToDo - improve capslock look when password chars are active
 
-import QtQml.Models
 // Config created by Keyitdev https://github.com/Keyitdev/sddm-astronaut-theme
 // Copyright (C) 2022-2025 Keyitdev
 // Based on https://github.com/MarianArlt/sddm-sugar-dark
@@ -8,6 +7,7 @@ import QtQml.Models
 // Modified by 3d3f for the "ii-sddm-theme" project (2025)
 // Licensed under the GNU General Public License v3.0
 // Adapted from end-4's Hyprland dotfiles (https://github.com/end-4/dots-hyprland)
+import QtQml.Models
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
@@ -495,15 +495,7 @@ Item {
     }
 
     Timer {
-        // <<< RIMOSSO >>>
-        // La gestione dello scorrimento è ora dichiarativa nel Flickable,
-        // non è più necessario impostarla qui in modo imperativo.
-        // Questo risolve il problema dello scatto durante la cancellazione.
-
         id: cursorBlinkTimer
-
-        // if (usePasswordChars && passwordCharsFlickable.contentWidth > passwordCharsFlickable.width)
-        //     passwordCharsFlickable.contentX = passwordCharsFlickable.contentWidth - passwordCharsFlickable.width;
         interval: 530
         running: password.activeFocus && loginContainer.usePasswordChars && password.text.length === 0
         repeat: true

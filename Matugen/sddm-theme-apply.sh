@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+
+## TODO: Video wallpaper support
+
 set -euo pipefail
 
 # --- Security: Validate and sanitize paths ---

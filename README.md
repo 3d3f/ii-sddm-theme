@@ -16,7 +16,7 @@ I only have a basic understanding of Qt QML, so this project is a learning exper
 
 This theme wouldn't exist without these projects:
 
-- **[illogical impulse](https://github.com/end-4/dots-hyprland)** – All the widgets code, the design and the creativeness comes from End-4's repo
+- **[illogical impulse](https://github.com/end-4/dots-hyprland)** – All the widgets code, the design and the creativeness comes from [end-4](https://github.com/end-4) repo
 - **[sddm-astronaut-theme](https://github.com/Keyitdev/sddm-astronaut-theme)** – The starting point for this theme
 - **[SilentSDDM](https://github.com/uiriansan/SilentSDDM)** – Custom virtual keyboard implementation and various improvements
 - **[qt/qtvirtualkeyboard](https://github.com/qt/qtvirtualkeyboard)** – Default virtual keyboard style template
@@ -176,7 +176,7 @@ sddm-greeter-qt6 --test-mode --theme /usr/share/sddm/themes/ii-sddm-theme
 
 #### 11. Reboot
 
-Restart your system.
+Restart your system to see the theme in action.
 
 </details>
 

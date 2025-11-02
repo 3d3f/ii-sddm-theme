@@ -80,7 +80,6 @@ Pane {
             id: backgroundImage
 
             property bool isVideo: {
-                // Controllo robusto del tipo file
                 var bg = config.Background;
                 if (!bg || bg.toString().length === 0)
                     return false;

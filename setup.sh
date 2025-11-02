@@ -1,6 +1,6 @@
 #!/bin/bash
 
-## ii-sddm-theme full installer
+## TODO support for other distros
 
 set -euo pipefail
 
@@ -64,7 +64,7 @@ step() { echo -e "\n${BLUE}━━━ $* ━━━${NC}"; }
 # Global flags to control integration types
 II_CONFIG_FOUND=false
 MATUGEN_CONFIG_FOUND=false
-INSTALLATION_TYPE="no-matugen" # Default installation type
+INSTALLATION_TYPE="no-matugen"
 
 # === INTRODUCTION ===
 introduction() {
