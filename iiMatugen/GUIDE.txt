@@ -9,7 +9,7 @@ To apply your color scheme and background, simply change your background or togg
 If you only want to apply the SDDM theme settings you can run the provided script:
 
 ```bash
-sudo ~/.config/hypr/custom/scripts/ii-sddm-theme/sddm-theme-apply.sh
+sudo ~/.config/ii-sddm-theme/sddm-theme-apply.sh
 ```
 
 ### Additional ii-sddm-theme Configurations:

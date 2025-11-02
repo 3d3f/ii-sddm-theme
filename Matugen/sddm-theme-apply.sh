@@ -37,7 +37,7 @@ fi
 
 # --- Directories ---
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SRC="$USER_HOME/.config/hypr/custom/scripts/ii-sddm-theme"
+SRC="$USER_HOME/.config/ii-sddm-theme"
 DEST="/usr/share/sddm/themes/ii-sddm-theme"
 
 # --- Colors.qml source ---

@@ -9,7 +9,7 @@ You can modify the theme's settings directly from the `Settings.qml` file locate
 To apply only the SDDM theme settings, you can execute the `sddm-theme-apply.sh` script with superuser privileges:
 
 ```bash
-sudo ~/.config/hypr/custom/scripts/ii-sddm-theme/sddm-theme-apply.sh
+sudo ~/.config/ii-sddm-theme/sddm-theme-apply.sh
 ```
 
 ### Advanced SDDM Configurations:

@@ -2,7 +2,7 @@ import QtQuick
 pragma Singleton
 
 // Don't edit this file or the script won't pick up the right background
-// ~/.config/hypr/custom/scripts/ii-sddm-theme/default-background/background.png
+// ~/.config/ii-sddm-theme/default-background/background.png
 QtObject {
     property real contentTransparency: 0.57 
     property real backgroundTransparency: 0

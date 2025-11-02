@@ -110,10 +110,10 @@ This option is for users who have both `illogical impulse` and `matugen` configu
 #### 4. Copy Integration Files
 
 ```bash
-mkdir -p ~/.config/hypr/custom/scripts/ii-sddm-theme/
-cp -r iiMatugen/* ~/.config/hypr/custom/scripts/ii-sddm-theme/
-chmod +x ~/.config/hypr/custom/scripts/ii-sddm-theme/sddm-theme-apply.sh
-chmod +x ~/.config/hypr/custom/scripts/ii-sddm-theme/generate_settings.py
+mkdir -p ~/.config/ii-sddm-theme/
+cp -r iiMatugen/* ~/.config/ii-sddm-theme/
+chmod +x ~/.config/ii-sddm-theme/sddm-theme-apply.sh
+chmod +x ~/.config/ii-sddm-theme/generate_settings.py
 ```
 
 #### 5. Install the Theme
@@ -148,9 +148,9 @@ Add this block to `~/.config/matugen/config.toml`:
 
 ```toml
 [templates.iisddmtheme]
-input_path = '~/.config/hypr/custom/scripts/ii-sddm-theme/SddmColors.qml'
-output_path = '~/.config/hypr/custom/scripts/ii-sddm-theme/Colors.qml'
-post_hook = 'python3 ~/.config/hypr/custom/scripts/ii-sddm-theme/generate_settings.py && sudo ~/.config/hypr/custom/scripts/ii-sddm-theme/sddm-theme-apply.sh &'
+input_path = '~/.config/ii-sddm-theme/SddmColors.qml'
+output_path = '~/.config/ii-sddm-theme/Colors.qml'
+post_hook = 'python3 ~/.config/ii-sddm-theme/generate_settings.py && sudo ~/.config/ii-sddm-theme/sddm-theme-apply.sh &'
 ```
 
 #### 8. Configure Passwordless Sudo
@@ -158,15 +158,15 @@ post_hook = 'python3 ~/.config/hypr/custom/scripts/ii-sddm-theme/generate_settin
 Allow the apply script to run without a password prompt:
 
 ```bash
-echo "$USER ALL=(ALL) NOPASSWD: /home/$USER/.config/hypr/custom/scripts/ii-sddm-theme/sddm-theme-apply.sh" | sudo tee /etc/sudoers.d/sddm-theme-$USER > /dev/null
+echo "$USER ALL=(ALL) NOPASSWD: /home/$USER/.config/ii-sddm-theme/sddm-theme-apply.sh" | sudo tee /etc/sudoers.d/sddm-theme-$USER > /dev/null
 sudo chmod 0440 /etc/sudoers.d/sddm-theme-$USER
 ```
 
 #### 9. Apply the Theme
 
 ```bash
-python3 ~/.config/hypr/custom/scripts/ii-sddm-theme/generate_settings.py
-sudo ~/.config/hypr/custom/scripts/ii-sddm-theme/sddm-theme-apply.sh
+python3 ~/.config/ii-sddm-theme/generate_settings.py
+sudo ~/.config/ii-sddm-theme/sddm-theme-apply.sh
 ```
 
 #### 10. Test the Theme
@@ -191,9 +191,9 @@ This option uses `matugen` to generate color schemes from your wallpaper without
 #### 4. Copy Integration Files
 
 ```bash
-mkdir -p ~/.config/hypr/custom/scripts/ii-sddm-theme/
-cp -r Matugen/* ~/.config/hypr/custom/scripts/ii-sddm-theme/
-chmod +x ~/.config/hypr/custom/scripts/ii-sddm-theme/sddm-theme-apply.sh
+mkdir -p ~/.config/ii-sddm-theme/
+cp -r Matugen/* ~/.config/ii-sddm-theme/
+chmod +x ~/.config/ii-sddm-theme/sddm-theme-apply.sh
 ```
 
 #### 5. Install the Theme
@@ -228,22 +228,22 @@ Add this block to `~/.config/matugen/config.toml`:
 
 ```toml
 [templates.iisddmtheme]
-input_path = '~/.config/hypr/custom/scripts/ii-sddm-theme/SddmColors.qml'
-output_path = '~/.config/hypr/custom/scripts/ii-sddm-theme/Colors.qml'
-post_hook = 'sudo ~/.config/hypr/custom/scripts/ii-sddm-theme/sddm-theme-apply.sh &'
+input_path = '~/.config/ii-sddm-theme/SddmColors.qml'
+output_path = '~/.config/ii-sddm-theme/Colors.qml'
+post_hook = 'sudo ~/.config/ii-sddm-theme/sddm-theme-apply.sh &'
 ```
 
 #### 8. Configure Passwordless Sudo
 
 ```bash
-echo "$USER ALL=(ALL) NOPASSWD: /home/$USER/.config/hypr/custom/scripts/ii-sddm-theme/sddm-theme-apply.sh" | sudo tee /etc/sudoers.d/sddm-theme-$USER > /dev/null
+echo "$USER ALL=(ALL) NOPASSWD: /home/$USER/.config/ii-sddm-theme/sddm-theme-apply.sh" | sudo tee /etc/sudoers.d/sddm-theme-$USER > /dev/null
 sudo chmod 0440 /etc/sudoers.d/sddm-theme-$USER
 ```
 
 #### 9. Apply the Theme
 
 ```bash
-sudo ~/.config/hypr/custom/scripts/ii-sddm-theme/sddm-theme-apply.sh
+sudo ~/.config/ii-sddm-theme/sddm-theme-apply.sh
 ```
 
 #### 10. Test the Theme
@@ -268,9 +268,9 @@ This option is for users who prefer full manual control over background, colors,
 #### 4. Copy Integration Files
 
 ```bash
-mkdir -p ~/.config/hypr/custom/scripts/ii-sddm-theme/
-cp -r noMatugen/* ~/.config/hypr/custom/scripts/ii-sddm-theme/
-chmod +x ~/.config/hypr/custom/scripts/ii-sddm-theme/sddm-theme-apply.sh
+mkdir -p ~/.config/ii-sddm-theme/
+cp -r noMatugen/* ~/.config/ii-sddm-theme/
+chmod +x ~/.config/ii-sddm-theme/sddm-theme-apply.sh
 ```
 
 #### 5. Install the Theme
@@ -302,7 +302,7 @@ Current=ii-sddm-theme
 #### 7. Apply the Theme
 
 ```bash
-sudo ~/.config/hypr/custom/scripts/ii-sddm-theme/sddm-theme-apply.sh
+sudo ~/.config/ii-sddm-theme/sddm-theme-apply.sh
 ```
 
 #### 8. Test the Theme
@@ -323,7 +323,7 @@ Restart your system to see the theme in action.
 
 ## Post-Installation
 
-After installation, check the `GUIDE.txt` file in your `~/.config/hypr/custom/scripts/ii-sddm-theme/` folder.
+After installation, check the `GUIDE.txt` file in your `~/.config/ii-sddm-theme/` folder.
 
 ## Support
 

@@ -383,8 +383,8 @@ configure_matugen() {
     touch "$MATUGEN_CONF"
 
     # Define the Matugen config block to add with tilde paths
-    local input_path_tilde="~/.config/hypr/custom/scripts/$THEME_NAME/SddmColors.qml" 
-    local output_path_tilde="~/.config/hypr/custom/scripts/$THEME_NAME/Colors.qml" 
+    local input_path_tilde="~/.config/$THEME_NAME/SddmColors.qml" 
+    local output_path_tilde="~/.config/$THEME_NAME/Colors.qml" 
     local post_hook_command=""
     
     if [[ "$INSTALLATION_TYPE" == "ii-matugen" ]]; then
@@ -398,7 +398,7 @@ configure_matugen() {
             return 1
         fi
         # The post-hook now explicitly calls generate_settings.py before sddm-theme-apply.sh
-        post_hook_command="python3 ~/.config/hypr/custom/scripts/$THEME_NAME/generate_settings.py && sudo ~/.config/hypr/custom/scripts/$THEME_NAME/sddm-theme-apply.sh &"
+        post_hook_command="python3 ~/.config/$THEME_NAME/generate_settings.py && sudo ~/.config/$THEME_NAME/sddm-theme-apply.sh &"
         info "Matugen post-hook will include ii clock and time settings generation via generate_settings.py."
     elif [[ "$INSTALLATION_TYPE" == "matugen-only" ]]; then
         # For matugen-only, only apply.sh is included in files_to_copy, so just use it
@@ -406,7 +406,7 @@ configure_matugen() {
             error "Apply script $APPLY_SCRIPT not found for Matugen-only integration. Skipping Matugen post-hook configuration."
             return 1
         fi
-        post_hook_command="sudo ~/.config/hypr/custom/scripts/$THEME_NAME/sddm-theme-apply.sh &"
+        post_hook_command="sudo ~/.config/$THEME_NAME/sddm-theme-apply.sh &"
         info "Matugen post-hook will apply theme changes via sddm-theme-apply.sh."
     fi
 
