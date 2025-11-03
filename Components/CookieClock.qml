@@ -17,13 +17,13 @@ Item {
     property string monthNumber: ""
     property string fullDateString: ""
     property color colShadow: Colors.colShadow
-    property color colBackground: Colors.secondary_container
-    property color colOnBackground: Colors.mix(Colors.secondary, Colors.secondary_container, 0.15)
+    property color colBackground: Colors.primary_container
+    property color colOnBackground: Colors.mix(Colors.secondary, Colors.primary_container, 0.15)
     property color colHourHand: Colors.primary
-    property color colMinuteHand: Colors.secondary
-    property color colSecondHand: Colors.tertiary
+    property color colMinuteHand: Colors.tertiary
+    property color colSecondHand: Colors.primary
     property color colDateBackground: Colors.mix(Colors.primary, Colors.secondary_container, 0.55)
-    property color colColumnTime: Colors.mix(Colors.primary, Colors.secondary_container, 0.55)
+    property color colColumnTime:  Colors.mix(Colors.primary, Colors.primary_container, 0.55)
     property string time_format: Settings.time_format
     readonly property bool is12HourFormat: {
         return (time_format.indexOf("ap") !== -1) || (time_format.indexOf("AP") !== -1);

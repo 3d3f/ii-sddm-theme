@@ -40,7 +40,7 @@ Item {
                 StyledText {
                     anchors.centerIn: parent
                     text: root.dayOfMonth
-                    color: Colors.tertiary
+                    color: Colors.on_tertiary_container
                     font.pixelSize: 30
                     font.weight: Font.Bold
                     font.family: Appearance.font_family_expressive
@@ -59,7 +59,7 @@ Item {
                 MaterialCookie {
                     anchors.fill: parent
                     implicitSize: Appearance.date_square_size
-                    color: Colors.primary_container
+                    color: Colors.secondary_container
                     sides: 2
                     amplitude: 3
                     constantlyRotate: false
@@ -69,7 +69,7 @@ Item {
                 StyledText {
                     anchors.centerIn: parent
                     text: root.monthNumber
-                    color: Colors.primary
+                    color: Colors.on_secondary_container
                     font.pixelSize: 30
                     font.weight: Font.Black
                     font.family: Appearance.font_family_expressive

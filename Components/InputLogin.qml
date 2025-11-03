@@ -1,5 +1,3 @@
-// ToDo - improve capslock look when password chars are active
-
 // Config created by Keyitdev https://github.com/Keyitdev/sddm-astronaut-theme
 // Copyright (C) 2022-2025 Keyitdev
 // Based on https://github.com/MarianArlt/sddm-sugar-dark
@@ -18,7 +16,7 @@ Item {
     property bool loginFailed: false
     property bool isLoggingIn: false
     property bool usePasswordChars: Settings.lock_materialShapeChars
-    property var customShapeSequence: [4, 6, 5, 8, 7]
+    property var customShapeSequence: [6, 3, 5, 8, 7, 9]
 
     Layout.preferredHeight: Appearance.formRowHeight
     Layout.alignment: Qt.AlignBottom
@@ -37,11 +35,12 @@ Item {
     }
 
     RowLayout {
+        //clip: true
+
         id: inputRow
 
         anchors.fill: parent
         spacing: 6
-        clip: true
 
         Item {
             id: passwordField
@@ -105,7 +104,48 @@ Item {
                     KeyNavigation.right: loginButton
 
                     background: Rectangle {
-                        color: "transparent"
+                        color: Colors.colLayer1
+                        radius: Appearance.rounding_full
+                    }
+
+                }
+
+                SequentialAnimation {
+                    id: wrongPasswordShakeAnim
+
+                    NumberAnimation {
+                        target: passwordField
+                        property: "x"
+                        to: -30
+                        duration: 50
+                    }
+
+                    NumberAnimation {
+                        target: passwordField
+                        property: "x"
+                        to: 30
+                        duration: 50
+                    }
+
+                    NumberAnimation {
+                        target: passwordField
+                        property: "x"
+                        to: -15
+                        duration: 40
+                    }
+
+                    NumberAnimation {
+                        target: passwordField
+                        property: "x"
+                        to: 15
+                        duration: 40
+                    }
+
+                    NumberAnimation {
+                        target: passwordField
+                        property: "x"
+                        to: 0
+                        duration: 30
                     }
 
                 }
@@ -134,131 +174,97 @@ Item {
 
                 }
 
-                StyledFlickable {
-                    id: passwordCharsFlickable
+                PasswordChars {
+                }
 
-                    visible: usePasswordChars
-                    anchors.fill: parent
-                    anchors.topMargin: 8
-                    anchors.bottomMargin: 8
-                    anchors.leftMargin: 13
-                    contentWidth: dotsRow.implicitWidth + 20
-                    flickableDirection: Flickable.HorizontalFlick
-                    contentX: Math.max(contentWidth - 6 - width, 0)
+                Item {
+                    id: capsLock
 
-                    Row {
-                        id: dotsRow
+                    anchors.right: parent.right
+                    anchors.rightMargin: 12
+                    anchors.verticalCenter: parent.verticalCenter
+                    implicitWidth: 24
+                    implicitHeight: 24
+                    states: [
+                        State {
+                            name: "visible"
+                            when: keyboard.capsLock
 
-                        anchors.verticalCenter: parent.verticalCenter
-                        spacing: 2
+                            PropertyChanges {
+                                target: capsRect
+                                opacity: 1
+                            }
 
-                        Repeater {
-                            model: passwordCharsModel
+                            PropertyChanges {
+                                target: capsLockIndicator
+                                opacity: 1
+                                scale: 1
+                            }
 
-                            delegate: MaterialCookie {
-                                id: cookie
+                        }
+                    ]
+                    transitions: [
+                        Transition {
+                            from: "*"
+                            to: "visible"
+                            reversible: true
 
-                                required property int index
+                            ParallelAnimation {
+                                NumberAnimation {
+                                    target: capsRect
+                                    property: "opacity"
+                                    duration: 100
+                                    easing.type: Easing.OutCubic
+                                }
 
-                                implicitSize: 19
-                                color: Colors.on_surface_variant
-                                sides: loginContainer.customShapeSequence[index % loginContainer.customShapeSequence.length]
-                                amplitude: 1.5
-                                opacity: 0
-                                scale: 0.5
+                                NumberAnimation {
+                                    target: capsLockIndicator
+                                    property: "opacity"
+                                    duration: 100
+                                    easing.type: Easing.OutCubic
+                                }
 
-                                SequentialAnimation {
-                                    id: appearAnim
-
-                                    running: true
-
-                                    ParallelAnimation {
-                                        NumberAnimation {
-                                            target: cookie
-                                            properties: "opacity"
-                                            to: 1
-                                            duration: Appearance.animation.elementMoveEnter.duration
-                                            easing.type: Appearance.animation.elementMoveEnter.type
-                                            easing.bezierCurve: Appearance.animation.elementMoveEnter.bezierCurve
-                                        }
-
-                                        NumberAnimation {
-                                            target: cookie
-                                            properties: "scale"
-                                            to: 1
-                                            duration: Appearance.animation.elementMoveEnter.duration
-                                            easing.type: Appearance.animation.elementMoveEnter.type
-                                            easing.bezierCurve: Appearance.animation.elementMoveEnter.bezierCurve
-                                        }
-
-                                    }
-
+                                NumberAnimation {
+                                    target: capsLockIndicator
+                                    property: "scale"
+                                    duration: 100
+                                    easing.type: Easing.OutCubic
                                 }
 
                             }
 
                         }
+                    ]
 
+                    Rectangle {
+                        id: capsRect
+
+                        anchors.fill: parent
+                        color: Colors.error
+                        radius: 4
+                        opacity: 0
                     }
 
-                    TapHandler {
-                        onTapped: password.forceActiveFocus()
-                    }
+                    Text {
+                        id: capsLockIndicator
 
-                    Behavior on contentX {
-                        NumberAnimation {
-                            duration: Appearance.animation.elementMoveFast.duration
-                            easing.type: Appearance.animation.elementMoveFast.type
-                            easing.bezierCurve: Appearance.animation.elementMoveFast.bezierCurve
+                        property real fill: 1
+                        property real truncatedFill: Math.round(fill * 100) / 100
+                        property int iconSize: 24
+
+                        anchors.centerIn: parent
+                        font.family: "Material Symbols Outlined"
+                        color: Colors.on_error
+                        text: "keyboard_capslock"
+                        font.pixelSize: iconSize
+                        opacity: 0
+                        scale: 0.8
+                        renderType: fill !== 0 ? Text.CurveRendering : Text.NativeRendering
+                        font.hintingPreference: Font.PreferFullHinting
+                        font.variableAxes: {
+                            "FILL": truncatedFill,
+                            "opsz": iconSize
                         }
-
-                    }
-
-                }
-
-                Text {
-                    id: capsLockIndicator
-
-                    anchors.right: parent.right
-                    anchors.rightMargin: 18
-                    anchors.verticalCenter: parent.verticalCenter
-                    font.family: "Material Symbols Outlined"
-                    font.pixelSize: 20
-                    color: Colors.error
-                    text: "keyboard_capslock_badge"
-                    opacity: 0
-                    scale: 0.8
-
-                    states: State {
-                        name: "visible"
-                        when: keyboard.capsLock
-
-                        PropertyChanges {
-                            target: capsLockIndicator
-                            opacity: 1
-                            scale: 1
-                        }
-
-                    }
-
-                    transitions: Transition {
-                        ParallelAnimation {
-                            NumberAnimation {
-                                properties: "opacity"
-                                duration: Appearance.animation.elementMoveEnter.duration
-                                easing.type: Appearance.animation.elementMoveEnter.type
-                                easing.bezierCurve: Appearance.animation.elementMoveEnter.bezierCurve
-                            }
-
-                            NumberAnimation {
-                                properties: "scale"
-                                duration: Appearance.animation.elementMoveEnter.duration
-                                easing.type: Appearance.animation.elementMoveEnter.type
-                                easing.bezierCurve: Appearance.animation.elementMoveEnter.bezierCurve
-                            }
-
-                        }
-
                     }
 
                 }
@@ -496,6 +502,7 @@ Item {
 
     Timer {
         id: cursorBlinkTimer
+
         interval: 530
         running: password.activeFocus && loginContainer.usePasswordChars && password.text.length === 0
         repeat: true
@@ -509,6 +516,7 @@ Item {
             loginContainer.loginFailed = true;
             loginContainer.isLoggingIn = false;
             password.text = "";
+            wrongPasswordShakeAnim.restart();
             password.forceActiveFocus();
         }
 

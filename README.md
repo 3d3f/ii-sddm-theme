@@ -376,13 +376,12 @@ Current=
 Or set `Current=` to your preferred theme (you can check available themes in `/usr/share/sddm/themes`).
 
 ### 6. Optional: Remove Dependencies
-If you no longer need the theme-specific fonts and packages:
+If you no longer need the theme-specific fonts and packages (they are used in ii):
 ```bash
 yay -Rns otf-space-grotesk ttf-gabarito-git ttf-material-symbols-variable-git ttf-readex-pro ttf-rubik-vf
 ```
 
 > **Note:** 
-> Only remove the fonts if you are certain no other applications or shell use them
 > Only remove `sddm`, `qt6-svg`, `qt6-virtualkeyboard`, and `qt6-multimedia-ffmpeg` if you're certain no other applications depend on them.
 
 ### 7. Reboot
