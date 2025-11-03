@@ -325,6 +325,74 @@ Restart your system to see the theme in action.
 
 After installation, check the `GUIDE.txt` file in your `~/.config/ii-sddm-theme/` folder.
 
+## Uninstallation
+
+<details>
+<summary><b>Click to expand uninstallation instructions</b></summary>
+
+<br>
+
+To completely remove the theme from your system, follow these steps:
+
+### 1. Remove Theme Files
+```bash
+sudo rm -rf /usr/share/sddm/themes/ii-sddm-theme
+```
+
+### 2. Remove Configuration Files
+```bash
+rm -rf ~/.config/ii-sddm-theme
+```
+
+### 3. Remove Sudo Permissions
+```bash
+sudo rm -f /etc/sudoers.d/sddm-theme-$USER
+```
+
+### 4. Remove Matugen Configuration
+If you used Matugen integration, remove the theme configuration from `~/.config/matugen/config.toml`:
+```bash
+nano ~/.config/matugen/config.toml
+```
+
+Remove the `[templates.iisddmtheme]` section.
+
+### 5. Restore Default SDDM Theme
+Edit `/etc/sddm.conf`:
+```bash
+sudo nano /etc/sddm.conf
+```
+
+Change or remove these lines:
+```ini
+[General]
+InputMethod=
+GreeterEnvironment=
+
+[Theme]
+Current=
+```
+
+Or set `Current=` to your preferred theme (you can check available themes in `/usr/share/sddm/themes`).
+
+### 6. Optional: Remove Dependencies
+If you no longer need the theme-specific fonts and packages:
+```bash
+yay -Rns otf-space-grotesk ttf-gabarito-git ttf-material-symbols-variable-git ttf-readex-pro ttf-rubik-vf
+```
+
+> **Note:** 
+> Only remove the fonts if you are certain no other applications or shell use them
+> Only remove `sddm`, `qt6-svg`, `qt6-virtualkeyboard`, and `qt6-multimedia-ffmpeg` if you're certain no other applications depend on them.
+
+### 7. Reboot
+Restart your system to apply the changes:
+```bash
+reboot
+```
+
+</details>
+
 ## Support
 
 If you encounter any issues or have questions:

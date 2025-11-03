@@ -39,7 +39,7 @@ RowLayout {
             anchors.fill: parent
             spacing: 0
 
-            InputUserComboBox {
+            UserButton {
                 id: selectUser
             }
 
