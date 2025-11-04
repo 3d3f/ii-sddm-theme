@@ -47,6 +47,7 @@ Item {
 
             implicitHeight: parent.height
             implicitWidth: 219
+            Layout.rightMargin: -Layout.leftMargin
 
             Rectangle {
                 id: fieldBackground
@@ -115,35 +116,35 @@ Item {
 
                     NumberAnimation {
                         target: passwordField
-                        property: "x"
+                        property: "Layout.leftMargin"
                         to: -30
                         duration: 50
                     }
 
                     NumberAnimation {
                         target: passwordField
-                        property: "x"
+                        property: "Layout.leftMargin"
                         to: 30
                         duration: 50
                     }
 
                     NumberAnimation {
                         target: passwordField
-                        property: "x"
+                        property: "Layout.leftMargin"
                         to: -15
                         duration: 40
                     }
 
                     NumberAnimation {
                         target: passwordField
-                        property: "x"
+                        property: "Layout.leftMargin"
                         to: 15
                         duration: 40
                     }
 
                     NumberAnimation {
                         target: passwordField
-                        property: "x"
+                        property: "Layout.leftMargin"
                         to: 0
                         duration: 30
                     }
