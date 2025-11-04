@@ -15,3 +15,6 @@ sudo ~/.config/ii-sddm-theme/sddm-theme-apply.sh
 ### Additional ii-sddm-theme Configurations:
 
 For further customization, check the `ii-sddm.conf` file located in this directory. Remember that after making changes to this file, you'll still need to adjust your background or light/dark mode in the `ii` settings app to ensure the new configurations
+
+### Change avatars
+To change avatars for every user run the change_avatar.sh script present in this directory

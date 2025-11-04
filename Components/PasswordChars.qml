@@ -1,3 +1,5 @@
+// Adapted from end-4's Hyprland dotfiles (https://github.com/end-4/dots-hyprland)
+
 import QtQml.Models
 import QtQuick
 import QtQuick.Controls

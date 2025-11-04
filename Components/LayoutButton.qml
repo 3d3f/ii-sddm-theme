@@ -6,7 +6,7 @@ Item {
     id: layoutButton
     Layout.preferredHeight: Appearance.formRowHeight
     Layout.preferredWidth: contentRow.implicitWidth
-    Layout.leftMargin: -4
+    Layout.leftMargin: -2
     Layout.alignment: Qt.AlignVCenter
     
     Rectangle {

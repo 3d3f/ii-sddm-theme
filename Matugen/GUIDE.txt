@@ -15,3 +15,6 @@ sudo ~/.config/ii-sddm-theme/sddm-theme-apply.sh
 ### Advanced SDDM Configurations:
 
 For additional customization options, please review the `ii-sddm.conf` file in this directory. Note that to apply any changes made to this file, you will still need to run matugen or the sddm-theme-apply.sh script
+
+### Change avatars
+To change avatars for every user run the change_avatar.sh script present in this directory

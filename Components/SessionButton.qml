@@ -31,8 +31,8 @@ Item {
         indicator: null
         clip: true
         focusPolicy: Qt.StrongFocus
-        height: Appearance.formRowHeight
-        width: animatedWidth
+        implicitHeight: Appearance.formRowHeight
+        implicitWidth: animatedWidth
         Keys.onPressed: function(event) {
             if (event.key === Qt.Key_Up || event.key === Qt.Key_Down) {
                 if (!popup.opened)
@@ -103,10 +103,10 @@ Item {
         popup: Popup {
             id: popupHandler
 
-            property real targetHeight: Math.min(listView.contentHeight + 10, 300)
+            property real targetHeight: Math.min(listView.contentHeight, 300) + topPadding + bottomPadding
 
-            width: selectSession.width
-            height: 0
+            implicitWidth: selectSession.implicitWidth
+            implicitHeight: 0
             clip: true
             padding: 5
 
@@ -114,7 +114,6 @@ Item {
                 id: listView
 
                 implicitHeight: Math.min(contentHeight, 300)
-                clip: true
                 model: selectSession.model
                 currentIndex: selectSession.highlightedIndex
                 spacing: Appearance.listItemSpacing
@@ -177,7 +176,7 @@ Item {
                     ParallelAnimation {
                         NumberAnimation {
                             target: popupHandler
-                            property: "height"
+                            property: "implicitHeight"
                             from: 70
                             to: popupHandler.targetHeight
                             duration: 300
@@ -203,8 +202,8 @@ Item {
                 ParallelAnimation {
                     NumberAnimation {
                         target: popupHandler
-                        property: "height"
-                        from: popupHandler.height
+                        property: "implicitHeight"
+                        from: popupHandler.implicitHeight
                         to: 0
                         duration: 200
                         easing.type: Easing.InCubic

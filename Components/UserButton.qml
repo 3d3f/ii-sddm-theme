@@ -5,6 +5,7 @@
 // Modified by 3d3f for the "ii-sddm-theme" project (2025)
 // Licensed under the GNU General Public License v3.0
 // See: https://www.gnu.org/licenses/gpl-3.0.txt
+
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
@@ -14,7 +15,7 @@ ComboBox {
 
     Layout.preferredHeight: Appearance.formRowHeight
     Layout.alignment: Qt.AlignVCenter
-    Layout.preferredWidth: userRow.implicitWidth + 40
+    Layout.preferredWidth: userRow.implicitWidth + 37
     model: userModel
     currentIndex: model.lastIndex
     textRole: "name"
@@ -26,7 +27,6 @@ ComboBox {
         if (event.key === Qt.Key_Up || event.key === Qt.Key_Down) {
             if (!popup.opened)
                 popup.open();
-
         }
     }
 
@@ -53,11 +53,8 @@ ComboBox {
                     duration: 200
                     easing.type: Easing.InOutQuad
                 }
-
             }
-
         }
-
     }
 
     contentItem: RowLayout {
@@ -68,29 +65,18 @@ ComboBox {
         anchors.leftMargin: 17
         clip: true
 
-        Text {
-            id: icon
-
-            property real fill: 1
-            property real truncatedFill: Math.round(fill * 100) / 100
-            property int iconSize: 24 
-
-            font.family: "Material Symbols Outlined"
-            font.pixelSize: iconSize
-            color: Colors.on_surface_variant
+        Avatar {
+            id: mainUserAvatar
             Layout.alignment: Qt.AlignVCenter
-            text: "account_circle"
-            renderType: fill !== 0 ? Text.CurveRendering : Text.NativeRendering
-            font.hintingPreference: Font.PreferFullHinting
-            font.variableAxes: {
-                "FILL": truncatedFill,
-                "opsz": iconSize  
-            }
+            Layout.bottomMargin: 0
+            size: 27
+            iconColor: Colors.on_surface_variant
+            userName: userModel.data(userModel.index(selectUser.currentIndex, 0), 257)
+            source: userModel.data(userModel.index(selectUser.currentIndex, 0), 260)
         }
 
         Text {
             id: userName
-
             Layout.alignment: Qt.AlignVCenter
             text: selectUser.displayText
             color: Colors.on_surface_variant
@@ -103,14 +89,15 @@ ComboBox {
         Item {
             Layout.fillWidth: true
         }
-
     }
 
     popup: Popup {
         id: userPopup
 
-        implicitHeight: contentItem.implicitHeight + 10
-        implicitWidth: userRow.width
+        property real targetHeight: Math.min(userList.contentHeight, 300) + topPadding + bottomPadding
+        
+        implicitHeight: 0 
+        implicitWidth: userRow.width + layoutSelect.width - 6
         x: 10
         y: 10
         padding: 5
@@ -118,21 +105,19 @@ ComboBox {
 
         contentItem: ListView {
             id: userList
-
-            implicitHeight: contentHeight
+            implicitHeight: Math.min(contentHeight, 300) 
             clip: true
             model: selectUser.model
             currentIndex: selectUser.highlightedIndex
             spacing: Appearance.listItemSpacing
-            y: 8
+            y: 10
             opacity: userPopup.opacity
 
-            ScrollIndicator.vertical: ScrollIndicator {
-            }
+            ScrollIndicator.vertical: ScrollIndicator { }
 
             delegate: ItemDelegate {
                 implicitWidth: userList.width
-                implicitHeight: Math.max(48, textCont.implicitHeight + 16)
+                implicitHeight: Math.max(48, contentRow.implicitHeight + 16)
                 hoverEnabled: true
                 topPadding: 8
                 bottomPadding: 8
@@ -143,15 +128,32 @@ ComboBox {
                     userPopup.close();
                 }
 
-                contentItem: Text {
-                    id: textCont
+                contentItem: RowLayout {
+                    id: contentRow
+                    spacing: 2
 
-                    text: model.name
-                    font.family: Appearance.font_family_main
-                    font.pixelSize: Appearance.font_size_normal
-                    color: selectUser.highlightedIndex === index ? Colors.on_primary : Colors.on_primary_container
-                    verticalAlignment: Text.AlignVCenter
-                    horizontalAlignment: Text.AlignHCenter
+                    Avatar {
+                        Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
+                        size: 27
+                        iconColor: selectUser.highlightedIndex === index ? Colors.on_primary : Colors.on_primary_container
+                        userName: model.name
+                        source: model.icon
+
+                    }
+
+                    Text {
+                        id: textCont
+                        Layout.fillWidth: true
+                        text: model.name
+                        font.family: Appearance.font_family_main
+                        font.pixelSize: Appearance.font_size_normal
+                        color: selectUser.highlightedIndex === index ? Colors.on_primary : Colors.on_primary_container
+                        verticalAlignment: Text.AlignVCenter
+                        horizontalAlignment: Text.AlignLeft
+                        leftPadding: 5
+                        elide: Text.ElideRight
+
+                    }
                 }
 
                 background: Rectangle {
@@ -163,13 +165,9 @@ ComboBox {
                             duration: 200
                             easing.type: Easing.InOutQuad
                         }
-
                     }
-
                 }
-
             }
-
         }
 
         background: Rectangle {
@@ -179,43 +177,44 @@ ComboBox {
         }
 
         enter: Transition {
-            NumberAnimation {
-                property: "implicitHeight"
-                from: 70
-                to: userPopup.contentItem.implicitHeight + 10
-                duration: 300
-                easing.type: Easing.OutExpo
+            SequentialAnimation {
+                ParallelAnimation {
+                    NumberAnimation { 
+                        property: "implicitHeight"; 
+                        from: 70; 
+                        to: userPopup.targetHeight; 
+                        duration: 300; 
+                        easing.type: Easing.OutCubic 
+                    }
+                    NumberAnimation { 
+                        property: "opacity"; 
+                        from: 0; 
+                        to: 1; 
+                        duration: 200; 
+                        easing.type: Easing.OutQuad 
+                    }
+                }
             }
-
-            NumberAnimation {
-                property: "opacity"
-                from: 0
-                to: 1
-                duration: 0
-                easing.type: Easing.OutCubic
-            }
-
         }
 
         exit: Transition {
-            NumberAnimation {
-                property: "implicitHeight"
-                from: userPopup.implicitHeight
-                to: 0
-                duration: 200
-                easing.type: Easing.InCubic
+            ParallelAnimation {
+                NumberAnimation { 
+                    property: "implicitHeight"; 
+                    from: userPopup.implicitHeight; 
+                    to: 0; 
+                    duration: 200; 
+                    easing.type: Easing.InCubic 
+                }
+                NumberAnimation { 
+                    property: "opacity"; 
+                    from: 1; 
+                    to: 0; 
+                    duration: 150; 
+                    easing.type: Easing.InQuad 
+                }
             }
-
-            NumberAnimation {
-                property: "opacity"
-                from: 1
-                to: 0
-                duration: 150
-                easing.type: Easing.InCubic
-            }
-
         }
-
     }
 
     Behavior on Layout.preferredWidth {
@@ -223,7 +222,5 @@ ComboBox {
             duration: 300
             easing.type: Easing.InOutCubic
         }
-
     }
-
 }
