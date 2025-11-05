@@ -5,6 +5,7 @@
 // Modified by 3d3f for the "ii-sddm-theme" project (2025)
 // Licensed under the GNU General Public License v3.0
 // Adapted from end-4's Hyprland dotfiles (https://github.com/end-4/dots-hyprland)
+
 import QtQml.Models
 import QtQuick
 import QtQuick.Controls
@@ -62,8 +63,10 @@ Item {
                     id: password
 
                     anchors.fill: parent
-                    anchors.margins: 8
-                    color: "transparent"
+                    anchors.margins: 0
+                    anchors.rightMargin: 3
+                    anchors.leftMargin: 3
+                    color: usePasswordChars ? "transparent" : Colors.colOnLayer1
                     focus: true
                     focusPolicy: Qt.StrongFocus
                     echoMode: TextInput.Password
@@ -71,7 +74,8 @@ Item {
                     placeholderTextColor: loginContainer.loginFailed ? Colors.error : Qt.rgba(Colors.on_surface.r, Colors.on_surface.g, Colors.on_surface.b, 0.6)
                     font.family: Appearance.font_family_main
                     font.pixelSize: Appearance.font_size_normal
-                    cursorVisible: usePasswordChars ? false : true
+                    cursorVisible: !usePasswordChars //it has no effect on sddm, hidden with opacity
+                    opacity: usePasswordChars ? 0 : 1
                     selectByMouse: true
                     selectionColor: Colors.primary_container
                     selectedTextColor: Colors.on_primary_container
@@ -157,11 +161,11 @@ Item {
                     visible: password.activeFocus && usePasswordChars && password.text.length === 0
                     color: Qt.rgba(Colors.on_surface.r, Colors.on_surface.g, Colors.on_surface.b, 0.6)
                     width: 2
-                    height: password.height * 0.8
+                    height: 19
                     anchors.verticalCenter: parent.verticalCenter
-                    anchors.verticalCenterOffset: -1
+                    anchors.verticalCenterOffset: 0
                     anchors.left: password.left
-                    anchors.leftMargin: 4
+                    anchors.leftMargin: 8
                     enabled: false
 
                     Behavior on opacity {
