@@ -17,7 +17,7 @@ Item {
     property bool loginFailed: false
     property bool isLoggingIn: false
     property bool usePasswordChars: Settings.lock_materialShapeChars
-    property var customShapeSequence: [6, 3, 5, 8, 7, 9]
+    property var customShapeSequence: [6, 3, 5, 8, 7, 4]
 
     Layout.preferredHeight: Appearance.formRowHeight
     Layout.alignment: Qt.AlignBottom
@@ -58,6 +58,19 @@ Item {
                 color: Colors.surface_container_low
                 radius: Appearance.rounding_full
                 clip: true
+
+                Text {
+                    id: customPlaceholder
+
+                    visible: usePasswordChars && password.text.length === 0
+                    anchors.fill: parent
+                    anchors.leftMargin: 10.7
+                    verticalAlignment: Text.AlignVCenter
+                    text: loginContainer.loginFailed ? "Incorrect password" : "Enter password"
+                    color: loginContainer.loginFailed ? Colors.error : Qt.rgba(Colors.on_surface.r, Colors.on_surface.g, Colors.on_surface.b, 0.6)
+                    font.family: Appearance.font_family_main
+                    font.pixelSize: Appearance.font_size_normal
+                }
 
                 TextField {
                     id: password
