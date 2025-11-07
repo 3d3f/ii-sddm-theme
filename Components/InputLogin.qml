@@ -87,7 +87,7 @@ Item {
                     placeholderTextColor: loginContainer.loginFailed ? Colors.error : Qt.rgba(Colors.on_surface.r, Colors.on_surface.g, Colors.on_surface.b, 0.6)
                     font.family: Appearance.font_family_main
                     font.pixelSize: Appearance.font_size_normal
-                    cursorVisible: !usePasswordChars //it has no effect on sddm, hidden with opacity
+                    cursorVisible: !usePasswordChars //it has no effect on sddm, only in test mode,hidden with opacity
                     opacity: usePasswordChars ? 0 : 1
                     selectByMouse: true
                     selectionColor: Colors.primary_container
@@ -122,6 +122,8 @@ Item {
                     KeyNavigation.right: loginButton
 
                     background: Rectangle {
+                        id: fieldRect
+
                         color: Colors.colLayer1
                         radius: Appearance.rounding_full
                     }
@@ -307,7 +309,7 @@ Item {
                 implicitHeight: 40
                 text: ""
                 hoverEnabled: true
-                focusPolicy: Qt.NoFocus
+                focusPolicy: Qt.TabFcous
                 enabled: !loginContainer.isLoggingIn && (config.AllowEmptyPassword == "true" || (selectUser.currentText !== "" && password.text !== ""))
                 onPressed: {
                     if (!loginContainer.isLoggingIn)
@@ -321,6 +323,14 @@ Item {
                         const user = config.AllowUppercaseLettersInUsernames == "false" ? selectUser.currentText.toLowerCase() : selectUser.currentText;
                         sddm.login(user, password.text, sessionSelect.selectedSession);
                     }
+                }
+
+                FocusRing {
+                    id: focusRing
+
+                    target: loginButton
+                    offset: 0
+                    border.color: Colors.tertiary_fixed
                 }
 
                 MouseArea {

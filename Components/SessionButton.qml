@@ -30,7 +30,7 @@ Item {
         hoverEnabled: true
         indicator: null
         clip: true
-        focusPolicy: Qt.StrongFocus
+        focusPolicy: Qt.TabFocus
         implicitHeight: Appearance.formRowHeight
         implicitWidth: animatedWidth
         Keys.onPressed: function(event) {
@@ -51,6 +51,8 @@ Item {
 
         background: Item {
             Rectangle {
+                id: sessionRect
+
                 anchors.fill: parent
                 radius: Appearance.rounding_full
                 color: selectSession.hovered ? Colors.surface_container_highest : Colors.surface_container
@@ -74,6 +76,13 @@ Item {
 
                 }
 
+            }
+
+            FocusRing {
+                id: focusRing
+
+                target: selectSession
+                offset: 0
             }
 
         }

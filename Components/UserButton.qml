@@ -22,11 +22,12 @@ ComboBox {
     hoverEnabled: true
     indicator: null
     clip: true
-    focusPolicy: Qt.StrongFocus
+    focusPolicy: Qt.TabFocus
     Keys.onPressed: function(event) {
         if (event.key === Qt.Key_Up || event.key === Qt.Key_Down) {
             if (!popup.opened)
                 popup.open();
+
         }
     }
 
@@ -53,8 +54,19 @@ ComboBox {
                     duration: 200
                     easing.type: Easing.InOutQuad
                 }
+
             }
+
         }
+
+        FocusRing {
+            id: focusRing
+
+            target: selectUser
+            offset: -8
+            opacity: !userPopup.opened && target && target.activeFocus ? 1 : 0
+        }
+
     }
 
     contentItem: RowLayout {
@@ -67,6 +79,7 @@ ComboBox {
 
         Avatar {
             id: mainUserAvatar
+
             Layout.alignment: Qt.AlignVCenter
             Layout.bottomMargin: 0
             size: 27
@@ -77,6 +90,7 @@ ComboBox {
 
         Text {
             id: userName
+
             Layout.alignment: Qt.AlignVCenter
             text: selectUser.displayText
             color: Colors.on_surface_variant
@@ -89,15 +103,16 @@ ComboBox {
         Item {
             Layout.fillWidth: true
         }
+
     }
 
     popup: Popup {
         id: userPopup
 
         property real targetHeight: Math.min(userList.contentHeight, 300) + topPadding + bottomPadding
-        
-        implicitHeight: 0 
-        implicitWidth: userRow.width + layoutSelect.width - 6
+
+        implicitHeight: 0
+        implicitWidth: userRow.width + layoutSelect.width - 4.7
         x: 10
         y: 10
         padding: 5
@@ -105,7 +120,8 @@ ComboBox {
 
         contentItem: ListView {
             id: userList
-            implicitHeight: Math.min(contentHeight, 300) 
+
+            implicitHeight: Math.min(contentHeight, 300)
             clip: true
             model: selectUser.model
             currentIndex: selectUser.highlightedIndex
@@ -113,7 +129,8 @@ ComboBox {
             y: 10
             opacity: userPopup.opacity
 
-            ScrollIndicator.vertical: ScrollIndicator { }
+            ScrollIndicator.vertical: ScrollIndicator {
+            }
 
             delegate: ItemDelegate {
                 implicitWidth: userList.width
@@ -130,6 +147,7 @@ ComboBox {
 
                 contentItem: RowLayout {
                     id: contentRow
+
                     spacing: 2
 
                     Avatar {
@@ -138,11 +156,11 @@ ComboBox {
                         iconColor: selectUser.highlightedIndex === index ? Colors.on_primary : Colors.on_primary_container
                         userName: model.name
                         source: model.icon
-
                     }
 
                     Text {
                         id: textCont
+
                         Layout.fillWidth: true
                         text: model.name
                         font.family: Appearance.font_family_main
@@ -152,8 +170,8 @@ ComboBox {
                         horizontalAlignment: Text.AlignLeft
                         leftPadding: 5
                         elide: Text.ElideRight
-
                     }
+
                 }
 
                 background: Rectangle {
@@ -165,9 +183,13 @@ ComboBox {
                             duration: 200
                             easing.type: Easing.InOutQuad
                         }
+
                     }
+
                 }
+
             }
+
         }
 
         background: Rectangle {
@@ -179,42 +201,50 @@ ComboBox {
         enter: Transition {
             SequentialAnimation {
                 ParallelAnimation {
-                    NumberAnimation { 
-                        property: "implicitHeight"; 
-                        from: 70; 
-                        to: userPopup.targetHeight; 
-                        duration: 300; 
-                        easing.type: Easing.OutCubic 
+                    NumberAnimation {
+                        property: "implicitHeight"
+                        from: 70
+                        to: userPopup.targetHeight
+                        duration: 300
+                        easing.type: Easing.OutCubic
                     }
-                    NumberAnimation { 
-                        property: "opacity"; 
-                        from: 0; 
-                        to: 1; 
-                        duration: 200; 
-                        easing.type: Easing.OutQuad 
+
+                    NumberAnimation {
+                        property: "opacity"
+                        from: 0
+                        to: 1
+                        duration: 200
+                        easing.type: Easing.OutQuad
                     }
+
                 }
+
             }
+
         }
 
         exit: Transition {
             ParallelAnimation {
-                NumberAnimation { 
-                    property: "implicitHeight"; 
-                    from: userPopup.implicitHeight; 
-                    to: 0; 
-                    duration: 200; 
-                    easing.type: Easing.InCubic 
+                NumberAnimation {
+                    property: "implicitHeight"
+                    from: userPopup.implicitHeight
+                    to: 0
+                    duration: 200
+                    easing.type: Easing.InCubic
                 }
-                NumberAnimation { 
-                    property: "opacity"; 
-                    from: 1; 
-                    to: 0; 
-                    duration: 150; 
-                    easing.type: Easing.InQuad 
+
+                NumberAnimation {
+                    property: "opacity"
+                    from: 1
+                    to: 0
+                    duration: 150
+                    easing.type: Easing.InQuad
                 }
+
             }
+
         }
+
     }
 
     Behavior on Layout.preferredWidth {
@@ -222,5 +252,7 @@ ComboBox {
             duration: 300
             easing.type: Easing.InOutCubic
         }
+
     }
+
 }

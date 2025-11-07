@@ -37,6 +37,15 @@ Item {
         onReleased: pressOverlay.opacity = 0
         onCanceled: pressOverlay.opacity = 0
         onHoveredChanged: hoverOverlay.opacity = hovered ? 0.08 : 0
+        focus: true
+        focusPolicy: Qt.TabFocus
+
+        FocusRing {
+            id: focusRing
+
+            target: virtualKeyboardButton
+            offset: 0
+        }
 
         MouseArea {
             anchors.fill: parent

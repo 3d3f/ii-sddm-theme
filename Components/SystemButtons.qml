@@ -49,7 +49,9 @@ Item {
                     anchors.fill: parent
                     visible: config.HideSystemButtons != "true"
                     hoverEnabled: true
+                    focusPolicy: Qt.TabFocus
                     Keys.onReturnPressed: clicked()
+                    Keys.onEnterPressed: clicked()
                     onClicked: {
                         parent.forceActiveFocus();
                         index == 0 ? sddm.suspend() : index == 1 ? sddm.powerOff() : sddm.reboot();
@@ -67,6 +69,13 @@ Item {
                                 return Qt.rgba(1, 1, 1, 0.08);
 
                             return "transparent";
+                        }
+
+                        FocusRing {
+                            id: focusRing
+
+                            target: btn
+                            offset: 0
                         }
 
                         Rectangle {
@@ -116,6 +125,9 @@ Item {
                         font.family: "Material Symbols Outlined"
                         font.pixelSize: 24
                         color: {
+                            if (btn.activeFocus)
+                                return Colors.primary 
+
                             if (btn.down)
                                 return Colors.on_surface_variant;
 
@@ -140,7 +152,10 @@ Item {
                 MouseArea {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
-                    onClicked: btn.clicked()
+                    onPressed: {
+                        btn.forceActiveFocus();
+                        mouse.accepted = false;
+                    }
                 }
 
             }
