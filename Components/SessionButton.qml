@@ -101,7 +101,12 @@ Item {
                 Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
-                color: Colors.on_surface_variant
+                color: {
+                    if (selectSession.activeFocus)
+                        return Colors.primary;
+
+                    return Colors.on_surface_variant;
+                }
                 font.family: Appearance.font_family_main
                 font.pixelSize: Appearance.font_size_normal
                 elide: Text.ElideRight

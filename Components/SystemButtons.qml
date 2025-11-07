@@ -126,7 +126,7 @@ Item {
                         font.pixelSize: 24
                         color: {
                             if (btn.activeFocus)
-                                return Colors.primary 
+                                return Colors.primary;
 
                             if (btn.down)
                                 return Colors.on_surface_variant;

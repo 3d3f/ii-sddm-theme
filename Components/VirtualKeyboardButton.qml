@@ -59,7 +59,15 @@ Item {
             text: virtualKeyboardButton.checked ? "keyboard_hide" : "keyboard"
             font.family: "Material Symbols Outlined"
             font.pixelSize: parent.height * 0.5
-            color: virtualKeyboardButton.checked ? Colors.on_primary_container : Colors.on_surface_variant
+            color: {
+                if (virtualKeyboardButton.checked)
+                    return Colors.on_primary_container;
+
+                if (virtualKeyboardButton.activeFocus)
+                    return Colors.primary;
+
+                return Colors.on_surface_variant;
+            }
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
             rotation: virtualKeyboardButton.checked ? 180 : 0

@@ -93,7 +93,10 @@ ComboBox {
 
             Layout.alignment: Qt.AlignVCenter
             text: selectUser.displayText
-            color: Colors.on_surface_variant
+            color: {
+                    if (selectUser.activeFocus)
+                        return Colors.primary
+                     return Colors.on_surface_variant}
             font.family: "Rubik"
             font.pixelSize: Appearance.font_size_normal
             font.bold: false
