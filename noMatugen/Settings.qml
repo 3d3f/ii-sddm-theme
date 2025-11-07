@@ -4,7 +4,7 @@ pragma Singleton
 // Here you can edit your theme settings, be sure to check ii-sddm.conf from this same folder for more settings
 // On the comment on the right there are all possible options
 QtObject {
-    property string time_format: "h:mm ap" // "h:mm","h:mm ap","h:mm AP"
+    property string time_format: "h:mm ap" // "hh:mm","h:mm ap","h:mm AP"
     property string background_widgets_clock_style: "digital" // "none", "digital", "cookie"
     property bool background_widgets_clock_cookie_constantlyRotate: false // true, false
     property string background_widgets_clock_cookie_dateStyle: "bubble" // "hide", "rect", "bubble", "border"

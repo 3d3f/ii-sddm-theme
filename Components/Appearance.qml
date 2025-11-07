@@ -5,6 +5,7 @@ QtObject {
     id: root
 
     property string font_family_main: "Rubik"
+    property string font_family_new_main: "Roboto Flex"
     property string font_family_expressive: "Space Grotesk"
     property string font_family_title: "Gabarito"
     property string font_family_reading: "Readex Pro"

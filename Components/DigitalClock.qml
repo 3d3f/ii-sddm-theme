@@ -21,7 +21,6 @@ Item {
     Component.onCompleted: {
         timeLabel.updateTime();
         dateLabel.updateTime();
-        lockScreen.alignItem(clock, Config.clockPosition);
     }
     onTime_formatChanged: {
         console.log("DigitalClock: time_format changed ->", clock.time_format);
@@ -106,7 +105,7 @@ Item {
         color: Colors.primary_fixed_dim
     }
 
-    // Quote Label - inline component
+    // Quote Label 
     Loader {
         id: quoteLoader
 
@@ -126,14 +125,16 @@ Item {
 
                     text: clock.background_quote
                     anchors.horizontalCenter: parent.horizontalCenter
-                    font.family: Appearance.font_family_main
+                    font.family: Appearance.font_family_new_main
                     font.pixelSize: 16
-                    font.weight: Font.Light
-                    font.italic: true
+                    font.weight: 350
+                    font.italic: false
                     color: Colors.primary_fixed_dim
                     wrapMode: Text.WordWrap
                     width: clock.width * 0.8
                     horizontalAlignment: Text.AlignHCenter
+                    style: Text.Raised
+                    styleColor: Colors.colShadow
                 }
 
             }
