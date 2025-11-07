@@ -28,22 +28,12 @@ Flickable {
 
     }
 
-    Behavior on contentX {
-        NumberAnimation {
-            duration: Appearance.animation.elementMoveFast.duration
-            easing.type: Appearance.animation.elementMoveFast.type
-            easing.bezierCurve: Appearance.animation.elementMoveFast.bezierCurve
-        }
-
-    }
-
     Behavior on contentY {
         enabled: !root.moving
 
         NumberAnimation {
             duration: Appearance.animation.scroll.duration
             easing.type: Appearance.animation.scroll.type
-            easing.bezierCurve: Appearance.animation.scroll.bezierCurve
         }
 
     }
