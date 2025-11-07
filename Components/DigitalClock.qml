@@ -7,9 +7,9 @@ Item {
     id: clock
 
     property string time_format: Settings.time_format
-    property string background_quote: Settings.background_quote
-    property bool background_showQuote: Settings.background_showQuote
-    readonly property bool sessionLockedActive: Settings.lock_showLockedText && config.ShowSessionLockedText === "true" && config.SessionLockedText !== ""
+    property string background_quote: Settings.background_widgets_clock_quote_text
+    property bool background_showQuote: Settings.background_widgets_clock_quote_enable
+    readonly property bool sessionLockedActive: Settings.background_widgets_clock_quote_text && config.ShowSessionLockedText === "true" && config.SessionLockedText !== ""
     readonly property bool quoteActive: background_showQuote && background_quote !== ""
     readonly property int quoteTopMargin: 6
     readonly property int sessionLockedTopMargin: 8

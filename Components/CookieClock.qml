@@ -34,7 +34,7 @@ Item {
         return Settings.lock_showLockedText && config.ShowSessionLockedText === "true" && config.SessionLockedText !== "";
     }
     readonly property bool quoteActive: {
-        return config.CookieClockQuote === "true" && Settings.background_showQuote && Settings.background_quote !== "";
+        return config.CookieClockQuote === "true" && Settings.background_widgets_clock_quote_enable && Settings.background_widgets_clock_quote_text !== "";
     }
 
     function _formatTimeString() {
@@ -95,9 +95,9 @@ Item {
 
         implicitSize: root.width
         amplitude: root.width / 70
-        sides: Settings.background_clock_cookie_sides || 14
+        sides: Settings.background_widgets_clock_cookie_sides || 14
         color: root.colBackground
-        constantlyRotate: Settings.background_clock_cookie_constantlyRotate
+        constantlyRotate: Settings.background_widgets_clock_cookie_constantlyRotate
 
         // Minute marks (outermost)
         MinuteMarks {
@@ -106,7 +106,7 @@ Item {
             anchors.fill: parent
             z: 0
             color: root.colOnBackground
-            dialNumberStyle: Settings.background_clock_cookie_dialNumberStyle
+            dialNumberStyle: Settings.background_widgets_clock_cookie_dialNumberStyle
         }
 
         // Hour marks
@@ -117,7 +117,7 @@ Item {
             implicitSize: 135
             color: root.colOnBackground
             colOnBackground: Colors.mix(root.colDateBackground, root.colOnBackground, 0.5)
-            visible: Settings.background_clock_cookie_hourMarks
+            visible: Settings.background_widgets_clock_cookie_hourMarks
         }
 
         // Digital time display
@@ -125,8 +125,8 @@ Item {
             anchors.fill: parent
             color: root.colColumnTime
             timeString: root.timeString
-            enabled: Settings.background_clock_cookie_timeIndicators
-            isCompact: Settings.background_clock_cookie_hourMarks
+            enabled: Settings.background_widgets_clock_cookie_timeIndicators
+            isCompact: Settings.background_widgets_clock_cookie_hourMarks
         }
 
         // Hour hand
@@ -134,7 +134,7 @@ Item {
             anchors.fill: parent
             z: 1
             color: root.colHourHand
-            style: Settings.background_clock_cookie_hourHandStyle
+            style: Settings.background_widgets_clock_cookie_hourHandStyle
             clockHour: root.clockHour
             clockMinute: root.clockMinute
         }
@@ -144,7 +144,7 @@ Item {
             anchors.fill: parent
             z: 2
             color: root.colMinuteHand
-            style: Settings.background_clock_cookie_minuteHandStyle
+            style: Settings.background_widgets_clock_cookie_minuteHandStyle
             clockMinute: root.clockMinute
         }
 
@@ -153,7 +153,7 @@ Item {
             anchors.fill: parent
             z: 3
             color: root.colSecondHand
-            style: Settings.background_clock_cookie_secondHandStyle
+            style: Settings.background_widgets_clock_cookie_secondHandStyle
             clockSecond: root.clockSecond
             visible: Settings.time_secondPrecision
         }
@@ -162,12 +162,12 @@ Item {
         DateIndicator {
             anchors.fill: parent
             color: root.colDateBackground
-            style: Settings.background_clock_cookie_dateStyle
+            style: Settings.background_widgets_clock_cookie_dateStyle
             dateText: root.fullDateString
             dayOfMonth: root.dayNumber
             monthNumber: root.monthNumber
             clockSecond: root.clockSecond
-            secondHandVisible: Settings.time_secondPrecision && Settings.background_clock_cookie_secondHandStyle !== "hide"
+            secondHandVisible: Settings.time_secondPrecision && Settings.background_widgets_clock_cookie_secondHandStyle !== "hide"
         }
 
         // Center dot
@@ -177,8 +177,8 @@ Item {
             width: 6
             height: 6
             radius: width / 2
-            color: Settings.background_clock_cookie_minuteHandStyle === "medium" ? root.colBackground : root.colMinuteHand
-            visible: Settings.background_clock_cookie_minuteHandStyle !== "bold"
+            color: Settings.background_widgets_clock_cookie_minuteHandStyle === "medium" ? root.colBackground : root.colMinuteHand
+            visible: Settings.background_widgets_clock_cookie_minuteHandStyle !== "bold"
         }
 
     }

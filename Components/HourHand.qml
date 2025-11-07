@@ -7,7 +7,7 @@ Item {
 
     required property int clockHour
     required property int clockMinute
-    property string style: Settings.background_clock_cookie_hourHandStyle // "fill", "hollow", "classic", "hide"
+    property string style: Settings.background_widgets_clock_cookie_hourHandStyle // "fill", "hollow", "classic", "hide"
     property color color: "black"
     property real handLength: 72
     property real handWidth: 18

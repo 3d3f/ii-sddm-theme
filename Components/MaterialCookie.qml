@@ -12,7 +12,7 @@ Item {
     property int renderPoints: 360
     property color color: "#605790"
     property alias strokeWidth: shapePath.strokeWidth
-    property bool constantlyRotate: Settings.background_clock_cookie_constantlyRotate
+    property bool constantlyRotate: Settings.background_widgets_clock_cookie_constantlyRotate
     property real shapeRotation: 0
 
     implicitWidth: implicitSize

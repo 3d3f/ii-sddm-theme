@@ -309,7 +309,7 @@ Item {
                 implicitHeight: 40
                 text: ""
                 hoverEnabled: true
-                focusPolicy: Qt.TabFcous
+                focusPolicy: Qt.TabFocus
                 enabled: !loginContainer.isLoggingIn && (config.AllowEmptyPassword == "true" || (selectUser.currentText !== "" && password.text !== ""))
                 onPressed: {
                     if (!loginContainer.isLoggingIn)

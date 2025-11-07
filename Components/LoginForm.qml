@@ -23,11 +23,11 @@ Item {
 
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-        active: Settings.background_clock_style !== "none"
+        active: Settings.background_widgets_clock_style !== "none"
         sourceComponent: {
-            if (Settings.background_clock_style === "cookie")
+            if (Settings.background_widgets_clock_style === "cookie")
                 return cookieClockComponent;
-            else if (Settings.background_clock_style === "digital")
+            else if (Settings.background_widgets_clock_style === "digital")
                 return digitalClockComponent;
             return null;
         }
