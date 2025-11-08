@@ -61,7 +61,7 @@ The script will detect your configuration and guide you through the installation
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/3d3f/ii-sddm-theme/main/setup.sh)"
 ```
 
-> **Note:** Only Arch Linux + Hyprland is supported. Non-standard folder structures will require manual installation. If something goes wrong, please [open an issue](https://github.com/3d3f/ii-sddm-theme/issues/new/choose).
+> **Note:** Only Arch Linux + Hyprland is supported. Non-standard folder structures will require manual installation. If something goes wrong or you have some questions, please [open an issue](https://github.com/3d3f/ii-sddm-theme/issues/new/choose).
 
 ---
 
@@ -392,8 +392,24 @@ reboot
 
 </details>
 
-## Support
+## Cursor theme
+This example is made with Bibata Modern Classic, but you can use any cursor theme.
+This workaround worked for me but may not work for everybody.
 
-If you encounter any issues or have questions:
+### Install the cursor theme package (if you use ii you have it already)
+```bash
+yay -S bibata-cursor-theme-bin
+```
 
-- [Open an issue](https://github.com/3d3f/ii-sddm-theme/issues/new/choose) on GitHub
+### Workaround 
+Backup and then edit `/usr/share/icons/default/index.theme`:
+```bash
+sudo nano /usr/share/icons/default/index.theme
+```
+Change or add these lines:
+```ini
+[Icon Theme]
+Inherits=Bibata-Modern-Classic
+```
+
+- If this doesn't work for you [Open an issue](https://github.com/3d3f/ii-sddm-theme/issues/new/choose)
