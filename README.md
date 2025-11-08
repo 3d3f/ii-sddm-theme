@@ -393,7 +393,7 @@ reboot
 </details>
 
 ## Cursor theme
-This example is made with Bibata Modern Classic, but you can use any cursor theme.
+This example is made with [Bibata Modern Classic](https://github.com/ful1e5/Bibata_Cursor), but you can use any cursor theme.
 This workaround worked for me but may not work for everybody.
 
 ### Install the cursor theme package (if you use ii you have it already)
