@@ -20,7 +20,6 @@ import SddmComponents
 Pane {
     id: root
 
-    property bool partialBlur: Settings.lock_blur_enable
     property variant screenGeometry: screenModel.geometry(screenModel.primary)
 
     padding: 0
@@ -64,7 +63,7 @@ Pane {
             z: -1
             color: "#000000"
             visible: true
-            opacity: partialBlur ? 0.3 : 1
+            opacity: Settings.lock_blur_enable ? 0.3 : 1
         }
 
         Image {
@@ -187,21 +186,21 @@ Pane {
             anchors.centerIn: form
             sourceItem: backgroundImage
             sourceRect: Qt.rect(x, y, width, height)
-            visible: config.FullBlur == "true" || partialBlur == "true" ? true : false
+            visible: config.FullBlur == "true" || Settings.lock_blur_enable ? true : false
         }
 
         MultiEffect {
             id: blur
 
             height: parent.height
-            width: (config.FullBlur == "true" && partialBlur == "false" && config.FormPosition != "center") ? parent.width - formBackground.width : config.FullBlur == "true" ? parent.width : form.width
+            width: (config.FullBlur == "true" && !Settings.lock_blur_enable && config.FormPosition != "center") ? parent.width - formBackground.width : config.FullBlur == "true" ? parent.width : form.width
             anchors.centerIn: config.FullBlur == "true" ? backgroundImage : form
             source: config.FullBlur == "true" ? backgroundImage : blurMask
-            blurEnabled: (config.FullBlur == "true" || partialBlur == "true") && backgroundImage.visible && !backgroundImage.displayColor
+            blurEnabled: Settings.lock_blur_enable && !backgroundImage.displayColor
             autoPaddingEnabled: false
-            blur: (config.Blur == "" ? 2 : config.Blur) > 0 ? 1 : 0
+            blur: config.Blur == "" ? 2 : config.Blur
             blurMax: config.BlurMax == "" ? 48 : config.BlurMax
-            visible: config.FullBlur == "true" || partialBlur == "true" ? true : false
+            visible: config.FullBlur == "true" || Settings.lock_blur_enable ? true : false
         }
 
         Loader {
