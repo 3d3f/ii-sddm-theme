@@ -3,6 +3,8 @@
 
 import QtQuick
 
+import "../"
+
 Item {
     id: root
 

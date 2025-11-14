@@ -15,9 +15,6 @@ Item {
     property color shadowColor: Colors.colShadow
 
     visible: text !== ""
-    anchors.bottom: parent.bottom
-    anchors.horizontalCenter: parent.horizontalCenter
-    anchors.bottomMargin: 0
     width: sessionLockedBox.width
     height: sessionLockedBox.height
     z: 10

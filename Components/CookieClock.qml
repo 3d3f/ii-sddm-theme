@@ -3,6 +3,7 @@
 import Qt5Compat.GraphicalEffects
 import QtQuick
 import QtQuick.Shapes
+import QtQuick.Layouts
 
 import "ClockComponents"
 import "Commons"
@@ -12,12 +13,10 @@ Item {
 
     property real implicitSize: 230
     
-    // Time properties - now using TimeManager singleton
+    // TimeManager properties
     readonly property int clockHour: TimeManager.hours
     readonly property int clockMinute: TimeManager.minutes
     readonly property int clockSecond: TimeManager.seconds
-    
-    // Date properties - now using TimeManager singleton
     readonly property string dateText: TimeManager.dayOfMonth.toString().padStart(2, "0")
     readonly property string dayNumber: TimeManager.dayOfMonth.toString().padStart(2, "0")
     readonly property string monthNumber: TimeManager.month.toString()
@@ -236,43 +235,43 @@ Item {
         }
     }
 
-    // Session locked text
-    Loader {
-        id: sessionLockedTextLoader
-        active: root.sessionLockedActive
-        source: "ClockComponents/CookieSessionLocked.qml"
-        z: 11
-        onLoaded: {
-            item.text = config.SessionLockedText;
-            item.backgroundColor = Colors.secondary_container;
-            item.textColor = Colors.on_secondary_container;
-            item.shadowColor = Colors.colShadow;
-        }
-
-        anchors {
-            top: useSineCookie ? sineCookieLoader.bottom : materialCookieLoader.bottom
-            horizontalCenter: parent.horizontalCenter
-            topMargin: 55
-        }
-    }
-
-    // Quote text
-    Loader {
-        id: quoteLoader
-        active: root.quoteActive
-        source: "ClockComponents/CookieQuote.qml"
-        z: 10
-        onLoaded: {
-            item.text = Settings.background_widgets_clock_quote_text;
-            item.backgroundColor = Colors.secondary_container;
-            item.textColor = Colors.on_secondary_container;
-            item.shadowColor = Colors.colShadow;
-        }
-
+    ColumnLayout {
+        id: textContainer
         anchors {
             top: useSineCookie ? sineCookieLoader.bottom : materialCookieLoader.bottom
             horizontalCenter: parent.horizontalCenter
             topMargin: 10
+        }
+        spacing: 10 
+
+        // Quote text
+        Loader {
+            id: quoteLoader
+            active: root.quoteActive
+            source: "ClockComponents/CookieQuote.qml"
+            Layout.alignment: Qt.AlignHCenter
+            
+            onLoaded: {
+                item.text = Settings.background_widgets_clock_quote_text;
+                item.backgroundColor = Colors.secondary_container;
+                item.textColor = Colors.on_secondary_container;
+                item.shadowColor = Colors.colShadow;
+            }
+        }
+
+        // Session locked text
+        Loader {
+            id: sessionLockedTextLoader
+            active: root.sessionLockedActive
+            source: "ClockComponents/CookieSessionLocked.qml"
+            Layout.alignment: Qt.AlignHCenter
+            
+            onLoaded: {
+                item.text = config.SessionLockedText;
+                item.backgroundColor = Colors.secondary_container;
+                item.textColor = Colors.on_secondary_container;
+                item.shadowColor = Colors.colShadow;
+            }
         }
     }
 }
