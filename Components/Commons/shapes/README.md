@@ -1,3 +1,6 @@
+## Credits
+I took this files and this readme from end-4 repo: [rounded-polygon-qmljs] https://github.com/end-4/rounded-polygon-qmljs/tree/8aa62a41bd4cdc4899bdfdc0d9cf103ac34c51f6
+
 ## Morphing rounded polygons in QML Js
 
 QML-compatible Javascript port of [Knugel's Typescript port](https://github.com/Knugel/rounded-polygon-ts) of Androidx's shape library. Also includes the 35 [Material Design shapes](https://m3.material.io/styles/shape/overview-principles#579dd4ba-39f3-4e60-bd9b-1d97ed6ef1bf)
