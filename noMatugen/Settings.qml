@@ -21,4 +21,5 @@ QtObject {
     property bool lock_showLockedText: true // true, false
     property bool time_secondPrecision: true // true, false
     property bool lock_materialShapeChars: true // true, false
+    property bool background_widgets_clock_digital_animateChange: true // true, false
 }

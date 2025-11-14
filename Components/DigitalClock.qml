@@ -3,6 +3,8 @@
 import QtQuick
 import QtQuick.Controls
 
+import "Commons"
+
 Item {
     id: clock
 
@@ -17,7 +19,7 @@ Item {
     implicitHeight: timeLabel.implicitHeight + dateLabel.implicitHeight + (quoteLoader.active ? quoteLoader.height : 0) + (sessionLockedLoader.active ? sessionLockedLoader.height : 0)
     anchors.centerIn:parent
     anchors.verticalCenterOffset: 33
-    Label {
+    StyledText {
         id: timeLabel
         text: TimeManager.formattedTime
         anchors.horizontalCenter: parent.horizontalCenter
@@ -31,9 +33,10 @@ Item {
         font.hintingPreference: Font.PreferDefaultHinting
         style: Text.Raised
         styleColor: Colors.colShadow
+        animateChange: Settings.background_widgets_clock_digital_animateChange
     }
 
-    Label {
+    StyledText {
         id: dateLabel
         text: TimeManager.formattedDateShort
         anchors.top: timeLabel.bottom
@@ -43,6 +46,7 @@ Item {
         font.pixelSize: 20
         font.weight: Font.DemiBold
         color: Colors.primary_fixed_dim
+        animateChange: false//Settings.background_widgets_clock_digital_animateChange
     }
 
     // Quote Label 
