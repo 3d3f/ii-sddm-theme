@@ -1,12 +1,11 @@
 // CookieQuote.qml (MODIFICATO)
 
+import "../"
 // Adapted from end-4's Hyprland dotfiles (https://github.com/end-4/dots-hyprland)
 // Modified by 3d3f for "ii-sddm-theme" (2025)
 import Qt5Compat.GraphicalEffects
 import QtQuick
 import QtQuick.Layouts
-import "../"
-
 
 Item {
     id: quoteContainer
@@ -17,13 +16,7 @@ Item {
     property color shadowColor: Colors.colShadow
 
     visible: text !== ""
-    // RIMOSSI GLI ANCORAGGI PROBLEMATICI
-    // anchors.bottom: parent.bottom
-    // anchors.horizontalCenter: parent.horizontalCenter
-    // anchors.bottomMargin: 0
     z: 10
-
-    // L'altezza e la larghezza del componente sono ora determinate dal suo contenuto (quoteBox)
     implicitWidth: quoteBox.implicitWidth
     implicitHeight: quoteBox.implicitHeight
 
@@ -43,13 +36,13 @@ Item {
 
         radius: 12
         color: backgroundColor
-        // L'ancoraggio qui è interno al componente e va bene
         anchors.horizontalCenter: parent.horizontalCenter
         implicitWidth: quoteRow.implicitWidth + 16
         implicitHeight: quoteRow.implicitHeight + 8
 
         Row {
-            id:quoteRow
+            id: quoteRow
+
             anchors.centerIn: parent
             spacing: 4
 

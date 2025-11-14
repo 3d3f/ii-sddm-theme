@@ -240,7 +240,7 @@ Item {
         anchors {
             top: useSineCookie ? sineCookieLoader.bottom : materialCookieLoader.bottom
             horizontalCenter: parent.horizontalCenter
-            topMargin: 10
+            topMargin: root.quoteActive ? 10 : 0
         }
         spacing: 10 
 

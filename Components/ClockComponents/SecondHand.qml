@@ -83,12 +83,4 @@ Item {
 
     }
 
-    Behavior on rotation {
-        RotationAnimation {
-            duration: 100
-            direction: RotationAnimation.Clockwise
-        }
-
-    }
-
 }
