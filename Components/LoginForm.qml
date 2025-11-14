@@ -23,6 +23,7 @@ Item {
 
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
+        anchors.verticalCenterOffset: -45
         active: Settings.background_widgets_clock_style !== "none"
         sourceComponent: {
             if (Settings.background_widgets_clock_style === "cookie")

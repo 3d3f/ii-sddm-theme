@@ -6,6 +6,7 @@
 // Licensed under the GNU General Public License v3.0
 // Adapted from end-4's Hyprland dotfiles (https://github.com/end-4/dots-hyprland)
 
+import "Commons"
 import QtQml.Models
 import QtQuick
 import QtQuick.Controls
@@ -17,7 +18,7 @@ Item {
     property bool loginFailed: false
     property bool isLoggingIn: false
     property bool usePasswordChars: Settings.lock_materialShapeChars
-    property var customShapeSequence: [6, 3, 5, 8, 7, 4]
+    property var customShapeSequence: [MaterialShape.Shape.Clover4Leaf, MaterialShape.Shape.Arrow, MaterialShape.Shape.Pill, MaterialShape.Shape.SoftBurst, MaterialShape.Shape.Diamond, MaterialShape.Shape.ClamShell, MaterialShape.Shape.Pentagon]
 
     Layout.preferredHeight: Appearance.formRowHeight
     Layout.alignment: Qt.AlignBottom
@@ -195,6 +196,16 @@ Item {
                 }
 
                 PasswordChars {
+                    passwordModel: passwordCharsModel
+                    usePasswordChars: loginContainer.usePasswordChars
+                    customShapeSequence: loginContainer.customShapeSequence
+
+                    anchors {
+                        fill: parent
+                        leftMargin: 10
+                        rightMargin: 10
+                    }
+
                 }
 
                 Item {

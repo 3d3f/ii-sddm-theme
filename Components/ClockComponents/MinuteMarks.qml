@@ -1,3 +1,4 @@
+import "../"
 // Adapted from end-4's Hyprland dotfiles (https://github.com/end-4/dots-hyprland)
 // Modified by 3d3f for "ii-sddm-theme" (2025)
 import QtQuick
@@ -19,6 +20,7 @@ Item {
                     required property int index
 
                     anchors.fill: parent
+                    anchors.margins: 10
                     rotation: 360 / 12 * index
 
                     Rectangle {
@@ -46,6 +48,7 @@ Item {
                     required property int index
 
                     anchors.fill: parent
+                    anchors.margins: 10
                     rotation: 360 / 60 * index
                     visible: index % 5 !== 0
 
@@ -74,25 +77,31 @@ Item {
     Component {
         id: dotsMarksComponent
 
-        Repeater {
-            model: 12
+        Item {
+            anchors.fill: parent
+            anchors.margins: 10
 
-            Item {
-                required property int index
+            Repeater {
+                model: 12
 
-                anchors.fill: parent
-                rotation: 360 / 12 * index
+                Item {
+                    required property int index
 
-                Rectangle {
-                    width: 12
-                    height: 12
-                    radius: width / 2
-                    color: root.color
+                    anchors.fill: parent
+                    rotation: 360 / 12 * index
 
-                    anchors {
-                        left: parent.left
-                        verticalCenter: parent.verticalCenter
-                        leftMargin: 12
+                    Rectangle {
+                        width: 12
+                        height: 12
+                        radius: width / 2
+                        color: root.color
+
+                        anchors {
+                            left: parent.left
+                            verticalCenter: parent.verticalCenter
+                            leftMargin: 10
+                        }
+
                     }
 
                 }

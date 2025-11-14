@@ -3,78 +3,114 @@ import QtQml.Models
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import "Commons"
+
 
 StyledFlickable {
     id: passwordCharsFlickable
     
+    required property var passwordModel  
+    property bool usePasswordChars: true
+    
+    property var customShapeSequence: [
+        MaterialShape.Shape.Clover4Leaf,
+        MaterialShape.Shape.Arrow,
+        MaterialShape.Shape.Pill,
+        MaterialShape.Shape.SoftBurst,
+        MaterialShape.Shape.Diamond,
+        MaterialShape.Shape.ClamShell,
+        MaterialShape.Shape.Pentagon,
+        MaterialShape.Shape.Circle // Can add more
+    ]
+    
     visible: usePasswordChars
-    anchors.fill: parent
-    anchors.topMargin: 0
-    anchors.bottomMargin: 0
-    anchors.leftMargin: 5
-    anchors.rightMargin: 5
     contentWidth: dotsRow.implicitWidth
     flickableDirection: Flickable.HorizontalFlick
-    
     contentX: Math.max(contentWidth - width, 0)
+    
+    Behavior on contentX {
+        NumberAnimation {
+            duration: Appearance.animation.elementMoveEnter.duration || 200
+            easing.type: Appearance.animation.elementMoveEnter.type || Easing.OutCubic
+            easing.bezierCurve: Appearance.animation.elementMoveEnter.bezierCurve || []
+        }
+    }
     
     Row {
         id: dotsRow
-        
         anchors {
             left: parent.left
             verticalCenter: parent.verticalCenter
-            leftMargin: 0  
-            rightMargin: 0 
+            leftMargin: 3.3
         }
-        spacing: 3
+        spacing: 10
         
         Repeater {
-            model: passwordCharsModel
+            model: passwordCharsFlickable.passwordModel
             
-            delegate: MaterialCookie {
-                id: cookie
+            delegate: Item {
+                id: charItem
+                
                 required property int index
                 
-                implicitSize: 19
-                color: Colors.primary
-                sides: loginContainer.customShapeSequence[index % loginContainer.customShapeSequence.length]
-                amplitude: 1.5
-                opacity: 0
-                scale: 0.5
+                implicitWidth: 10
+                implicitHeight: 10
                 
-                ParallelAnimation {
-                    id: appearAnim
+                MaterialShape {
+                    id: materialShape
+                    anchors.centerIn: parent
                     
-                    NumberAnimation {
-                        target: cookie
-                        properties: "opacity"
-                        to: 1
-                        duration: 50
-                        easing.type: Appearance.animation.elementMoveFast.type
-                        easing.bezierCurve: Appearance.animation.elementMoveFast.bezierCurve
+                    shape: customShapeSequence[charItem.index % customShapeSequence.length]
+                    color: Colors.primary
+                    implicitSize: 0
+                    opacity: 0
+                    scale: 0.5
+                    
+                    Component.onCompleted: {
+                        appearAnim.start();
                     }
                     
-                    NumberAnimation {
-                        target: cookie
-                        properties: "scale"
-                        to: 1 
-                        duration: 300 
-                        easing.type: Easing.OutBack
-                    }
-                    
-                    ColorAnimation {
-                        target: cookie
-                        properties: "color"
-                        from: Colors.primary
-                        to: Colors.colOnLayer1
-                        duration: 1000
-                        easing.type: Appearance.animation.elementMoveFast.type
-                        easing.bezierCurve: Appearance.animation.elementMoveFast.bezierCurve
+                    ParallelAnimation {
+                        id: appearAnim
+                        
+                        NumberAnimation {
+                            target: materialShape
+                            properties: "opacity"
+                            to: 1
+                            duration: 50
+                            easing.type: Appearance.animation.elementMoveFast.type
+                            easing.bezierCurve: Appearance.animation.elementMoveFast.bezierCurve
+                        }
+                        
+                        NumberAnimation {
+                            target: materialShape
+                            properties: "scale"
+                            to: 1
+                            duration: 200
+                            easing.type: Easing.BezierSpline
+                            easing.bezierCurve: Appearance.animationCurves?.expressiveFastSpatial || [0.4, 0.0, 0.2, 1.0]
+                        }
+                        
+                        NumberAnimation {
+                            target: materialShape
+                            properties: "implicitSize"
+                            to: 18
+                            duration: 200
+                            easing.type: Easing.BezierSpline
+                            easing.bezierCurve: Appearance.animationCurves?.expressiveFastSpatial || [0.4, 0.0, 0.2, 1.0]
+                        }
+                        
+                        ColorAnimation {
+                            target: materialShape
+                            properties: "color"
+                            from: Colors.primary
+                            to: Colors.colOnLayer1
+                            duration: 1000
+                            easing.type: Appearance.animation.elementMoveFast.type
+                            easing.bezierCurve: Appearance.animation.elementMoveFast.bezierCurve
+                        }
                     }
                 }
-                
-                Component.onCompleted: appearAnim.start()
             }
         }
     }

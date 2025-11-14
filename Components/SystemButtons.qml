@@ -9,6 +9,8 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
+import "Commons"
+
 Item {
     property var shutdown: ["power_settings_new", config.TranslateShutdown || textConstants.shutdown, sddm.canPowerOff]
     property var reboot: ["restart_alt", config.TranslateReboot || textConstants.reboot, sddm.canReboot]

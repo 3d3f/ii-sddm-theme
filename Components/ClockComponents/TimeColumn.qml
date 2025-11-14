@@ -1,11 +1,14 @@
 // Adapted from end-4's Hyprland dotfiles (https://github.com/end-4/dots-hyprland)
 // Modified by 3d3f for "ii-sddm-theme" (2025)
+
+import "../"
+import "../Commons"
 import QtQuick
 
 Item {
     id: root
 
-    property color color: "black"
+    property color color: Colors.on_secondary_container
     property string timeString: ""
     property bool enabled: true
     property bool isCompact: true

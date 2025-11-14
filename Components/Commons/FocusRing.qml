@@ -1,5 +1,7 @@
 import QtQuick
 
+import "../"
+
 Rectangle {
     id: focusRing
 

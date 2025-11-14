@@ -8,6 +8,8 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
+import "Commons"
+
 Item {
     Layout.preferredHeight: Appearance.formRowHeight
     Layout.preferredWidth: Layout.preferredHeight

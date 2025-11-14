@@ -7,15 +7,24 @@ Item {
     id: root
 
     required property int clockSecond
-    property string style: "classic" 
+    property string style: Settings.background_widgets_clock_cookie_secondHandStyle
     property color color: "black"
     property real handWidth: 2
-    property real handLength: 100
+    property real handLength: 95
     property real dotSize: 20
 
     anchors.fill: parent
     visible: root.style !== "hide"
     rotation: (360 / 60 * root.clockSecond) + 90
+
+        Behavior on rotation {
+        enabled: Settings.background_widgets_clock_cookie_constantlyRotate // Animating every second is expensive...
+        animation: RotationAnimation {
+            direction: RotationAnimation.Clockwise
+            duration: 1000 // 1 second
+            easing.type: Easing.InOutQuad
+        }
+    }
 
     Rectangle {
         id: mainHand
@@ -28,7 +37,7 @@ Item {
         anchors {
             left: parent.left
             verticalCenter: parent.verticalCenter
-            leftMargin: 10
+            leftMargin: 10 +(root.style === "dot" ? root.dotSize : 0)
         }
 
         Behavior on width {

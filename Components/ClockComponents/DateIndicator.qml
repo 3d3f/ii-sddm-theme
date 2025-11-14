@@ -1,3 +1,5 @@
+import "../"
+import "../Commons"
 // Adapted from end-4's Hyprland dotfiles (https://github.com/end-4/dots-hyprland)
 // Modified by 3d3f for "ii-sddm-theme" (2025)
 import QtQuick
@@ -19,55 +21,41 @@ Item {
         Item {
             anchors.fill: parent
 
-            Item {
+            MaterialShape {
                 id: dayBubble
 
                 anchors.left: parent.left
                 anchors.top: parent.top
-                anchors.leftMargin: 28
-                anchors.topMargin: 33
-
-                MaterialCookie {
-                    anchors.fill: parent
-                    implicitSize: Appearance.date_square_size
-                    color: Colors.tertiary_container
-                    sides: 5
-                    amplitude: 2
-                    constantlyRotate: false
-                    rotation: -18
-                }
+                z: 5
+                implicitSize: 64
+                color: Colors.tertiary_container
+                shape: MaterialShape.Shape.Pentagon
 
                 StyledText {
                     anchors.centerIn: parent
+                    z: 6
                     text: root.dayOfMonth
                     color: Colors.on_tertiary_container
                     font.pixelSize: 30
-                    font.weight: Font.Bold
+                    font.weight: Font.Black
                     font.family: Appearance.font_family_expressive
                 }
 
             }
 
-            Item {
+            MaterialShape {
                 id: monthBubble
 
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom
-                anchors.rightMargin: 28
-                anchors.bottomMargin: 33
-
-                MaterialCookie {
-                    anchors.fill: parent
-                    implicitSize: Appearance.date_square_size
-                    color: Colors.secondary_container
-                    sides: 2
-                    amplitude: 3
-                    constantlyRotate: false
-                    rotation: -45
-                }
+                z: 5
+                implicitSize: 64
+                color: Colors.secondary_container
+                shape: MaterialShape.Shape.Pill
 
                 StyledText {
                     anchors.centerIn: parent
+                    z: 6
                     text: root.monthNumber
                     color: Colors.on_secondary_container
                     font.pixelSize: 30
@@ -88,22 +76,21 @@ Item {
             anchors.fill: parent
 
             Rectangle {
-                // i can't get the right color
+                // ToDo i can't get the right color
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.horizontalCenterOffset: 85
-                width: 45
-                height: 30
+                implicitWidth: 45
+                implicitHeight: 30
                 radius: Appearance.rounding_small
-                color: Colors.inverse_primary
-
+                color: Colors.mix(Colors.secondary_container, Colors.primary, 0.5)
                 StyledText {
                     anchors.centerIn: parent
                     text: root.dayOfMonth
                     font.pixelSize: 20
                     font.weight: 1000
                     font.family: Appearance.font_family_expressive
-                    color: Colors.inverse_on_surface
+                    color: Colors.secondary
                 }
 
             }
@@ -144,8 +131,6 @@ Item {
                     font {
                         family: Appearance.font_family_title
                         pixelSize: 30
-                        weight: Font.Bold
-                        hintingPreference: Font.PreferNoHinting
                     }
 
                 }

@@ -1,6 +1,7 @@
 // Adapted from end-4's Hyprland dotfiles (https://github.com/end-4/dots-hyprland)
 // Modified by 3d3f for "ii-sddm-theme" (2025)
 import QtQuick
+import "../"
 
 Item {
     id: root
@@ -17,8 +18,8 @@ Item {
     Rectangle {
         color: root.color
         anchors.centerIn: parent
-        width: root.implicitSize
-        height: root.implicitSize
+        implicitWidth: root.implicitSize
+        implicitHeight: root.implicitSize
         radius: width / 2
 
         Repeater {
@@ -31,8 +32,8 @@ Item {
                 rotation: 360 / 12 * index
 
                 Rectangle {
-                    width: root.markLength
-                    height: root.markWidth
+                    implicitWidth: root.markLength
+                    implicitHeight: root.markWidth
                     radius: width / 2
                     color: root.colOnBackground
 

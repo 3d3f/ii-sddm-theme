@@ -1,6 +1,7 @@
 // Adapted from end-4's Hyprland dotfiles (https://github.com/end-4/dots-hyprland)
 // Modified by 3d3f for "ii-sddm-theme" (2025)
 import QtQuick
+import "../"
 
 Item {
     id: root
@@ -10,7 +11,7 @@ Item {
     property string style: Settings.background_widgets_clock_cookie_hourHandStyle // "fill", "hollow", "classic", "hide"
     property color color: "black"
     property real handLength: 72
-    property real handWidth: 18
+    property real handWidth: 20
     property real fillColorAlpha: root.style === "hollow" ? 0 : 1
 
     visible: root.style !== "hide"

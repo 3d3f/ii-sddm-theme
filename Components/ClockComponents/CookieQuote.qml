@@ -1,13 +1,14 @@
 // Adapted from end-4's Hyprland dotfiles (https://github.com/end-4/dots-hyprland)
 // Modified by 3d3f for "ii-sddm-theme" (2025)
-
 import Qt5Compat.GraphicalEffects
 import QtQuick
+import "../"
+
 
 Item {
-    id: sessionLockedContainer
+    id: quoteContainer
 
-    property alias text: sessionLockedText.text
+    property alias text: quoteStyledText.text
     property color backgroundColor: Colors.secondary_container
     property color textColor: Colors.on_secondary_container
     property color shadowColor: Colors.colShadow
@@ -16,13 +17,11 @@ Item {
     anchors.bottom: parent.bottom
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.bottomMargin: 0
-    width: sessionLockedBox.width
-    height: sessionLockedBox.height
     z: 10
 
     DropShadow {
-        source: sessionLockedBox
-        anchors.fill: sessionLockedBox
+        source: quoteBox
+        anchors.fill: quoteBox
         horizontalOffset: 0
         verticalOffset: 2
         radius: 12
@@ -32,42 +31,39 @@ Item {
     }
 
     Rectangle {
-        id: sessionLockedBox
+        id: quoteBox
 
         radius: 12
         color: backgroundColor
         anchors.horizontalCenter: parent.horizontalCenter
-        implicitWidth: sessionLockedRow.width + 34
-        implicitHeight: sessionLockedRow.height + 14
+        implicitWidth: quoteRow.implicitWidth + 8 * 2
+        implicitHeight: quoteRow.implicitHeight + 4 * 2
 
         Row {
-            id: sessionLockedRow
-
+            id:quoteRow
             anchors.centerIn: parent
             spacing: 4
 
             Text {
-                id: lockIcon
+                id: quoteIcon
 
                 font.family: "Material Symbols Outlined"
-                font.pixelSize: 20
-                text: "lock"
+                font.pixelSize: 22
+                text: "format_quote"
                 color: textColor
-                anchors.verticalCenter: parent.verticalCenter
             }
 
             Text {
-                id: sessionLockedText
+                id: quoteStyledText
 
                 wrapMode: Text.WordWrap
                 horizontalAlignment: Text.AlignLeft
                 verticalAlignment: Text.AlignVCenter
                 renderType: Text.NativeRendering
                 color: textColor
-                font.family: Appearance.font_family_main
-                font.pixelSize: 16
+                font.family: "Readex Pro"
+                font.pixelSize: 17
                 font.weight: Font.Normal
-                anchors.verticalCenter: parent.verticalCenter
             }
 
         }
