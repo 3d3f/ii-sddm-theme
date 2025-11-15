@@ -24,11 +24,11 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         anchors.verticalCenterOffset: -45
-        active: Settings.background_widgets_clock_style !== "none"
+        active: Settings.background_widgets_clock_styleLocked !== "none"
         sourceComponent: {
-            if (Settings.background_widgets_clock_style === "cookie")
+            if (Settings.background_widgets_clock_styleLocked === "cookie")
                 return cookieClockComponent;
-            else if (Settings.background_widgets_clock_style === "digital")
+            else if (Settings.background_widgets_clock_styleLocked === "digital")
                 return digitalClockComponent;
             return null;
         }

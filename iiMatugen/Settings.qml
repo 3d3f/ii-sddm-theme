@@ -5,7 +5,7 @@ pragma Singleton
 // On the comment on the right there are all possible options
 QtObject {
     property string time_format: "h:mm ap" // "hh:mm","h:mm ap","h:mm AP"
-    property string background_widgets_clock_style: "digital" // "none", "digital", "cookie"
+    property string background_widgets_clock_styleLocked: "digital" // "none", "digital", "cookie"
     property bool background_widgets_clock_cookie_constantlyRotate: false // true, false
     property string background_widgets_clock_cookie_dateStyle: "bubble" // "hide", "rect", "bubble", "border"
     property string background_widgets_clock_cookie_dialNumberStyle: "full" // "full", "dots", "numbers", "none"
