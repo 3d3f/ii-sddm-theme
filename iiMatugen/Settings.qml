@@ -1,8 +1,7 @@
 import QtQuick
 pragma Singleton
 
-// Here you can edit your theme settings, be sure to check ii-sddm.conf from this same folder for more settings
-// On the comment on the right there are all possible options
+// This file will be replaced by settings generated through the script
 QtObject {
     property string time_format: "h:mm ap" // "hh:mm","h:mm ap","h:mm AP"
     property string background_widgets_clock_styleLocked: "digital" // "none", "digital", "cookie"
@@ -22,4 +21,5 @@ QtObject {
     property bool time_secondPrecision: true // true, false
     property bool lock_materialShapeChars: true // true, false
     property bool background_widgets_clock_digital_animateChange: true // true, false
+    property bool background_widgets_clock_cookie_useSineCookie: false // true, false
 }
