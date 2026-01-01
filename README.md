@@ -1,6 +1,6 @@
 # ii-sddm-theme
 
-https://github.com/user-attachments/assets/2af3d30f-c288-4a32-a9bf-4bec4c31490e
+https://github.com/user-attachments/assets/a03e1628-3438-4390-bb62-96e18308a8e0
 
 ## Overview
 
