@@ -337,14 +337,6 @@ Item {
                     }
                 }
 
-                FocusRing {
-                    id: focusRing
-
-                    target: loginButton
-                    offset: 0
-                    border.color: Colors.tertiary_fixed
-                }
-
                 MouseArea {
                     anchors.fill: parent
                     cursorShape: loginButton.enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
