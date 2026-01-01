@@ -6,7 +6,7 @@ https://github.com/user-attachments/assets/a03e1628-3438-4390-bb62-96e18308a8e0
 
 [ii-sddm-theme](https://github.com/3d3f/ii-sddm-theme) is a custom theme for the [SDDM](https://github.com/sddm/sddm/) display manager that tries to replicate the lockscreen aesthetic and settings of [illogical impulse](https://github.com/end-4/dots-hyprland). It can be used with ii dotfiles, with [Matugen](https://github.com/InioX/matugen) only, or as a standalone theme.
 
-I only have a basic understanding of Qt QML, so this project is a learning experience and mostly about together code from various sources while figuring things out along the way. I also get a ton of help from llm models.
+I only have a basic understanding of Qt QML, so this project is a learning experience and mostly about together code from various sources while figuring things out along the way. I also get a ton of help from ai models.
 
 **Currently supports:** Arch Linux + Hyprland, to be extended
 
