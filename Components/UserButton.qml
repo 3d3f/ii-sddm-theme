@@ -1,263 +1,195 @@
-// Config created by Keyitdev https://github.com/Keyitdev/sddm-astronaut-theme
-// Copyright (C) 2022-2025 Keyitdev
-// Based on https://github.com/MarianArlt/sddm-sugar-dark
-// Distributed under the GPLv3+ License https://www.gnu.org/licenses/gpl-3.0.html
-// Modified by 3d3f for the "ii-sddm-theme" project (2025)
-// Licensed under the GNU General Public License v3.0
-// See: https://www.gnu.org/licenses/gpl-3.0.txt
-
+import "Commons"
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
-import "Commons"
+FocusScope {
+    id: userIsland
 
-ComboBox {
-    id: selectUser
+    property alias currentIndex: userList.currentIndex
+    property bool isOpen: false
+    readonly property string currentText: selectedTextMetrics.text
+    readonly property int baseHeight: 42
+    readonly property int popupHeight: Math.min(400, userList.contentHeight + 8)
+    readonly property int baseWidth: Math.ceil(selectedTextMetrics.advanceWidth + 60)
+    readonly property int expandedWidth: Math.ceil(Math.max(100, longestTextMetrics.advanceWidth + 90))
 
-    Layout.preferredHeight: Appearance.formRowHeight
-    Layout.alignment: Qt.AlignVCenter
-    Layout.preferredWidth: userRow.implicitWidth + 37
-    model: userModel
-    currentIndex: model.lastIndex
-    textRole: "name"
-    hoverEnabled: true
-    indicator: null
-    clip: true
-    focusPolicy: Qt.TabFocus
+    focusPolicy: Qt.ClickFocus 
+    implicitWidth: isOpen ? expandedWidth : baseWidth
+    // IMPORTANTE: Teniamo l'altezza fissa a 42 per permettere l'espansione verso l'alto
+    implicitHeight: baseHeight 
+
+    onActiveFocusChanged: {
+        if (!activeFocus)
+            isOpen = false;
+    }
+
     Keys.onPressed: function(event) {
-        if (event.key === Qt.Key_Up || event.key === Qt.Key_Down) {
-            if (!popup.opened)
-                popup.open();
-
+        if (!isOpen) {
+            if (event.key === Qt.Key_Up || event.key === Qt.Key_Down || event.key === Qt.Key_Return) {
+                isOpen = true;
+                event.accepted = true;
+            }
+        } else {
+            if (event.key === Qt.Key_Escape || event.key === Qt.Key_Return) {
+                isOpen = false;
+                event.accepted = true;
+            }
         }
     }
 
-    background: Item {
-        Rectangle {
+    // RIMOSSO: Il MouseArea outsideCloser per la chiusura esterna
+
+    TextMetrics {
+        id: selectedTextMetrics
+        font.family: Appearance.font_family_main
+        font.pixelSize: Appearance.font_size_normal
+        text: userModel.data(userModel.index(userList.currentIndex, 0), 257) || ""
+    }
+
+    TextMetrics {
+        id: longestTextMetrics
+        font.family: Appearance.font_family_main
+        font.pixelSize: Appearance.font_size_normal
+        text: {
+            var longest = "";
+            for (var i = 0; i < userModel.count; i++) {
+                var name = userModel.data(userModel.index(i, 0), 257);
+                if (name && name.length > longest.length)
+                    longest = name;
+            }
+            return longest;
+        }
+    }
+
+    Rectangle {
+        id: animatedContainer
+        // Ancorato al fondo del FocusScope (che è alto 42)
+        anchors.bottom: parent.bottom 
+        width: parent.width
+        // Quando cresce in altezza, può crescere solo verso l'alto perché il fondo è bloccato
+        height: isOpen ? userIsland.popupHeight : userIsland.baseHeight
+        antialiasing: true
+        clip: true
+        color: isOpen ? Colors.primary_container : (userButton.hovered ? Colors.surface_container_highest : Colors.surface_container)
+        radius: isOpen ? 16 : Appearance.rounding_full
+        
+        z: 1 // Sopra gli elementi sottostanti
+
+        // Questo MouseArea impedisce i click di "passare attraverso" il container
+        // mantenendo il focus sul componente quando si clicca all'interno del popup
+        MouseArea {
             anchors.fill: parent
-            anchors.margins: 8
-            radius: Appearance.rounding_full
-            color: selectUser.hovered ? Colors.surface_container_highest : Colors.surface_container
+            enabled: isOpen
+            onClicked: (mouse) => { mouse.accepted = true; }
+        }
 
-            MouseArea {
+        Button {
+            id: userButton
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom // Sempre al fondo
+            height: userIsland.baseHeight
+            hoverEnabled: true
+            focusPolicy: Qt.NoFocus
+            opacity: isOpen ? 0 : 1
+            visible: opacity > 0
+            onClicked: {
+                userIsland.forceActiveFocus();
+                isOpen = true;
+            }
+
+            background: Item {
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    acceptedButtons: Qt.NoButton
+                }
+            }
+
+            contentItem: RowLayout {
+                spacing: 8
                 anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                onClicked: {
-                    if (userPopup.opened)
-                        userPopup.close();
-                    else
-                        userPopup.open();
-                }
-            }
+                anchors.leftMargin: 12
+                anchors.rightMargin: 12
 
-            Behavior on color {
-                ColorAnimation {
-                    duration: 200
-                    easing.type: Easing.InOutQuad
+                Avatar {
+                    size: 24
+                    userName: selectedTextMetrics.text
+                    source: userModel.data(userModel.index(userList.currentIndex, 0), 260) || ""
+                    iconColor: Colors.on_surface_variant
                 }
 
+                Text {
+                    Layout.fillWidth: true
+                    text: selectedTextMetrics.text
+                    font: selectedTextMetrics.font
+                    color: Colors.on_surface_variant
+                    elide: Text.ElideRight
+                }
             }
-
         }
 
-        FocusRing {
-            id: focusRing
-
-            target: selectUser
-            offset: -8
-            opacity: !userPopup.opened && target && target.activeFocus ? 1 : 0
-        }
-
-    }
-
-    contentItem: RowLayout {
-        id: userRow
-
-        spacing: 8
-        anchors.fill: parent
-        anchors.leftMargin: 17
-        clip: true
-
-        Avatar {
-            id: mainUserAvatar
-
-            Layout.alignment: Qt.AlignVCenter
-            Layout.bottomMargin: 0
-            size: 27
-            iconColor: Colors.on_surface_variant
-            userName: userModel.data(userModel.index(selectUser.currentIndex, 0), 257)
-            source: userModel.data(userModel.index(selectUser.currentIndex, 0), 260)
-        }
-
-        Text {
-            id: userName
-
-            Layout.alignment: Qt.AlignVCenter
-            text: selectUser.displayText
-            color: {
-                    if (selectUser.activeFocus)
-                        return Colors.primary
-                     return Colors.on_surface_variant}
-            font.family: "Rubik"
-            font.pixelSize: Appearance.font_size_normal
-            font.bold: false
-            font.capitalization: Font.MixedCase
-        }
-
-        Item {
-            Layout.fillWidth: true
-        }
-
-    }
-
-    popup: Popup {
-        id: userPopup
-
-        property real targetHeight: Math.min(userList.contentHeight, 300) + topPadding + bottomPadding
-
-        implicitHeight: 0
-        implicitWidth: userRow.width + layoutSelect.width - 4.7
-        x: 10
-        y: 10
-        padding: 5
-        clip: true
-
-        contentItem: ListView {
+        ListView {
             id: userList
-
-            implicitHeight: Math.min(contentHeight, 300)
-            clip: true
-            model: selectUser.model
-            currentIndex: selectUser.highlightedIndex
-            spacing: Appearance.listItemSpacing
-            y: 10
-            opacity: userPopup.opacity
-
-            ScrollIndicator.vertical: ScrollIndicator {
-            }
+            anchors.fill: parent
+            anchors.topMargin: 4
+            anchors.bottomMargin: 0
+            anchors.leftMargin: 2
+            anchors.rightMargin: 2
+            model: userModel
+            spacing: 2
+            focusPolicy: Qt.NoFocus
+            focus: isOpen
+            opacity: isOpen ? 1 : 0
+            visible: opacity > 0
+            currentIndex: userModel.lastIndex
 
             delegate: ItemDelegate {
-                implicitWidth: userList.width
-                implicitHeight: Math.max(48, contentRow.implicitHeight + 16)
-                hoverEnabled: true
-                topPadding: 8
-                bottomPadding: 8
-                leftPadding: 12
-                rightPadding: 12
+                id: userDelegate
+                width: userList.width
+                height: 48
+                highlighted: ListView.isCurrentItem
+                focusPolicy: Qt.NoFocus
                 onClicked: {
-                    selectUser.currentIndex = index;
-                    userPopup.close();
+                    userList.currentIndex = index;
+                    isOpen = false;
                 }
 
                 contentItem: RowLayout {
-                    id: contentRow
-
-                    spacing: 2
-
+                    spacing: 8
                     Avatar {
-                        Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
-                        size: 27
-                        iconColor: selectUser.highlightedIndex === index ? Colors.on_primary : Colors.on_primary_container
+                        size: 26
+                        Layout.leftMargin: 4
                         userName: model.name
-                        source: model.icon
+                        source: model.icon || ""
+                        iconColor: userDelegate.highlighted ? Colors.on_primary : Colors.on_primary_container
                     }
-
                     Text {
-                        id: textCont
-
-                        Layout.fillWidth: true
                         text: model.name
-                        font.family: Appearance.font_family_main
-                        font.pixelSize: Appearance.font_size_normal
-                        color: selectUser.highlightedIndex === index ? Colors.on_primary : Colors.on_primary_container
+                        font: selectedTextMetrics.font
+                        color: userDelegate.highlighted ? Colors.on_primary : Colors.on_primary_container
                         verticalAlignment: Text.AlignVCenter
-                        horizontalAlignment: Text.AlignLeft
-                        leftPadding: 5
-                        elide: Text.ElideRight
                     }
-
                 }
 
                 background: Rectangle {
-                    color: selectUser.highlightedIndex === index ? Colors.primary : (parent.hovered ? Colors.colPrimaryContainerHover : Colors.primary_container)
+                    color: userDelegate.highlighted ? Colors.primary : (userDelegate.hovered ? Colors.colPrimaryContainerHover : Colors.primary_container)
                     radius: 12
-
-                    Behavior on color {
-                        ColorAnimation {
-                            duration: 200
-                            easing.type: Easing.InOutQuad
-                        }
-
-                    }
-
                 }
-
             }
-
         }
 
-        background: Rectangle {
-            radius: 16
-            color: Colors.primary_container
-            layer.enabled: true
+        Behavior on height {
+            NumberAnimation { duration: 250; easing.type: Easing.InOutQuad }
         }
 
-        enter: Transition {
-            SequentialAnimation {
-                ParallelAnimation {
-                    NumberAnimation {
-                        property: "implicitHeight"
-                        from: 70
-                        to: userPopup.targetHeight
-                        duration: 300
-                        easing.type: Easing.OutCubic
-                    }
-
-                    NumberAnimation {
-                        property: "opacity"
-                        from: 0
-                        to: 1
-                        duration: 200
-                        easing.type: Easing.OutQuad
-                    }
-
-                }
-
-            }
-
+        Behavior on color {
+            ColorAnimation { duration: 200 }
         }
-
-        exit: Transition {
-            ParallelAnimation {
-                NumberAnimation {
-                    property: "implicitHeight"
-                    from: userPopup.implicitHeight
-                    to: 0
-                    duration: 200
-                    easing.type: Easing.InCubic
-                }
-
-                NumberAnimation {
-                    property: "opacity"
-                    from: 1
-                    to: 0
-                    duration: 150
-                    easing.type: Easing.InQuad
-                }
-
-            }
-
-        }
-
     }
 
-    Behavior on Layout.preferredWidth {
-        NumberAnimation {
-            duration: 300
-            easing.type: Easing.InOutCubic
-        }
-
+    Behavior on implicitWidth {
+        NumberAnimation { duration: 250; easing.type: Easing.InOutQuad }
     }
-
 }

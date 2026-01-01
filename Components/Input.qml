@@ -1,3 +1,4 @@
+import "Commons"
 // Config created by Keyitdev https://github.com/Keyitdev/sddm-astronaut-theme
 // Copyright (C) 2022-2025 Keyitdev
 // Distributed under the GPLv3+ License https://www.gnu.org/licenses/gpl-3.0.html
@@ -11,22 +12,24 @@ import QtQuick.Layouts
 RowLayout {
     id: inputContainer
 
-    property ComboBox exposeSession: sessionSelect.exposeSession
     property bool failed
+    property int selectedSession: 0
 
-    Layout.preferredHeight: 400
+    clip: false
     spacing: 10
 
     Item {
         id: usernameFieldContainer
 
+        property alias selectUser: selectUser
+
         Layout.alignment: Qt.AlignBottom
         Layout.preferredHeight: Appearance.formRowHeight
-        implicitWidth: usernameField.implicitWidth
-        Layout.preferredWidth: implicitWidth
+        implicitWidth: innerRow.implicitWidth + 18
+        clip: false
 
         Rectangle {
-            id: usernameBackground
+            id: mainPillBackground
 
             anchors.fill: parent
             color: Colors.surface_container
@@ -34,10 +37,11 @@ RowLayout {
         }
 
         RowLayout {
-            id: usernameField
+            id: innerRow
 
-            anchors.fill: parent
-            spacing: 0
+            anchors.centerIn: parent
+            spacing: 8
+            clip: false
 
             UserButton {
                 id: selectUser
@@ -55,6 +59,8 @@ RowLayout {
 
     InputLogin {
         id: loginContainer
+
+        Layout.alignment: Qt.AlignBottom
     }
 
     Connections {

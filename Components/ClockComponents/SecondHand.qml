@@ -1,9 +1,8 @@
 // Adapted from end-4's Hyprland dotfiles (https://github.com/end-4/dots-hyprland)
 // Modified by 3d3f for "ii-sddm-theme" (2025)
 
-import QtQuick
-
 import "../"
+import QtQuick
 
 Item {
     id: root
@@ -19,15 +18,6 @@ Item {
     visible: root.style !== "hide"
     rotation: (360 / 60 * root.clockSecond) + 90
 
-        Behavior on rotation {
-        enabled: Settings.background_widgets_clock_cookie_constantlyRotate // Animating every second is expensive...
-        animation: RotationAnimation {
-            direction: RotationAnimation.Clockwise
-            duration: 1000 // 1 second
-            easing.type: Easing.InOutQuad
-        }
-    }
-
     Rectangle {
         id: mainHand
 
@@ -39,7 +29,7 @@ Item {
         anchors {
             left: parent.left
             verticalCenter: parent.verticalCenter
-            leftMargin: 10 +(root.style === "dot" ? root.dotSize : 0)
+            leftMargin: 10 + (root.style === "dot" ? root.dotSize : 0)
         }
 
         Behavior on width {
@@ -79,6 +69,17 @@ Item {
                 easing.type: Easing.OutQuad
             }
 
+        }
+
+    }
+
+    Behavior on rotation {
+        enabled: Settings.background_widgets_clock_cookie_constantlyRotate
+
+        animation: RotationAnimation {
+            direction: RotationAnimation.Clockwise
+            duration: 1000 
+            easing.type: Easing.InOutQuad
         }
 
     }

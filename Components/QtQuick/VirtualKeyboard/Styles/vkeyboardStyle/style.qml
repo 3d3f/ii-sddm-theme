@@ -3,6 +3,7 @@
 // Taken from https://github.com/qt/qtvirtualkeyboard/blob/16fbddbbc03777e0a006daa998eda14624d62268/src/styles/builtin/default/style.qml#L11
 
 import "../../../../../Components"
+import "../../../../../Components/Waffle"
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.VirtualKeyboard
@@ -11,31 +12,41 @@ import QtQuick.VirtualKeyboard.Styles
 KeyboardStyle {
     id: currentStyle
 
+    property bool isWaffleTheme: Settings.panelFamily === "waffle"
     readonly property bool compactSelectionList: [InputEngine.InputMode.Pinyin, InputEngine.InputMode.Cangjie, InputEngine.InputMode.Zhuyin].indexOf(InputContext.inputEngine.inputMode) !== -1
-    readonly property string fontFamily: Appearance.font_family_main
+    readonly property string fontFamily: isWaffleTheme ? Appearance.waffleFont : Appearance.font_family_main
     readonly property real keyBackgroundMargin: Math.round(13 * scaleHint)
     readonly property real keyContentMargin: Math.round(40 * scaleHint)
     readonly property real keyIconScale: scaleHint * 0.8
     readonly property string inputLocale: InputContext.locale
-    readonly property real spacialKeyScale: 25
-    property color keyboardBackgroundColor: Colors.surface_container_low
-    property color normalKeyBackgroundColor: Colors.surface_container
-    property color highlightedKeyBackgroundColor: Colors.surface_container
-    property color capsLockKeyAccentColor: Colors.on_surface_variant
-    property color modeKeyAccentColor: Colors.on_primary
-    property color keyTextColor: Colors.on_surface_variant
-    property color keySmallTextColor: Colors.on_surface_variant
-    property color popupBackgroundColor: Colors.surface_container_high
-    property color popupBorderColor: Colors.on_surface_variant
-    property color popupTextColor: Colors.on_surface_variant
-    property color popupHighlightColor: Colors.secondary
-    property color selectionListTextColor: Colors.on_surface_variant
-    property color selectionListSeparatorColor: Colors.tertiary
+    readonly property real spacialKeyScale: isWaffleTheme ? 20 : 25
+    property color keyboardBackgroundColor: isWaffleTheme ? keyboardBackgroundColorWaffle : Colors.surface_container_low
+    property color keyboardBackgroundColorWaffle: Appearance.highContrastEnabled ? "#000000" : Colors.surface
+    property color normalKeyBackgroundColor: Appearance.highContrastEnabled ? "#000000" : Colors.surface_container
+    property color highlightedKeyBackgroundColor: Appearance.highContrastEnabled ? "#000000" : Colors.surface_container
+    property color capsLockKeyAccentColor: Appearance.highContrastEnabled ? "#FFFFFF" : Colors.on_surface_variant
+    property color modeKeyAccentColor: Appearance.highContrastEnabled ? "#FFFFFF" : Colors.on_primary
+    property color keyTextColor: Appearance.highContrastEnabled ? "#FFFFFF" : Colors.on_surface_variant
+    property color keySmallTextColor: Appearance.highContrastEnabled ? "#FFFFFF" : Colors.on_surface_variant
+    property color popupBackgroundColor: Appearance.highContrastEnabled ? "#000000" : Colors.surface_container_high
+    property color popupBorderColor: isWaffleTheme ? popupBorderColorWaffle : Colors.surface_container_high
+    property color popupBorderColorWaffle: Appearance.highContrastEnabled ? "#1AEBFF" : Colors.shadow
+    property color popupTextColor: Appearance.highContrastEnabled ? "#FFFFFF" : Colors.on_surface_variant
+    property color popupHighlightColor: Appearance.highContrastEnabled ? "#1AEBFF" : Colors.secondary
+    property color selectionListTextColor: Appearance.highContrastEnabled ? "#FFFFFF" : Colors.on_surface_variant
+    property color selectionListSeparatorColor: Appearance.highContrastEnabled ? "#1AEBFF" : Colors.tertiary
     property color selectionListBackgroundColor: "transparent"
-    property color navigationHighlightColor: Colors.primary
+    property color navigationHighlightColor: Appearance.highContrastEnabled ? "#1AEBFF" : Colors.primary
     property real inputLocaleIndicatorOpacity: 1
     property Timer inputLocaleIndicatorHighlightTimer
     property Component component_settingsIcon
+    property color specialKeyActive: Appearance.highContrastEnabled ? "#1AEBFF" : Colors.primary
+    property color specialKeyActiveText: Appearance.highContrastEnabled ? "#000000" : Colors.on_primary
+    property color keyboardBackgroundBorderColor: Appearance.highContrastEnabled ? "#1AEBFF" : Colors.shadow
+    property color listBackground: Appearance.highContrastEnabled ? "#000000" : Colors.primary_container
+    property color listTextColor: Appearance.highContrastEnabled ? "#FFFFFF" : Colors.on_primary_container
+    property color listHighlighted: Appearance.highContrastEnabled ? "#1AEBFF" : Colors.primary
+    property color listTextHighlighted: Appearance.highContrastEnabled ? "#000000" : Colors.on_primary
 
     onInputLocaleChanged: {
         inputLocaleIndicatorOpacity = 1;
@@ -69,8 +80,8 @@ KeyboardStyle {
 
             Text {
                 anchors.centerIn: parent
-                text: "settings"
-                font.family: "Material Symbols Outlined"
+                text: isWaffleTheme ? String.fromCodePoint(59155) : "settings"
+                font.family: isWaffleTheme ? Appearance.waffleIconFont : Appearance.illogicalIconFont
                 font.pixelSize: 48 * keyIconScale
                 color: Colors.on_surface_variant
                 horizontalAlignment: Text.AlignHCenter
@@ -90,7 +101,9 @@ KeyboardStyle {
             anchors.fill: parent
             color: keyboardBackgroundColor
             opacity: 1
-            radius: 17
+            radius: isWaffleTheme ? 8 : 17
+            border.width: isWaffleTheme ? 1 : 0
+            border.color: keyboardBackgroundBorderColor
         }
 
     }
@@ -134,10 +147,12 @@ KeyboardStyle {
         Rectangle {
             id: keyBackground
 
-            radius: 12
+            radius: isWaffleTheme ? 4 : 12
             color: control && control.highlighted ? highlightedKeyBackgroundColor : normalKeyBackgroundColor
             anchors.fill: keyPanel
             anchors.margins: keyBackgroundMargin
+            border.width: isWaffleTheme ? 0.8 : 0
+            border.color: keyboardBackgroundBorderColor
             states: [
                 State {
                     when: control.smallText === "\u2699" && control.smallTextVisible
@@ -247,19 +262,21 @@ KeyboardStyle {
         Rectangle {
             id: backspaceKeyBackground
 
-            radius: 12
+            radius: isWaffleTheme ? 4 : 12
             color: control && control.highlighted ? highlightedKeyBackgroundColor : normalKeyBackgroundColor
             anchors.fill: backspaceKeyPanel
             anchors.margins: keyBackgroundMargin
+            border.width: isWaffleTheme ? 0.8 : 0
+            border.color: keyboardBackgroundBorderColor
 
             Text {
                 id: backspaceKeyIcon
 
                 anchors.centerIn: parent
-                text: "backspace"
-                font.family: "Material Symbols Outlined"
+                text: isWaffleTheme ? "\uf1B2" : "backspace"
+                font.family: isWaffleTheme ? Appearance.waffleIconFont : Appearance.illogicalIconFont
                 font.pixelSize: spacialKeyScale
-                color: Colors.on_surface_variant
+                color: keyTextColor
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
             }
@@ -307,19 +324,21 @@ KeyboardStyle {
         Rectangle {
             id: languageKeyBackground
 
-            radius: 12
+            radius: isWaffleTheme ? 4 : 12
             color: control && control.highlighted ? highlightedKeyBackgroundColor : normalKeyBackgroundColor
             anchors.fill: languageKeyPanel
             anchors.margins: keyBackgroundMargin
+            border.width: isWaffleTheme ? 0.8 : 0
+            border.color: keyboardBackgroundBorderColor
 
             Text {
                 id: languageKeyIcon
 
                 anchors.centerIn: parent
-                text: "language" // nome del simbolo Material
-                font.family: "Material Symbols Outlined"
+                text: isWaffleTheme ? "\ue6B2" : "language"
+                font.family: isWaffleTheme ? Appearance.waffleIconFont : Appearance.illogicalIconFont
                 font.pixelSize: spacialKeyScale
-                color: Colors.on_surface_variant
+                color: keyTextColor
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
             }
@@ -377,19 +396,21 @@ KeyboardStyle {
         Rectangle {
             id: enterKeyBackground
 
-            radius: 12
+            radius: isWaffleTheme ? 4 : 12
             color: control && control.highlighted ? highlightedKeyBackgroundColor : normalKeyBackgroundColor
             anchors.fill: enterKeyPanel
             anchors.margins: keyBackgroundMargin
+            border.width: isWaffleTheme ? 0.8 : 0
+            border.color: keyboardBackgroundBorderColor
 
             Text {
                 id: enterKeyTexy
 
                 anchors.centerIn: parent
-                text: "keyboard_return" // nome del simbolo Material
-                font.family: "Material Symbols Outlined"
+                text: isWaffleTheme ? "\uf068" : "keyboard_return" 
+                font.family: isWaffleTheme ? Appearance.waffleIconFont : Appearance.illogicalIconFont
                 font.pixelSize: spacialKeyScale
-                color: Colors.on_surface_variant
+                color: keyTextColor
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
             }
@@ -461,19 +482,21 @@ KeyboardStyle {
         Rectangle {
             id: hideKeyBackground
 
-            radius: 12
+            radius: isWaffleTheme ? 4 : 12
             color: control && control.highlighted ? highlightedKeyBackgroundColor : normalKeyBackgroundColor
             anchors.fill: hideKeyPanel
             anchors.margins: keyBackgroundMargin
+            border.width: isWaffleTheme ? 0.8 : 0
+            border.color: keyboardBackgroundBorderColor
 
             Text {
                 id: hideKeyText
 
                 anchors.centerIn: parent
-                text: "keyboard_hide"
-                font.family: "Material Symbols Outlined"
+                text: isWaffleTheme ? "\uf2A1" : "keyboard_hide"
+                font.family: isWaffleTheme ? Appearance.waffleIconFont : Appearance.illogicalIconFont
                 font.pixelSize: spacialKeyScale
-                color: Colors.on_surface_variant
+                color: keyTextColor
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
             }
@@ -528,10 +551,12 @@ KeyboardStyle {
         Rectangle {
             id: shiftKeyBackground
 
-            radius: 12
+            radius: isWaffleTheme ? 4 : 12
             color: control && control.highlighted ? highlightedKeyBackgroundColor : normalKeyBackgroundColor
             anchors.fill: shiftKeyPanel
             anchors.margins: keyBackgroundMargin
+            border.width: isWaffleTheme ? 0.8 : 0
+            border.color: keyboardBackgroundBorderColor
             states: [
                 State {
                     name: "capsLockActive"
@@ -539,12 +564,12 @@ KeyboardStyle {
 
                     PropertyChanges {
                         target: shiftKeyBackground
-                        color: Colors.primary
+                        color: specialKeyActive
                     }
 
                     PropertyChanges {
                         target: shiftText
-                        color: Colors.on_primary
+                        color: specialKeyActiveText
                     }
 
                 },
@@ -554,12 +579,12 @@ KeyboardStyle {
 
                     PropertyChanges {
                         target: shiftKeyBackground
-                        color: Colors.primary
+                        color: specialKeyActive
                     }
 
                     PropertyChanges {
                         target: shiftText
-                        color: Colors.on_primary
+                        color: specialKeyActiveText
                     }
 
                 }
@@ -569,10 +594,10 @@ KeyboardStyle {
                 id: shiftText
 
                 anchors.centerIn: parent
-                text: "shift"
-                font.family: "Material Symbols Outlined"
+                text: isWaffleTheme ? "\ue752" : "shift"
+                font.family: isWaffleTheme ? Appearance.waffleIconFont : Appearance.illogicalIconFont
                 font.pixelSize: spacialKeyScale
-                color: Colors.on_surface_variant
+                color: keyTextColor
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
             }
@@ -610,30 +635,25 @@ KeyboardStyle {
         Rectangle {
             id: spaceKeyBackground
 
-            radius: 12
+            radius: isWaffleTheme ? 4 : 12
             color: control && control.highlighted ? highlightedKeyBackgroundColor : normalKeyBackgroundColor
             anchors.fill: spaceKeyPanel
             anchors.margins: keyBackgroundMargin
+            border.width: isWaffleTheme ? 0.8 : 0
+            border.color: keyboardBackgroundBorderColor
 
             Text {
                 id: spaceKeyText
 
                 text: Qt.locale(InputContext.locale).nativeLanguageName
-                color: Colors.on_surface_variant
-                opacity: 0.4
+                color: Appearance.highContrastEnabled ? "#FFFFFF" : Colors.on_surface_variant
+                opacity: Appearance.highContrastEnabled ? 1 : 0.4
                 anchors.centerIn: parent
 
                 font {
                     family: fontFamily
                     weight: Font.Normal
                     pixelSize: 60 * scaleHint
-                }
-
-                Behavior on opacity {
-                    PropertyAnimation {
-                        duration: 250
-                    }
-
                 }
 
             }
@@ -681,10 +701,12 @@ KeyboardStyle {
         Rectangle {
             id: symbolKeyBackground
 
-            radius: 12
+            radius: isWaffleTheme ? 4 : 12
             color: control && control.highlighted ? highlightedKeyBackgroundColor : normalKeyBackgroundColor
             anchors.fill: symbolKeyPanel
             anchors.margins: keyBackgroundMargin
+            border.width: isWaffleTheme ? 0.8 : 0
+            border.color: keyboardBackgroundBorderColor
 
             Text {
                 id: symbolKeyText
@@ -748,10 +770,12 @@ KeyboardStyle {
         Rectangle {
             id: modeKeyBackground
 
-            radius: 12
+            radius: isWaffleTheme ? 4 : 12
             color: control && control.highlighted ? highlightedKeyBackgroundColor : normalKeyBackgroundColor
             anchors.fill: modeKeyPanel
             anchors.margins: keyBackgroundMargin
+            border.width: isWaffleTheme ? 0.8 : 0
+            border.color: keyboardBackgroundBorderColor
 
             Text {
                 id: modeKeyText
@@ -830,20 +854,21 @@ KeyboardStyle {
         Rectangle {
             id: hwrKeyBackground
 
-            radius: 12
+            radius: isWaffleTheme ? 4 : 12
             color: control && control.highlighted ? highlightedKeyBackgroundColor : normalKeyBackgroundColor
             anchors.fill: handwritingKeyPanel
             anchors.margins: keyBackgroundMargin
+            border.width: isWaffleTheme ? 0.8 : 0
+            border.color: keyboardBackgroundBorderColor
 
-            // Icona Material Symbol dinamica (handwriting ↔ text)
             Text {
                 id: hwrKeyIcon
 
                 anchors.centerIn: parent
                 text: keyboard.handwritingMode ? "edit_note" : "draw"
-                font.family: "Material Symbols Outlined"
+                font.family: isWaffleTheme ? Appearance.waffleIconFont : Appearance.illogicalIconFont
                 font.pixelSize: spacialKeyScale
-                color: Colors.on_surface_variant
+                color: keyTextColor
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
             }
@@ -872,7 +897,7 @@ KeyboardStyle {
 
             anchors.fill: parent
             color: popupBackgroundColor
-            radius: 12
+            radius: isWaffleTheme ? 4 : 12
 
             Text {
                 id: characterPreviewText
@@ -1022,7 +1047,7 @@ KeyboardStyle {
             PropertyChanges {
                 target: listItemText
                 opacity: 1
-                color: Colors.on_primary
+                color: specialKeyActiveText
             }
 
         }
@@ -1031,7 +1056,7 @@ KeyboardStyle {
 
     alternateKeysListHighlight: Rectangle {
         color: popupHighlightColor
-        radius: 12
+        radius: isWaffleTheme ? 4 : 12
     }
 
     alternateKeysListBackground: Item {
@@ -1042,11 +1067,11 @@ KeyboardStyle {
             y: -margin
             width: parent.width + 2 * margin
             height: parent.height + 2 * margin
-            radius: 12
+            radius: isWaffleTheme ? 1 : 12
             color: popupBackgroundColor
 
             border {
-                width: 0
+                width: isWaffleTheme ? 1 : 0
                 color: popupBorderColor
             }
 
@@ -1157,13 +1182,12 @@ KeyboardStyle {
         Rectangle {
             id: traceInputKeyPanelBackground
 
-            radius: 12
+            radius: isWaffleTheme ? 4 : 12
             color: normalKeyBackgroundColor
             anchors.fill: traceInputKeyPanel
             anchors.margins: keyBackgroundMargin
 
             Text {
-                // Fallthrough
 
                 id: hwrInputModeIndicator
 
@@ -1411,7 +1435,7 @@ KeyboardStyle {
             anchors.topMargin: 4 + languageNameTextMetrics.height / 3
             anchors.bottomMargin: anchors.topMargin - 3
             text: languageNameFormatter.elidedText
-            color: Appearance.listTextColor
+            color: listTextColor
             horizontalAlignment: Text.AlignHCenter
             opacity: 0.8
 
@@ -1458,7 +1482,7 @@ KeyboardStyle {
             PropertyChanges {
                 target: languageListLabel
                 opacity: 1
-                color: Appearance.listTextHighlighted
+                color: listTextHighlighted
             }
 
         }
@@ -1466,7 +1490,7 @@ KeyboardStyle {
     }
 
     languageListHighlight: Rectangle {
-        color: Appearance.listHighlighted
+        color: listHighlighted
         radius: 5
     }
 
@@ -1478,8 +1502,8 @@ KeyboardStyle {
             y: -backgroundPadding
             width: parent.width + 2 * backgroundPadding
             height: parent.height + 2 * backgroundPadding
-            color: Appearance.listBackground
-            radius: 12
+            color: listBackground
+            radius: isWaffleTheme ? 4 : 12
         }
 
     }
@@ -1509,8 +1533,8 @@ KeyboardStyle {
 
         Text {
             anchors.centerIn: parent
-            text: "drag_handle" // icona Material per il "grip" o selezione
-            font.family: "Material Symbols Outlined"
+            text: "drag_handle"
+            font.family: isWaffleTheme ? Appearance.waffleIconFont : Appearance.illogicalIconFont
             font.pixelSize: spacialKeyScale
             color: Colors.on_surface_variant
             horizontalAlignment: Text.AlignHCenter
@@ -1550,12 +1574,11 @@ KeyboardStyle {
         width: iconWidth + 2 * iconMargin
         height: iconHeight + 2 * iconMargin
 
-        // Icona Material Symbol al posto dell'SVG
         Text {
             id: functionIcon
 
             anchors.centerIn: parent
-            font.family: "Material Symbols Outlined"
+            font.family: isWaffleTheme ? Appearance.waffleIconFont : Appearance.illogicalIconFont
             font.pixelSize: 48 * keyIconScale
             color: Colors.on_surface_variant
             horizontalAlignment: Text.AlignHCenter
@@ -1563,13 +1586,13 @@ KeyboardStyle {
             text: {
                 switch (keyboardFunction) {
                 case QtVirtualKeyboard.KeyboardFunction.HideInputPanel:
-                    return "keyboard_hide"; // nascondi tastiera
+                    return "keyboard_hide"; 
                 case QtVirtualKeyboard.KeyboardFunction.ChangeLanguage:
-                    return "language"; // cambia lingua
+                    return "language"; 
                 case QtVirtualKeyboard.KeyboardFunction.ToggleHandwritingMode:
-                    return keyboard.handwritingMode ? "edit_note" : "draw"; // testo ↔ scrittura a mano
+                    return keyboard.handwritingMode ? "edit_note" : "draw"; 
                 default:
-                    return "help"; // fallback (opzionale)
+                    return "help"; 
                 }
             }
         }
@@ -1584,7 +1607,7 @@ KeyboardStyle {
             y: -backgroundMargin
             width: parent.width + 2 * backgroundMargin
             height: parent.height + 2 * backgroundMargin
-            radius: 12
+            radius: isWaffleTheme ? 4 : 12
             color: popupBackgroundColor
 
             border {
@@ -1598,7 +1621,7 @@ KeyboardStyle {
 
     functionPopupListHighlight: Rectangle {
         color: popupHighlightColor
-        radius: 12
+        radius: isWaffleTheme ? 4 : 12
     }
 
 }

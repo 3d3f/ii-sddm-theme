@@ -1,3 +1,4 @@
+import "Commons"
 // Config created by Keyitdev https://github.com/Keyitdev/sddm-astronaut-theme
 // Copyright (C) 2022-2025 Keyitdev
 // Distributed under the GPLv3+ License https://www.gnu.org/licenses/gpl-3.0.html
@@ -7,8 +8,6 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-
-import "Commons"
 
 Item {
     Layout.preferredHeight: Appearance.formRowHeight
@@ -42,13 +41,6 @@ Item {
         focus: true
         focusPolicy: Qt.TabFocus
 
-        FocusRing {
-            id: focusRing
-
-            target: virtualKeyboardButton
-            offset: 0
-        }
-
         MouseArea {
             anchors.fill: parent
             cursorShape: Qt.PointingHandCursor
@@ -59,14 +51,11 @@ Item {
             id: virtualKeyboardButtonText
 
             text: virtualKeyboardButton.checked ? "keyboard_hide" : "keyboard"
-            font.family: "Material Symbols Outlined"
+            font.family: Appearance.illogicalIconFont
             font.pixelSize: parent.height * 0.5
             color: {
                 if (virtualKeyboardButton.checked)
                     return Colors.on_primary_container;
-
-                if (virtualKeyboardButton.activeFocus)
-                    return Colors.primary;
 
                 return Colors.on_surface_variant;
             }

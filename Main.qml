@@ -2,14 +2,11 @@
 // Copyright (C) 2022-2025 Keyitdev
 // Distributed under the GPLv3+ License https://www.gnu.org/licenses/gpl-3.0.html
 // Modified by 3d3f for the "ii-sddm-theme" project (2025)
-// Enhanced with advanced screen management and error handling
-// Licensed under the GNU General Public License v3.0
-// Adapted from uiriansan SilentSDDM (https://github.com/uiriansan/SilentSDDM)
-// Modified by 3d3f for "ii-sddm-Theme" (2025)
-// See LICENSE in project root for full GPLv3 text
 
 import "."
+import "../"
 import "Components"
+import Qt5Compat.GraphicalEffects
 import QtMultimedia
 import QtQuick
 import QtQuick.Controls
@@ -20,196 +17,158 @@ import SddmComponents
 Pane {
     id: root
 
-    property variant screenGeometry: screenModel.geometry(screenModel.primary)
+    readonly property variant screenGeometry: screenModel.geometry(screenModel.primary)
 
     padding: 0
-    font.family: Appearance.font_family_main
     focus: true
-    height: screenGeometry.height
-    width: screenGeometry.width
+    anchors.fill: parent
     x: screenGeometry.x || 0
     y: screenGeometry.y || 0
 
     Item {
         id: sizeHelper
-
-        height: parent.height
-        width: parent.width
         anchors.fill: parent
-
-        Rectangle {
-            id: tintLayer
-
-            height: parent.height
-            width: parent.width
-            anchors.fill: parent
-            z: 2
-            color: config.DimBackgroundColor
-            opacity: config.DimBackground
-        }
-
-        LoginForm {
-            id: form
-
-            height: parent.height
-            width: parent.width
-            z: 10
-        }
-
-        Rectangle {
-            id: formBackground
-
-            anchors.fill: form
-            z: -1
-            color: "#000000"
-            visible: true
-            opacity: Settings.lock_blur_enable ? 0.3 : 1
-        }
-
-        Image {
-            id: backgroundPlaceholderImage
-
-            z: 10
-            source: config.BackgroundPlaceholder || ""
-            visible: false
-            cache: true
-        }
 
         AnimatedImage {
             id: backgroundImage
 
-            property bool isVideo: {
-                var bg = config.Background;
-                if (!bg || bg.toString().length === 0)
-                    return false;
-
-                var parts = bg.toString().split(".");
-                if (parts.length === 0)
-                    return false;
-
-                var ext = parts[parts.length - 1].toLowerCase();
-                return ["avi", "mp4", "mov", "mkv", "m4v", "webm"].indexOf(ext) !== -1;
+            readonly property bool isVideo: {
+                const bg = config.Background?.toString() || "";
+                if (!bg) return false;
+                const ext = bg.split(".").pop()?.toLowerCase() || "";
+                return ["avi", "mp4", "mov", "mkv", "m4v", "webm"].includes(ext);
             }
-            property bool displayColor: false
+            property bool showFallbackColor: false
 
-            height: parent.height
-            width: parent.width
-            anchors.left: undefined
-            anchors.right: undefined
+            anchors.fill: parent
             horizontalAlignment: Image.AlignHCenter
             verticalAlignment: Image.AlignVCenter
-            speed: config.BackgroundSpeed == "" ? 1 : config.BackgroundSpeed
-            paused: config.PauseBackground == "true" ? 1 : 0
             fillMode: Image.PreserveAspectCrop
+            speed: config.BackgroundSpeed || 1
+            paused: config.PauseBackground == "true"
             asynchronous: true
             cache: true
             clip: true
             mipmap: true
+            visible: true
+
             Component.onCompleted: {
                 if (isVideo) {
-                    if (config.BackgroundPlaceholder && config.BackgroundPlaceholder.length > 0)
-                        backgroundPlaceholderImage.visible = true;
-
                     player.source = Qt.resolvedUrl(config.Background);
                     player.play();
                 } else {
-                    backgroundImage.source = config.background || config.Background || "";
+                    source = config.background || config.Background || "";
                 }
             }
+
             onStatusChanged: {
-                if (status === Image.Error) {
-                    console.log("Background image failed to load:", source);
-                    if (source !== "" && !displayColor) {
-                        displayColor = true;
-                        console.log("Switching to fallback color background");
-                    }
-                }
-            }
-            Component.onDestruction: {
-                if (player) {
-                    player.stop();
-                    player.source = "";
+                if (status === Image.Error && !showFallbackColor) {
+                    console.log("Background load failed, using fallback");
+                    showFallbackColor = true;
                 }
             }
 
             Rectangle {
-                id: backgroundColor
-
                 anchors.fill: parent
                 color: config.DimBackgroundColor || "#000000"
-                visible: parent.displayColor || (player.playbackState !== MediaPlayer.PlayingState && parent.isVideo && config.BackgroundPlaceholder.length === 0)
+                visible: parent.showFallbackColor || 
+                        (player.playbackState !== MediaPlayer.PlayingState && 
+                         parent.isVideo && 
+                         !config.BackgroundPlaceholder)
+                z: -2
+            }
+
+            Image {
+                anchors.fill: parent
+                source: backgroundImage.isVideo ? (config.BackgroundPlaceholder || "") : ""
+                visible: source !== "" && player.playbackState !== MediaPlayer.PlayingState
+                cache: true
+                asynchronous: false
                 z: -1
             }
 
             MediaPlayer {
                 id: player
-
                 videoOutput: videoOutput
-                autoPlay: false
-                playbackRate: config.BackgroundSpeed == "" ? 1 : config.BackgroundSpeed
+                playbackRate: config.BackgroundSpeed || 1
                 loops: MediaPlayer.Infinite
-                onPlaybackStateChanged: {
-                    if (playbackState === MediaPlayer.PlayingState) {
-                        console.log("Video started playing");
-                        backgroundPlaceholderImage.visible = false;
-                    }
-                }
-                onErrorOccurred: function(error, errorString) {
+                
+                onErrorOccurred: (error, errorString) => {
                     if (error !== MediaPlayer.NoError) {
                         console.log("Video error:", errorString);
-                        if (!config.BackgroundPlaceholder || config.BackgroundPlaceholder.length === 0)
-                            backgroundImage.displayColor = true;
-
+                        if (!config.BackgroundPlaceholder)
+                            backgroundImage.showFallbackColor = true;
                     }
                 }
             }
 
             VideoOutput {
                 id: videoOutput
-
-                fillMode: VideoOutput.PreserveAspectCrop
                 anchors.fill: parent
+                fillMode: VideoOutput.PreserveAspectCrop
             }
+        }
 
+        Rectangle {
+            id: highContrastBackground
+            anchors.fill: parent
+            color: "black"
+            z: 0.5 
+            visible: Appearance.highContrastEnabled
+        }
+
+        GaussianBlur {
+            id: blur
+            anchors.fill: backgroundImage
+            source: backgroundImage
+            radius: {
+                if (Settings.panelFamily === "waffle")
+                    return (loginInterfaceLoader.item?.unlocked) ? 100 : 0;
+                return 100;
+            }
+            samples: radius * 2 + 1
+            
+            visible: !Appearance.highContrastEnabled && (
+                Settings.panelFamily === "waffle" ? radius > 0 
+                : (Settings.panelFamily === "ii" && Settings.lock_blur_enable)
+            )
         }
 
         MouseArea {
-            anchors.fill: backgroundImage
+            anchors.fill: parent
             onClicked: parent.forceActiveFocus()
         }
 
-        ShaderEffectSource {
-            id: blurMask
+        Loader {
+            id: loginInterfaceLoader
+            anchors.fill: parent
+            z: 2
+            sourceComponent: Settings.panelFamily === "waffle" 
+                ? waffleLoginInterface 
+                : iiLoginInterface
 
-            height: parent.height
-            width: form.width
-            anchors.centerIn: form
-            sourceItem: backgroundImage
-            sourceRect: Qt.rect(x, y, width, height)
-            visible: config.FullBlur == "true" || Settings.lock_blur_enable ? true : false
-        }
+            Component {
+                id: iiLoginInterface
+                IILoginInterface {
+                    anchors.fill: parent
+                }
+            }
 
-        MultiEffect {
-            id: blur
-
-            height: parent.height
-            width: (config.FullBlur == "true" && !Settings.lock_blur_enable && config.FormPosition != "center") ? parent.width - formBackground.width : config.FullBlur == "true" ? parent.width : form.width
-            anchors.centerIn: config.FullBlur == "true" ? backgroundImage : form
-            source: config.FullBlur == "true" ? backgroundImage : blurMask
-            blurEnabled: Settings.lock_blur_enable && !backgroundImage.displayColor
-            autoPaddingEnabled: false
-            blur: config.Blur == "" ? 2 : config.Blur
-            blurMax: config.BlurMax == "" ? 48 : config.BlurMax
-            visible: config.FullBlur == "true" || Settings.lock_blur_enable ? true : false
+            Component {
+                id: waffleLoginInterface
+                WaffleLoginInterface {
+                    anchors.fill: parent
+                }
+            }
         }
 
         Loader {
             id: screenCornersLoader
-
             anchors.fill: parent
-            active: config.ScreenCorners == "true"
+            active: config.ScreenCorners == "true" && !Appearance.highContrastEnabled 
             source: "Components/RoundCorner.qml"
-            z: 100
+            z: 10
+            
             onLoaded: {
                 item.cornerType = "inverted";
                 item.cornerHeight = 25;
@@ -218,17 +177,13 @@ Pane {
                 item.color = "black";
             }
         }
-
     }
 
-    Behavior on opacity {
-        enabled: config.EnableAnimations == "true"
-
-        NumberAnimation {
-            duration: 150
-            easing.type: Easing.InOutQuad
-        }
-
-    }
-
+    // Behavior on opacity {
+    //     enabled: animationsEnabled
+    //     NumberAnimation {
+    //         duration: 150
+    //         easing.type: Easing.InOutQuad
+    //     }
+    // }
 }

@@ -9,12 +9,18 @@ import QtQuick.VirtualKeyboard.Settings
 InputPanel {
     id: virtualKeyboard
 
+    property bool isWaffleTheme: Settings.panelFamily === "waffle"
     property bool activated: false
     property bool keyboardOpen: false
 
     anchors.horizontalCenter: parent.horizontalCenter
-    anchors.bottom: mainRow.bottom
-    anchors.bottomMargin: keyboardOpen ? Appearance.formRowBottomMargin + Appearance.formRowHeight : -300
+    anchors.bottom: isWaffleTheme ? parent.bottom : mainRow.bottom
+    anchors.bottomMargin: {
+        if (keyboardOpen)
+            return isWaffleTheme ? 30 : (Appearance.formRowBottomMargin + Appearance.formRowHeight);
+        else
+            return isWaffleTheme ? -height : -300;
+    }
     width: 750
     opacity: keyboardOpen ? 1 : 0
     active: keyboardOpen

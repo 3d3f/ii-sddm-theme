@@ -1,10 +1,9 @@
 // Adapted from end-4's Hyprland dotfiles (https://github.com/end-4/dots-hyprland)
 // Modified by 3d3f for "ii-sddm-theme" (2025)
 
+import "../"
 import Qt5Compat.GraphicalEffects
 import QtQuick
-import "../"
-
 
 Item {
     id: sessionLockedContainer
@@ -48,11 +47,13 @@ Item {
             Text {
                 id: lockIcon
 
-                font.family: "Material Symbols Outlined"
+                font.family: Appearance.illogicalIconFont
                 font.pixelSize: 20
                 text: "lock"
                 color: textColor
                 anchors.verticalCenter: parent.verticalCenter
+                style: Text.Raised
+                styleColor: Colors_shadow
             }
 
             Text {
@@ -61,14 +62,18 @@ Item {
                 wrapMode: Text.WordWrap
                 horizontalAlignment: Text.AlignLeft
                 verticalAlignment: Text.AlignVCenter
-                renderType: Text.NativeRendering
+                renderType: Text.QtRendering
                 color: textColor
-                font.family: Appearance.font_family_expressive
+                font.family: Appearance.font_family_main
                 font.pixelSize: 17
-                font.weight: Font.Normal
                 style: Text.Raised
                 styleColor: Colors.colShadow
                 anchors.verticalCenter: parent.verticalCenter
+                Component.onCompleted: {
+                    font.variableAxes = {
+                        "wght": Font.Normal
+                    };
+                }
             }
 
         }

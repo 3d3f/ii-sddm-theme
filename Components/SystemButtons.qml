@@ -73,12 +73,6 @@ Item {
                             return "transparent";
                         }
 
-                        FocusRing {
-                            id: focusRing
-
-                            target: btn
-                            offset: 0
-                        }
 
                         Rectangle {
                             id: ripple
@@ -124,11 +118,9 @@ Item {
                         horizontalAlignment: Text.AlignHCenter
                         verticalAlignment: Text.AlignVCenter
                         text: modelData[0]
-                        font.family: "Material Symbols Outlined"
+                        font.family: Appearance.illogicalIconFont
                         font.pixelSize: 24
                         color: {
-                            if (btn.activeFocus)
-                                return Colors.primary;
 
                             if (btn.down)
                                 return Colors.on_surface_variant;

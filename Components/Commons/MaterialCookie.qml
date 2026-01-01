@@ -13,15 +13,10 @@ Item {
     property int sides: 12  
     property int implicitSize: 100
     property alias color: shapeCanvas.color
-
-    ///////////
-
     property real amplitude: implicitSize / 50
     property int renderPoints: 360
     property bool constantlyRotate: Settings.background_widgets_clock_cookie_constantlyRotate
     property real shapeRotation: 0
-    ////////////
-
 
     implicitWidth: implicitSize
     implicitHeight: implicitSize

@@ -1,45 +1,56 @@
 import QtQuick
-
 import "../"
 
 Text {
     id: root
+    
+    // Animation properties
     property bool animateChange: false
     property real animationDistanceX: 0
     property real animationDistanceY: 6
-
-    renderType: Text.NativeRendering
-    verticalAlignment: Text.AlignVCenter
+    
+    // Font properties
     property var defaultFont: Appearance.font_family_main
+    
+    // Rendering settings
+    renderType: Text.QtRendering
+    verticalAlignment: Text.AlignVCenter
     
     font {
         hintingPreference: Font.PreferDefaultHinting
         family: defaultFont
         pixelSize: 15
     }
+    
+    // Default colors
     color: Colors.on_surface
     linkColor: Colors.primary
-
+    
+    // Animation component
     component Anim: NumberAnimation {
         target: root
         duration: 300 / 2
         easing.type: Easing.BezierSpline
         easing.bezierCurve: Appearance.animation.elementMoveFast.bezierCurve
     }
-
+    
+    // Initialize original position
     Component.onCompleted: {
         textAnimationBehavior.originalX = root.x;
         textAnimationBehavior.originalY = root.y;
     }
-
+    
+    // Text change animation behavior
     Behavior on text {
         id: textAnimationBehavior
         property real originalX: root.x
         property real originalY: root.y
         enabled: root.animateChange
-
+        
         SequentialAnimation {
             alwaysRunToEnd: true
+            
+            // Fade out and slide away
             ParallelAnimation {
                 Anim {
                     property: "x"
@@ -57,7 +68,11 @@ Text {
                     easing.type: Easing.InSine
                 }
             }
-            PropertyAction {} // Tie the text update to this point (we don't want it to happen during the first slide+fade)
+            
+            // Update text at this point
+            PropertyAction {}
+            
+            // Reset position for slide in
             PropertyAction {
                 target: root
                 property: "x"
@@ -68,6 +83,8 @@ Text {
                 property: "y"
                 value: textAnimationBehavior.originalY + root.animationDistanceY
             }
+            
+            // Fade in and slide back
             ParallelAnimation {
                 Anim {
                     property: "x"

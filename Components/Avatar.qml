@@ -10,11 +10,12 @@ Item {
 
     property string source: ""
     property color iconColor: "black"
-    property int size: 24 
+    property int size: 24
     property string userName: ""
 
     width: size
     height: size
+
     Image {
         id: userImage
 
@@ -39,36 +40,34 @@ Item {
     }
 
     MultiEffect {
-        id: avatarEffect 
+        id: avatarEffect
 
         anchors.fill: userImage
         source: userImage
         maskEnabled: true
         maskSource: mask
-
-  
-        visible: userImage.status === Image.Ready &&
-                 avatarRoot.userName !== "" &&
-                 avatarRoot.source.toString().indexOf(avatarRoot.userName) !== -1
-        maskSpreadAtMin: 1.0
-        maskThresholdMax: 1.0
+        visible: userImage.status === Image.Ready && avatarRoot.userName !== "" && avatarRoot.source.toString().indexOf(avatarRoot.userName) !== -1
+        maskSpreadAtMin: 1
+        maskThresholdMax: 1
         maskThresholdMin: 0.5
     }
+
     Text {
         property real fill: 1
         property real truncatedFill: Math.round(fill * 100) / 100
 
         anchors.centerIn: parent
         visible: !avatarEffect.visible
-        font.family: "Material Symbols Outlined"
+        font.family: Appearance.illogicalIconFont
         font.pixelSize: size
         text: "account_circle"
         color: avatarRoot.iconColor
-        renderType: fill !== 0 ? Text.CurveRendering : Text.NativeRendering
+        renderType: fill !== 0 ? Text.CurveRendering : Text.QtRendering
         font.hintingPreference: Font.PreferFullHinting
         font.variableAxes: {
             "FILL": truncatedFill,
             "opsz": size
         }
     }
+
 }

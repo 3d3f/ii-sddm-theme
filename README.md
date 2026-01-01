@@ -6,7 +6,7 @@ https://github.com/user-attachments/assets/2af3d30f-c288-4a32-a9bf-4bec4c31490e
 
 [ii-sddm-theme](https://github.com/3d3f/ii-sddm-theme) is a custom theme for the [SDDM](https://github.com/sddm/sddm/) display manager that tries to replicate the lockscreen aesthetic and settings of [illogical impulse](https://github.com/end-4/dots-hyprland). It can be used with ii dotfiles, with [Matugen](https://github.com/InioX/matugen) only, or as a standalone theme.
 
-I only have a basic understanding of Qt QML, so this project is a learning experience—piecing together code from various sources while figuring things out along the way.
+I only have a basic understanding of Qt QML, so this project is a learning experience and mostly about together code from various sources while figuring things out along the way. I also get a ton of help from llm models.
 
 **Currently supports:** Arch Linux + Hyprland, to be extended
 
@@ -17,6 +17,7 @@ I only have a basic understanding of Qt QML, so this project is a learning exper
 This theme wouldn't exist without these projects:
 
 - **[illogical impulse](https://github.com/end-4/dots-hyprland)** – All the widgets code, the design and the creativeness comes from [end-4](https://github.com/end-4) repo
+- **[win11-sddm-theme](https://github.com/syrupderg/win11-sddm-theme)** – An amazing win 11 sddm theme, which i used for the waffle implementation
 - **[sddm-astronaut-theme](https://github.com/Keyitdev/sddm-astronaut-theme)** – The starting point for this theme
 - **[SilentSDDM](https://github.com/uiriansan/SilentSDDM)** – Custom virtual keyboard implementation and various improvements
 - **[matugen](https://github.com/InioX/matugen)** - Material You color palette generator
@@ -76,7 +77,7 @@ Follow these steps for a manual installation. You'll choose your integration met
 
 **Arch Linux:**
 ```bash
-yay -S --needed sddm qt6-svg qt6-virtualkeyboard qt6-multimedia-ffmpeg otf-space-grotesk ttf-gabarito-git ttf-material-symbols-variable-git ttf-readex-pro ttf-rubik-vf
+yay -S --needed sddm qt6-svg qt6-virtualkeyboard qt6-multimedia-ffmpeg
 ```
 
 ### 2. Clone the Repository
@@ -121,6 +122,7 @@ chmod +x ~/.config/ii-sddm-theme/generate_settings.py
 ```bash
 sudo mkdir -p /usr/share/sddm/themes/ii-sddm-theme
 sudo cp -rf . /usr/share/sddm/themes/ii-sddm-theme/
+sudo cp /usr/share/sddm/themes/ii-sddm-theme/fonts/ii-sddm-theme-fonts /usr/share/fonts/
 ```
 
 #### 6. Configure SDDM
@@ -337,6 +339,7 @@ To completely remove the theme from your system, follow these steps:
 ### 1. Remove Theme Files
 ```bash
 sudo rm -rf /usr/share/sddm/themes/ii-sddm-theme
+sudo rm -rf /usr/share/fonts/ii-sddm-theme-fonts
 ```
 
 ### 2. Remove Configuration Files
@@ -376,12 +379,7 @@ Current=
 Or set `Current=` to your preferred theme (you can check available themes in `/usr/share/sddm/themes`).
 
 ### 6. Optional: Remove Dependencies
-If you no longer need the theme-specific fonts and packages (they are used in ii):
-```bash
-yay -Rns otf-space-grotesk ttf-gabarito-git ttf-material-symbols-variable-git ttf-readex-pro ttf-rubik-vf
-```
-
-> **Note:** 
+ 
 > Only remove `sddm`, `qt6-svg`, `qt6-virtualkeyboard`, and `qt6-multimedia-ffmpeg` if you're certain no other applications depend on them.
 
 ### 7. Reboot

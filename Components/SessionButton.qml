@@ -1,243 +1,195 @@
-// Config created by Keyitdev https://github.com/Keyitdev/sddm-astronaut-theme
-// Copyright (C) 2022-2025 Keyitdev
-// Distributed under the GPLv3+ License https://www.gnu.org/licenses/gpl-3.0.html
-// Modified by 3d3f for the "ii-sddm-theme" project (2025)
-// Licensed under the GNU General Public License v3.0
-// See: https://www.gnu.org/licenses/gpl-3.0.txt
-
+import "../"
+import "Commons"
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import SddmComponents as SDDM
 
-import "Commons"
+FocusScope {
+    id: sessionIsland
 
-Item {
-    id: sessionButton
+    property alias selectedSession: sessionList.currentIndex
+    property bool isOpen: false
+    // Dimensioni dinamiche
+    readonly property int baseWidth: Math.ceil(Math.max(140, Math.min(300, selectedTextMetrics.advanceWidth + 50)))
+    readonly property int expandedWidth: Math.ceil(Math.max(200, Math.min(300, longestTextMetrics.advanceWidth + 70)))
+    readonly property int baseHeight: Appearance.formRowHeight
+    readonly property int expandedHeight: Math.ceil(Math.min(sessionList.contentHeight + 16, 450))
 
-    property alias selectedSession: selectSession.currentIndex
-    property alias exposeSession: selectSession
+    implicitWidth: isOpen ? expandedWidth : baseWidth
+    implicitHeight: isOpen ? expandedHeight : baseHeight
+    Layout.alignment: Qt.AlignBottom
+    focusPolicy: Qt.ClickFocus
+    
+    onActiveFocusChanged: {
+        if (!activeFocus)
+            isOpen = false;
+    }
 
-    Layout.preferredHeight: Appearance.formRowHeight
-    Layout.preferredWidth: selectSession.animatedWidth
-    Layout.alignment: Qt.AlignVCenter
+    Keys.onPressed: function(event) {
+        if (!isOpen) {
+            if (event.key === Qt.Key_Up || event.key === Qt.Key_Down || event.key === Qt.Key_Return) {
+                isOpen = true;
+                event.accepted = true;
+            }
+        } else {
+            if (event.key === Qt.Key_Escape || event.key === Qt.Key_Return) {
+                isOpen = false;
+                event.accepted = true;
+            }
+        }
+    }
 
-    ComboBox {
-        id: selectSession
+    TextMetrics {
+        id: selectedTextMetrics
 
-        property real animatedWidth: Math.max(contentRow.implicitWidth + 40, 120)
+        font.family: Appearance.font_family_main
+        font.pixelSize: Appearance.font_size_normal
+        text: sessionList.currentItem ? sessionList.currentItem.sessionName : ""
+    }
 
-        model: sessionModel
-        currentIndex: model.lastIndex
-        textRole: "name"
-        hoverEnabled: true
-        indicator: null
+    TextMetrics {
+        id: longestTextMetrics
+
+        font.family: Appearance.font_family_main
+        font.pixelSize: Appearance.font_size_normal
+        text: {
+            var longest = "";
+            for (var i = 0; i < sessionModel.count; i++) {
+                var name = sessionModel.data(sessionModel.index(i, 0), 257);
+                if (name && name.length > longest.length)
+                    longest = name;
+
+            }
+            return longest;
+        }
+    }
+
+    Rectangle {
+        id: animatedContainer
+
+        anchors.fill: parent
+        antialiasing: true
         clip: true
-        focusPolicy: Qt.TabFocus
-        implicitHeight: Appearance.formRowHeight
-        implicitWidth: animatedWidth
-        Keys.onPressed: function(event) {
-            if (event.key === Qt.Key_Up || event.key === Qt.Key_Down) {
-                if (!popup.opened)
-                    popup.open();
+        color: isOpen ? Colors.primary_container : (sessionButton.hovered ? Colors.surface_container_highest : Colors.surface_container)
+        radius: isOpen ? 16 : Appearance.rounding_full
 
+        Button {
+            id: sessionButton
+
+            anchors.fill: parent
+            hoverEnabled: true
+            focusPolicy: Qt.NoFocus
+            opacity: isOpen ? 0 : 1
+            visible: opacity > 0
+            enabled: !isOpen
+            onClicked: {
+                sessionIsland.forceActiveFocus();
+                isOpen = true;
             }
-        }
 
-        Behavior on animatedWidth {
-            NumberAnimation {
-                duration: 300
-                easing.type: Easing.InOutCubic
-            }
-
-        }
-
-        background: Item {
-            Rectangle {
-                id: sessionRect
-
-                anchors.fill: parent
-                radius: Appearance.rounding_full
-                color: selectSession.hovered ? Colors.surface_container_highest : Colors.surface_container
-
+            background: Item {
                 MouseArea {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
-                    onClicked: {
-                        if (popupHandler.opened)
-                            popupHandler.close();
-                        else
-                            popupHandler.open();
-                    }
-                }
-
-                Behavior on color {
-                    ColorAnimation {
-                        duration: 200
-                        easing.type: Easing.InOutQuad
-                    }
-
+                    acceptedButtons: Qt.NoButton
                 }
 
             }
 
-            FocusRing {
-                id: focusRing
-
-                target: selectSession
-                offset: 0
-            }
-
-        }
-
-        contentItem: RowLayout {
-            id: contentRow
-
-            spacing: 8
-            anchors.fill: parent
-            clip: true
-
-            Text {
-                id: labelText
-
-                text: selectSession.displayText
-                Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+            contentItem: Text {
+                text: selectedTextMetrics.text
+                font: selectedTextMetrics.font
+                color: Colors.on_surface_variant
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
-                color: {
-                    if (selectSession.activeFocus)
-                        return Colors.primary;
-
-                    return Colors.on_surface_variant;
-                }
-                font.family: Appearance.font_family_main
-                font.pixelSize: Appearance.font_size_normal
                 elide: Text.ElideRight
             }
 
         }
 
-        popup: Popup {
-            id: popupHandler
+        ListView {
+            id: sessionList
 
-            property real targetHeight: Math.min(listView.contentHeight, 300) + topPadding + bottomPadding
-
-            implicitWidth: selectSession.implicitWidth
-            implicitHeight: 0
+            anchors.fill: parent
+            anchors.margins: 8
+            model: sessionModel
             clip: true
-            padding: 5
+            spacing: 8
+            focusPolicy: Qt.NoFocus
+            focus: isOpen
+            opacity: isOpen ? 1 : 0
+            visible: opacity > 0
+            currentIndex: sessionModel.lastIndex
 
-            contentItem: ListView {
-                id: listView
+            delegate: Item {
+                id: sessionEntry
 
-                implicitHeight: Math.min(contentHeight, 300)
-                model: selectSession.model
-                currentIndex: selectSession.highlightedIndex
-                spacing: Appearance.listItemSpacing
-                opacity: popupHandler.opacity
+                readonly property string sessionName: name
 
-                ScrollIndicator.vertical: ScrollIndicator {
+                width: sessionList.width
+                height: 48
+
+                Rectangle {
+                    anchors.fill: parent
+                    radius: 12
+                    color: sessionList.currentIndex === index ? Colors.primary : (ma.containsMouse ? Colors.colPrimaryContainerHover : Colors.primary_container)
                 }
 
-                delegate: ItemDelegate {
-                    implicitWidth: listView.width
-                    implicitHeight: Math.max(48, textContent.implicitHeight + 16)
+                Text {
+                    anchors.centerIn: parent
+                    width: parent.width - 20
+                    text: name
+                    font.family: Appearance.font_family_main
+                    font.pixelSize: Appearance.font_size_normal
+                    elide: Text.ElideRight
+                    horizontalAlignment: Text.AlignHCenter
+                    color: sessionList.currentIndex === index ? Colors.on_primary : Colors.on_primary_container
+                }
+
+                MouseArea {
+                    id: ma
+
+                    anchors.fill: parent
                     hoverEnabled: true
-                    padding: 8
-                    leftPadding: 12
-                    rightPadding: 12
-                    ToolTip.visible: false
                     onClicked: {
-                        selectSession.currentIndex = index;
-                        popupHandler.close();
+                        sessionList.currentIndex = index;
+                        isOpen = false;
                     }
-
-                    contentItem: Text {
-                        id: textContent
-
-                        text: model.name
-                        font.family: Appearance.font_family_main
-                        font.pixelSize: Appearance.font_size_normal
-                        verticalAlignment: Text.AlignVCenter
-                        horizontalAlignment: Text.AlignHCenter
-                        elide: Text.ElideRight
-                        color: selectSession.highlightedIndex === index ? Colors.on_primary : (parent.hovered ? Colors.on_primary_container : Colors.on_primary_container)
-                    }
-
-                    background: Rectangle {
-                        color: selectSession.highlightedIndex === index ? Colors.primary : (parent.hovered ? Colors.colPrimaryContainerHover : Colors.primary_container)
-                        radius: 12
-
-                        Behavior on color {
-                            ColorAnimation {
-                                duration: 200
-                                easing.type: Easing.InOutQuad
-                            }
-
-                        }
-
-                    }
-
                 }
 
             }
 
-            background: Rectangle {
-                radius: 16
-                color: Colors.primary_container
-                layer.enabled: true
+        }
+
+        Behavior on color {
+            ColorAnimation {
+                duration: 200
             }
 
-            enter: Transition {
-                SequentialAnimation {
-                    ParallelAnimation {
-                        NumberAnimation {
-                            target: popupHandler
-                            property: "implicitHeight"
-                            from: 70
-                            to: popupHandler.targetHeight
-                            duration: 300
-                            easing.type: Easing.OutCubic
-                        }
+        }
 
-                        NumberAnimation {
-                            target: popupHandler
-                            property: "opacity"
-                            from: 0
-                            to: 1
-                            duration: 200
-                            easing.type: Easing.OutQuad
-                        }
-
-                    }
-
-                }
-
+        Behavior on radius {
+            NumberAnimation {
+                duration: 250
             }
 
-            exit: Transition {
-                ParallelAnimation {
-                    NumberAnimation {
-                        target: popupHandler
-                        property: "implicitHeight"
-                        from: popupHandler.implicitHeight
-                        to: 0
-                        duration: 200
-                        easing.type: Easing.InCubic
-                    }
+        }
 
-                    NumberAnimation {
-                        target: popupHandler
-                        property: "opacity"
-                        from: 1
-                        to: 0
-                        duration: 150
-                        easing.type: Easing.InQuad
-                    }
+    }
 
-                }
+    Behavior on implicitWidth {
+        NumberAnimation {
+            duration: 250
+            easing.type: Easing.InOutQuad
+        }
 
-            }
+    }
 
+    Behavior on implicitHeight {
+        NumberAnimation {
+            duration: 250
+            easing.type: Easing.InOutQuad
         }
 
     }

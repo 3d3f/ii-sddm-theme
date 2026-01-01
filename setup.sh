@@ -8,6 +8,10 @@ set -euo pipefail
 readonly THEME_NAME="ii-sddm-theme"
 readonly THEME_REPO="https://github.com/3d3f/ii-sddm-theme" 
 
+# Local fonts directory
+readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+readonly LOCAL_FONTS_SRC="$SCRIPT_DIR/fonts/ii-sddm-theme-fonts"
+
 # SDDM directory
 readonly SDDM_THEMES_DIR="/usr/share/sddm/themes"
 readonly SDDM_THEME_DEST="$SDDM_THEMES_DIR/$THEME_NAME"
@@ -38,15 +42,6 @@ readonly MATUGEN_CONF="$HOME/.config/matugen/config.toml"
 
 # ii configuration files
 readonly II_CONFIG_JSON="$HOME/.config/illogical-impulse/config.json"
-
-# Font dependencies (AUR)
-readonly AUR_FONTS=(
-  otf-space-grotesk
-  ttf-gabarito-git
-  ttf-material-symbols-variable-git
-  ttf-readex-pro
-  ttf-rubik-vf
-)
 
 # === COLORS ===
 readonly RED='\033[0;31m'
@@ -106,8 +101,27 @@ get_aur_helper() {
         info "AUR helper 'paru' found."
         echo "paru"
     else
-        error "No AUR helper (yay or paru) found. Please install one to proceed with font installation."
+        error "No AUR helper (yay or paru) found. Please install one to proceed."
         exit 1
+    fi
+}
+
+# === GIT CHECK ===
+check_git() {
+    step "Checking for git"
+    if ! command -v git &>/dev/null; then
+        warn "git is not installed."
+        read -p "git is required to clone the theme. Do you want to install it now? (y/n): " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+            sudo pacman -S --needed git
+            info "git installed successfully."
+        else
+            error "git is required. Installation aborted."
+            exit 1
+        fi
+    else
+        info "git is already installed."
     fi
 }
 
@@ -125,6 +139,20 @@ check_sddm_installation() {
         fi
     else
         info "SDDM is already installed."
+    fi
+}
+
+# === FONT INSTALLATION (LOCAL COPY) ===
+install_fonts() {
+    step "Installing fonts from local folder"
+    if [[ -d "$LOCAL_FONTS_SRC" ]]; then
+        info "Copying fonts from $LOCAL_FONTS_SRC to /usr/share/fonts/..."
+        sudo cp -r "$LOCAL_FONTS_SRC" /usr/share/fonts/
+        info "Updating font cache..."
+        sudo fc-cache -f
+        info "Fonts installed successfully."
+    else
+        warn "Local font folder not found at $LOCAL_FONTS_SRC. Skipping font copy."
     fi
 }
 
@@ -226,11 +254,9 @@ install_deps() {
     step "Installing dependencies"
     info "Installing official Arch repositories packages..."
     sudo pacman -S --needed sddm qt6-svg qt6-virtualkeyboard qt6-multimedia-ffmpeg
-
-    local aur_helper
-    aur_helper=$(get_aur_helper | tail -n 1)
-    info "Using AUR helper: $aur_helper. Installing AUR font packages..."
-    "$aur_helper" -S --needed "${AUR_FONTS[@]}" --noconfirm 
+    
+    # Install local fonts
+    install_fonts
     
     info "Dependencies installed successfully"
 }
@@ -493,6 +519,7 @@ main() {
     introduction
     check_requirements
     get_aur_helper 
+    check_git      
     check_sddm_installation 
     
     # Clone the repository FIRST to make source files available

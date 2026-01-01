@@ -37,8 +37,6 @@ Item {
     }
 
     RowLayout {
-        //clip: true
-
         id: inputRow
 
         anchors.fill: parent
@@ -83,6 +81,9 @@ Item {
                     color: usePasswordChars ? "transparent" : Colors.colOnLayer1
                     focus: true
                     focusPolicy: Qt.StrongFocus
+                    Component.onCompleted: {
+                        password.forceActiveFocus();
+                    }
                     echoMode: TextInput.Password
                     placeholderText: loginContainer.loginFailed ? "Incorrect password" : "Enter password"
                     placeholderTextColor: loginContainer.loginFailed ? Colors.error : Qt.rgba(Colors.on_surface.r, Colors.on_surface.g, Colors.on_surface.b, 0.6)
@@ -117,7 +118,7 @@ Item {
                         if (!loginContainer.isLoggingIn && (config.AllowEmptyPassword == "true" || password.text !== "")) {
                             loginContainer.isLoggingIn = true;
                             const user = config.AllowUppercaseLettersInUsernames == "false" ? selectUser.currentText.toLowerCase() : selectUser.currentText;
-                            sddm.login(user, password.text, sessionSelect.selectedSession);
+                            sddm.login(user, password.text, inputContainer.selectedSession);
                         }
                     }
                     KeyNavigation.right: loginButton
@@ -284,13 +285,13 @@ Item {
                         property int iconSize: 24
 
                         anchors.centerIn: parent
-                        font.family: "Material Symbols Outlined"
+                        font.family: Appearance.illogicalIconFont
                         color: Colors.on_error
                         text: "keyboard_capslock"
                         font.pixelSize: iconSize
                         opacity: 0
                         scale: 0.8
-                        renderType: fill !== 0 ? Text.CurveRendering : Text.NativeRendering
+                        renderType: fill !== 0 ? Text.CurveRendering : Text.QtRendering
                         font.hintingPreference: Font.PreferFullHinting
                         font.variableAxes: {
                             "FILL": truncatedFill,
@@ -332,7 +333,7 @@ Item {
                     if (!loginContainer.isLoggingIn) {
                         loginContainer.isLoggingIn = true;
                         const user = config.AllowUppercaseLettersInUsernames == "false" ? selectUser.currentText.toLowerCase() : selectUser.currentText;
-                        sddm.login(user, password.text, sessionSelect.selectedSession);
+                        sddm.login(user, password.text, inputContainer.selectedSession);
                     }
                 }
 
@@ -357,7 +358,7 @@ Item {
                         id: arrowIcon
 
                         anchors.centerIn: parent
-                        font.family: "Material Symbols Outlined"
+                        font.family: Appearance.illogicalIconFont
                         font.pixelSize: 22
                         color: loginButton.enabled ? Colors.on_primary : Colors.on_surface_variant
                         text: "arrow_right_alt"

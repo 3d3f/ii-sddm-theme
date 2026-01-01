@@ -20,7 +20,7 @@ StyledFlickable {
         MaterialShape.Shape.Diamond,
         MaterialShape.Shape.ClamShell,
         MaterialShape.Shape.Pentagon,
-        MaterialShape.Shape.Circle // Can add more
+        MaterialShape.Shape.Circle 
     ]
     
     visible: usePasswordChars

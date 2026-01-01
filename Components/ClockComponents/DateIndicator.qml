@@ -84,6 +84,7 @@ Item {
                 implicitHeight: 30
                 radius: Appearance.rounding_small
                 color: Colors.mix(Colors.secondary_container, Colors.primary, 0.5)
+
                 StyledText {
                     anchors.centerIn: parent
                     text: root.dayOfMonth
@@ -129,8 +130,13 @@ Item {
                     text: root.dateText.charAt(index)
 
                     font {
-                        family: Appearance.font_family_title
+                        family: Appearance.font_family_main
                         pixelSize: 30
+                        Component.onCompleted: {
+                            font.variableAxes = {
+                                "wght": 350
+                            };
+                        }
                     }
 
                 }

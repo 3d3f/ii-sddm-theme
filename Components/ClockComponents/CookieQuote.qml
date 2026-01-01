@@ -49,7 +49,7 @@ Item {
             Text {
                 id: quoteIcon
 
-                font.family: "Material Symbols Outlined"
+                font.family: Appearance.illogicalIconFont
                 font.pixelSize: 22
                 text: "format_quote"
                 color: textColor
@@ -61,7 +61,7 @@ Item {
                 wrapMode: Text.WordWrap
                 horizontalAlignment: Text.AlignLeft
                 verticalAlignment: Text.AlignVCenter
-                renderType: Text.NativeRendering
+                renderType: Text.QtRendering
                 color: textColor
                 font.family: "Readex Pro"
                 font.pixelSize: 17

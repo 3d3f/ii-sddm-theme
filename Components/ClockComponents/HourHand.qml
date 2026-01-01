@@ -1,14 +1,14 @@
+import "../"
 // Adapted from end-4's Hyprland dotfiles (https://github.com/end-4/dots-hyprland)
 // Modified by 3d3f for "ii-sddm-theme" (2025)
 import QtQuick
-import "../"
 
 Item {
     id: root
 
     required property int clockHour
     required property int clockMinute
-    property string style: Settings.background_widgets_clock_cookie_hourHandStyle // "fill", "hollow", "classic", "hide"
+    property string style: Settings.background_widgets_clock_cookie_hourHandStyle
     property color color: "black"
     property real handLength: 72
     property real handWidth: 20
