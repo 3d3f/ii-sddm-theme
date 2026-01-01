@@ -53,7 +53,7 @@ Item {
                 color: textColor
                 anchors.verticalCenter: parent.verticalCenter
                 style: Text.Raised
-                styleColor: Colors_shadow
+                styleColor: Colors.shadow
             }
 
             Text {

@@ -81,7 +81,6 @@ Item {
             id: systemButtons
 
             Layout.alignment: Qt.AlignBottom
-            exposedSession: input.exposeSession
         }
 
         VirtualKeyboardButton {

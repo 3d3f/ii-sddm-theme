@@ -16,7 +16,6 @@ Item {
     property var reboot: ["restart_alt", config.TranslateReboot || textConstants.reboot, sddm.canReboot]
     property var suspend: ["dark_mode", config.TranslateSuspend || textConstants.suspend, sddm.canSuspend]
     property var hibernate: ["bedtime", config.TranslateHibernate || textConstants.hibernate, sddm.canHibernate]
-    property ComboBox exposedSession
 
     Layout.preferredHeight: Appearance.formRowHeight
     implicitWidth: buttonRow.implicitWidth + 10
