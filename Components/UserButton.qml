@@ -1,3 +1,10 @@
+// Config created by Keyitdev https://github.com/Keyitdev/sddm-astronaut-theme
+// Copyright (C) 2022-2025 Keyitdev
+// Distributed under the GPLv3+ License https://www.gnu.org/licenses/gpl-3.0.html
+// Modified by 3d3f for the "ii-sddm-theme" project (2025)
+// Licensed under the GNU General Public License v3.0
+// See: https://www.gnu.org/licenses/gpl-3.0.txt
+
 import "Commons"
 import QtQuick
 import QtQuick.Controls
@@ -10,15 +17,13 @@ FocusScope {
     property bool isOpen: false
     readonly property string currentText: selectedTextMetrics.text
     readonly property int baseHeight: 42
-    readonly property int popupHeight: Math.min(400, userList.contentHeight + 8)
+    readonly property int popupHeight: Math.min(400, userList.contentHeight + 12)
     readonly property int baseWidth: Math.ceil(selectedTextMetrics.advanceWidth + 60)
     readonly property int expandedWidth: Math.ceil(Math.max(100, longestTextMetrics.advanceWidth + 90))
 
     focusPolicy: Qt.ClickFocus 
     implicitWidth: isOpen ? expandedWidth : baseWidth
-    // IMPORTANTE: Teniamo l'altezza fissa a 42 per permettere l'espansione verso l'alto
     implicitHeight: baseHeight 
-
     onActiveFocusChanged: {
         if (!activeFocus)
             isOpen = false;
@@ -37,8 +42,6 @@ FocusScope {
             }
         }
     }
-
-    // RIMOSSO: Il MouseArea outsideCloser per la chiusura esterna
 
     TextMetrics {
         id: selectedTextMetrics
@@ -64,20 +67,14 @@ FocusScope {
 
     Rectangle {
         id: animatedContainer
-        // Ancorato al fondo del FocusScope (che è alto 42)
         anchors.bottom: parent.bottom 
         width: parent.width
-        // Quando cresce in altezza, può crescere solo verso l'alto perché il fondo è bloccato
         height: isOpen ? userIsland.popupHeight : userIsland.baseHeight
         antialiasing: true
         clip: true
         color: isOpen ? Colors.primary_container : (userButton.hovered ? Colors.surface_container_highest : Colors.surface_container)
         radius: isOpen ? 16 : Appearance.rounding_full
-        
-        z: 1 // Sopra gli elementi sottostanti
 
-        // Questo MouseArea impedisce i click di "passare attraverso" il container
-        // mantenendo il focus sul componente quando si clicca all'interno del popup
         MouseArea {
             anchors.fill: parent
             enabled: isOpen
@@ -88,7 +85,7 @@ FocusScope {
             id: userButton
             anchors.left: parent.left
             anchors.right: parent.right
-            anchors.bottom: parent.bottom // Sempre al fondo
+            anchors.bottom: parent.bottom 
             height: userIsland.baseHeight
             hoverEnabled: true
             focusPolicy: Qt.NoFocus
@@ -130,55 +127,65 @@ FocusScope {
             }
         }
 
-        ListView {
-            id: userList
+ListView {
+    id: userList
+    anchors.fill: parent
+    anchors.margins: 6 
+    model: userModel
+    clip: true
+    spacing: 6 
+    focusPolicy: Qt.NoFocus
+    focus: isOpen
+    opacity: isOpen ? 1 : 0
+    visible: opacity > 0
+    currentIndex: userModel.lastIndex
+
+    delegate: Item {
+        id: userEntry
+        width: userList.width
+        height: 42
+
+        Rectangle {
             anchors.fill: parent
-            anchors.topMargin: 4
-            anchors.bottomMargin: 0
-            anchors.leftMargin: 2
-            anchors.rightMargin: 2
-            model: userModel
-            spacing: 2
-            focusPolicy: Qt.NoFocus
-            focus: isOpen
-            opacity: isOpen ? 1 : 0
-            visible: opacity > 0
-            currentIndex: userModel.lastIndex
+            radius: 12
+            color: userList.currentIndex === index 
+                   ? Colors.primary 
+                   : (ma.containsMouse ? Colors.colPrimaryContainerHover : Colors.primary_container)
+        }
 
-            delegate: ItemDelegate {
-                id: userDelegate
-                width: userList.width
-                height: 48
-                highlighted: ListView.isCurrentItem
-                focusPolicy: Qt.NoFocus
-                onClicked: {
-                    userList.currentIndex = index;
-                    isOpen = false;
-                }
+        Row {
+            anchors.centerIn: parent
+            spacing: 8
+            
+            Avatar {
+                size: 26
+                anchors.verticalCenter: parent.verticalCenter
+                userName: model.name
+                source: model.icon || ""
+                iconColor: userList.currentIndex === index ? Colors.on_primary : Colors.on_primary_container
+            }
 
-                contentItem: RowLayout {
-                    spacing: 8
-                    Avatar {
-                        size: 26
-                        Layout.leftMargin: 4
-                        userName: model.name
-                        source: model.icon || ""
-                        iconColor: userDelegate.highlighted ? Colors.on_primary : Colors.on_primary_container
-                    }
-                    Text {
-                        text: model.name
-                        font: selectedTextMetrics.font
-                        color: userDelegate.highlighted ? Colors.on_primary : Colors.on_primary_container
-                        verticalAlignment: Text.AlignVCenter
-                    }
-                }
-
-                background: Rectangle {
-                    color: userDelegate.highlighted ? Colors.primary : (userDelegate.hovered ? Colors.colPrimaryContainerHover : Colors.primary_container)
-                    radius: 12
-                }
+            Text {
+                text: model.name
+                anchors.verticalCenter: parent.verticalCenter
+                font.family: Appearance.font_family_main
+                font.pixelSize: Appearance.font_size_normal
+                elide: Text.ElideRight
+                color: userList.currentIndex === index ? Colors.on_primary : Colors.on_primary_container
             }
         }
+
+        MouseArea {
+            id: ma
+            anchors.fill: parent
+            hoverEnabled: true
+            onClicked: {
+                userList.currentIndex = index;
+                isOpen = false;
+            }
+        }
+    }
+}
 
         Behavior on height {
             NumberAnimation { duration: 250; easing.type: Easing.InOutQuad }

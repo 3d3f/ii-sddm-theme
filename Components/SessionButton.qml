@@ -1,3 +1,10 @@
+// Config created by Keyitdev https://github.com/Keyitdev/sddm-astronaut-theme
+// Copyright (C) 2022-2025 Keyitdev
+// Distributed under the GPLv3+ License https://www.gnu.org/licenses/gpl-3.0.html
+// Modified by 3d3f for the "ii-sddm-theme" project (2025)
+// Licensed under the GNU General Public License v3.0
+// See: https://www.gnu.org/licenses/gpl-3.0.txt
+
 import "../"
 import "Commons"
 import QtQuick
@@ -10,7 +17,7 @@ FocusScope {
 
     property alias selectedSession: sessionList.currentIndex
     property bool isOpen: false
-    // Dimensioni dinamiche
+
     readonly property int baseWidth: Math.ceil(Math.max(140, Math.min(300, selectedTextMetrics.advanceWidth + 50)))
     readonly property int expandedWidth: Math.ceil(Math.max(200, Math.min(300, longestTextMetrics.advanceWidth + 70)))
     readonly property int baseHeight: Appearance.formRowHeight
