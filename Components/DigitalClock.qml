@@ -12,8 +12,8 @@ Item {
     property bool background_showQuote: Settings.background_widgets_clock_quote_enable
     readonly property bool sessionLockedActive: config.ShowSessionLockedText === "true" && config.SessionLockedText !== ""
     readonly property bool quoteActive: background_showQuote && background_quote !== ""
-    readonly property int quoteTopMargin: 6
-    readonly property int sessionLockedTopMargin: 14
+    readonly property int quoteTopMargin: 2
+    readonly property int sessionLockedTopMargin: 13
     readonly property bool isVertical: Settings.background_widgets_clock_digital_vertical
     readonly property bool showDate: Settings.background_widgets_clock_digital_showDate
     readonly property bool animateChange: Settings.background_widgets_clock_digital_animateChange
@@ -45,6 +45,7 @@ Item {
             id: timeLabel
 
             text: clock.isVertical ? TimeManager.formattedTime.split(":")[0].padStart(2, "0") : TimeManager.formattedTime
+            Layout.fillWidth: true
             Layout.alignment: Qt.AlignHCenter
             animateChange: clock.animateChange
             animationDistanceY: 6
@@ -91,18 +92,21 @@ Item {
 
             visible: clock.showDate
             text: TimeManager.formattedDateShort
-            Layout.topMargin: clock.isVertical ? -20 : 4
+            Layout.topMargin: clock.isVertical ? -20 : -18
             Layout.alignment: Qt.AlignHCenter
             animateChange: false
-            defaultFont: Appearance.font_family_main
+            defaultFont: Appearance.font_family_expressive
             font.pixelSize: 20
             color: Colors.primary_fixed_dim
             horizontalAlignment: Text.AlignHCenter
-            Component.onCompleted: {
+            style: Text.Raised
+            styleColor: Colors.colShadow
+                        Component.onCompleted: {
                 font.variableAxes = {
                     "wght": 350
                 };
             }
+        
         }
 
         Loader {
@@ -115,14 +119,14 @@ Item {
             sourceComponent: StyledText {
                 text: clock.background_quote
                 animateChange: false
-                defaultFont: Appearance.font_family_main
-                font.pixelSize: 16
+                defaultFont: Appearance.font_family_expressive
+                font.pixelSize: Appearance.font.pixelSize.normal
                 font.italic: false
                 color: Colors.primary_fixed_dim
                 horizontalAlignment: Text.AlignHCenter
                 style: Text.Raised
                 styleColor: Colors.colShadow
-                Component.onCompleted: {
+                            Component.onCompleted: {
                     font.variableAxes = {
                         "wght": 350
                     };
@@ -148,14 +152,16 @@ Item {
                     anchors.centerIn: parent
                     spacing: 4
 
-                    Text {
+                    MaterialSymbol {
                         id: lockIcon
 
                         font.family: Appearance.illogicalIconFont
-                        font.pixelSize: 20
+                        iconSize: Appearance.font.pixelSize.huge
                         text: "lock"
                         color: Colors.primary_fixed_dim
                         anchors.verticalCenter: parent.verticalCenter
+                        style: Text.Raised
+                        styleColor: Colors.colShadow
                     }
 
                     StyledText {
@@ -163,14 +169,15 @@ Item {
 
                         text: config.SessionLockedText
                         animateChange: false
-                        wrapMode: Text.WordWrap
                         horizontalAlignment: Text.AlignLeft
                         verticalAlignment: Text.AlignVCenter
                         color: Colors.primary_fixed_dim
-                        defaultFont: Appearance.font_family_main
-                        font.pixelSize: 17
+                        defaultFont: Appearance.font_family_expressive
+                        font.pixelSize: Appearance.font.pixelSize.large
                         anchors.verticalCenter: parent.verticalCenter
-                        Component.onCompleted: {
+                        style: Text.Raised
+                        styleColor: Colors.colShadow
+                                            Component.onCompleted: {
                             font.variableAxes = {
                                 "wght": Font.Normal
                             };

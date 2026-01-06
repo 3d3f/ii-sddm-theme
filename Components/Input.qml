@@ -33,7 +33,7 @@ RowLayout {
 
             anchors.fill: parent
             color: Colors.surface_container
-            radius: Appearance.rounding_full
+            radius: Appearance.rounding.full
         }
 
         RowLayout {

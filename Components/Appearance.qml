@@ -11,12 +11,8 @@ QtObject {
     property string waffleFont: "Noto Sans"
     property string waffleIconFont: "FluentSystemIcons-Regular"
     property string animfont: "Segoe Boot Semilight"
-    
-    property real font_size_normal: 15
-    property real font_size_small: 12
+
     property real date_square_size: 64
-    property real rounding_full: 1000
-    property real rounding_small: 12
     property real waffleButtonIconFontSize: 20
     property real wafflePopupTextFont: 13
 

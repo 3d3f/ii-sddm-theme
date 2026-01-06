@@ -46,14 +46,14 @@ FocusScope {
     TextMetrics {
         id: selectedTextMetrics
         font.family: Appearance.font_family_main
-        font.pixelSize: Appearance.font_size_normal
+        font.pixelSize: Appearance.font.pixelSize.normal
         text: userModel.data(userModel.index(userList.currentIndex, 0), 257) || ""
     }
 
     TextMetrics {
         id: longestTextMetrics
         font.family: Appearance.font_family_main
-        font.pixelSize: Appearance.font_size_normal
+        font.pixelSize: Appearance.font.pixelSize.normal
         text: {
             var longest = "";
             for (var i = 0; i < userModel.count; i++) {
@@ -73,7 +73,7 @@ FocusScope {
         antialiasing: true
         clip: true
         color: isOpen ? Colors.primary_container : (userButton.hovered ? Colors.surface_container_highest : Colors.surface_container)
-        radius: isOpen ? 16 : Appearance.rounding_full
+        radius: isOpen ? 16 : Appearance.rounding.full
 
         MouseArea {
             anchors.fill: parent
@@ -169,7 +169,7 @@ ListView {
                 text: model.name
                 anchors.verticalCenter: parent.verticalCenter
                 font.family: Appearance.font_family_main
-                font.pixelSize: Appearance.font_size_normal
+                font.pixelSize: Appearance.font.pixelSize.normal
                 elide: Text.ElideRight
                 color: userList.currentIndex === index ? Colors.on_primary : Colors.on_primary_container
             }

@@ -33,7 +33,7 @@ Item {
 
         anchors.fill: parent
         color: Colors.surface_container
-        radius: Appearance.rounding_full
+        radius: Appearance.rounding.full
     }
 
     RowLayout {
@@ -55,7 +55,7 @@ Item {
                 anchors.fill: parent
                 anchors.margins: 8
                 color: Colors.surface_container_low
-                radius: Appearance.rounding_full
+                radius: Appearance.rounding.full
                 clip: true
 
                 Text {
@@ -68,7 +68,7 @@ Item {
                     text: loginContainer.loginFailed ? "Incorrect password" : "Enter password"
                     color: loginContainer.loginFailed ? Colors.error : Qt.rgba(Colors.on_surface.r, Colors.on_surface.g, Colors.on_surface.b, 0.6)
                     font.family: Appearance.font_family_main
-                    font.pixelSize: Appearance.font_size_normal
+                    font.pixelSize: Appearance.font.pixelSize.normal
                 }
 
                 TextField {
@@ -88,7 +88,7 @@ Item {
                     placeholderText: loginContainer.loginFailed ? "Incorrect password" : "Enter password"
                     placeholderTextColor: loginContainer.loginFailed ? Colors.error : Qt.rgba(Colors.on_surface.r, Colors.on_surface.g, Colors.on_surface.b, 0.6)
                     font.family: Appearance.font_family_main
-                    font.pixelSize: Appearance.font_size_normal
+                    font.pixelSize: Appearance.font.pixelSize.normal
                     cursorVisible: !usePasswordChars //it has no effect on sddm, only in test mode,hidden with opacity
                     opacity: usePasswordChars ? 0 : 1
                     selectByMouse: true
@@ -127,7 +127,7 @@ Item {
                         id: fieldRect
 
                         color: Colors.colLayer1
-                        radius: Appearance.rounding_full
+                        radius: Appearance.rounding.full
                     }
 
                 }

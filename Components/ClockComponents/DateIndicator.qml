@@ -82,7 +82,7 @@ Item {
                 anchors.horizontalCenterOffset: 85
                 implicitWidth: 45
                 implicitHeight: 30
-                radius: Appearance.rounding_small
+                radius: Appearance.rounding.small
                 color: Colors.mix(Colors.secondary_container, Colors.primary, 0.5)
 
                 StyledText {

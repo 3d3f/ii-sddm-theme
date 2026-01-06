@@ -51,7 +51,7 @@ FocusScope {
         id: selectedTextMetrics
 
         font.family: Appearance.font_family_main
-        font.pixelSize: Appearance.font_size_normal
+        font.pixelSize: Appearance.font.pixelSize.normal
         text: sessionList.currentItem ? sessionList.currentItem.sessionName : ""
     }
 
@@ -59,7 +59,7 @@ FocusScope {
         id: longestTextMetrics
 
         font.family: Appearance.font_family_main
-        font.pixelSize: Appearance.font_size_normal
+        font.pixelSize: Appearance.font.pixelSize.normal
         text: {
             var longest = "";
             for (var i = 0; i < sessionModel.count; i++) {
@@ -79,7 +79,7 @@ FocusScope {
         antialiasing: true
         clip: true
         color: isOpen ? Colors.primary_container : (sessionButton.hovered ? Colors.surface_container_highest : Colors.surface_container)
-        radius: isOpen ? 16 : Appearance.rounding_full
+        radius: isOpen ? 16 : Appearance.rounding.full
 
         Button {
             id: sessionButton
@@ -148,7 +148,7 @@ FocusScope {
                     width: parent.width - 20
                     text: name
                     font.family: Appearance.font_family_main
-                    font.pixelSize: Appearance.font_size_normal
+                    font.pixelSize: Appearance.font.pixelSize.normal
                     elide: Text.ElideRight
                     horizontalAlignment: Text.AlignHCenter
                     color: sessionList.currentIndex === index ? Colors.on_primary : Colors.on_primary_container
