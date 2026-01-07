@@ -1,6 +1,7 @@
 import QtQuick
 pragma Singleton
 
+// Don't edit this file or the script won't pick up the right background
 // {{image}}
 QtObject {
     property real contentTransparency: 0.57
@@ -55,7 +56,7 @@ QtObject {
     property color tertiary_fixed: "{{colors.tertiary_fixed.default.hex}}"
     property color tertiary_fixed_dim: "{{colors.tertiary_fixed_dim.default.hex}}"
     property color colSubtext: outline
-    property color colLayer0: mix(transparentize(background, backgroundTransparency), primary 0.99)
+    property color colLayer0: mix(transparentize(background, backgroundTransparency), primary, 0.99)
     property color colOnLayer0: on_background
     property color colLayer0Hover: transparentize(mix(colLayer0, colOnLayer0, 0.9), contentTransparency)
     property color colLayer0Active: transparentize(mix(colLayer0, colOnLayer0, 0.8), contentTransparency)
