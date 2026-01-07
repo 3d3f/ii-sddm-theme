@@ -153,25 +153,29 @@ ListView {
                    : (ma.containsMouse ? Colors.colPrimaryContainerHover : Colors.primary_container)
         }
 
-        Row {
-            anchors.centerIn: parent
-            spacing: 8
+        RowLayout {
+            anchors.fill: parent
+            spacing: 0
             
             Avatar {
                 size: 26
-                anchors.verticalCenter: parent.verticalCenter
                 userName: model.name
                 source: model.icon || ""
                 iconColor: userList.currentIndex === index ? Colors.on_primary : Colors.on_primary_container
+                Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
+                Layout.leftMargin: 10
+
             }
 
             Text {
                 text: model.name
-                anchors.verticalCenter: parent.verticalCenter
                 font.family: Appearance.font_family_main
                 font.pixelSize: Appearance.font.pixelSize.normal
                 elide: Text.ElideRight
                 color: userList.currentIndex === index ? Colors.on_primary : Colors.on_primary_container
+                Layout.fillWidth: true
+                Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
+                Layout.leftMargin: 10
             }
         }
 
