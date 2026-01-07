@@ -3,7 +3,7 @@ pragma Singleton
 
 // This file will be replaced by settings generated through the script
 QtObject {
-    property string panelFamily: "ii"
+    property string panelFamily: "ii" // "ii", "waffle"
     property string time_format: "h:mm ap" // "hh:mm","h:mm ap","h:mm AP"
     property string background_widgets_clock_styleLocked: "digital" // "none", "digital", "cookie"
     property real background_widgets_clock_digital_font_roundness: 1.45 
