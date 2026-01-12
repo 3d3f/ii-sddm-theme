@@ -167,7 +167,7 @@ FocusScope {
                         font.family: Appearance.waffleFont
                         font.pixelSize: 16
                         font.weight: Font.Bold
-                        color: isSelected ? Appearance.dynamicButtonIcon : Appearance.dynamicPopupText
+                        color: isSelected ? Appearance.dynamicListSelectedBackgroundText : Appearance.dynamicPopupText
                         Layout.preferredWidth: 32
                         leftPadding: 5
                     }
@@ -180,7 +180,7 @@ FocusScope {
                             text: modelData.longName
                             font.family: Appearance.waffleFont
                             font.pixelSize: Appearance.wafflePopupTextFont
-                            color: isSelected ? Appearance.dynamicButtonIcon : Appearance.dynamicPopupText
+                            color: isSelected ? Appearance.dynamicListSelectedBackgroundText : Appearance.dynamicPopupText
                             elide: Text.ElideRight
                             Layout.fillWidth: true
                         }
@@ -189,7 +189,7 @@ FocusScope {
                             text: "Keyboard"
                             font.family: Appearance.waffleFont
                             font.pixelSize: Appearance.wafflePopupTextFont           
-                            color: isSelected ? Appearance.dynamicButtonIcon : Appearance.dynamicPopupText
+                            color: isSelected ? Appearance.dynamicListSelectedBackgroundText : Appearance.dynamicPopupText
                             opacity: Appearance.highContrastEnabled ? 1 : 0.7
                             Layout.fillWidth: true
                         }

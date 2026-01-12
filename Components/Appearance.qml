@@ -42,6 +42,8 @@ QtObject {
     property color dynamicButtonBackground: highContrastEnabled ? "#1AEBFF" : Colors.transparentize("#FFFFFF", 0.9)
     property color dynamicButtonIcon: highContrastEnabled ? "#000000" : "#FFFFFF"
     property color dynamicListSelectedBackground: highContrastEnabled ? "#1AEBFF" : Colors.primary_container
+    property color dynamicListSelectedBackgroundText: highContrastEnabled ? "#000000" : Colors.on_primary_container
+
 
     readonly property QtObject colors: QtObject {
         property color colOnSecondaryContainer: Colors.on_secondary_container || Colors.on_surface
