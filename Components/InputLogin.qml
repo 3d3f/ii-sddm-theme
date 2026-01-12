@@ -11,6 +11,7 @@ import QtQml.Models
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import Qt5Compat.GraphicalEffects // Necessario per l'effetto di ritaglio arrotondato
 
 Item {
     id: loginContainer
@@ -30,7 +31,6 @@ Item {
 
     Rectangle {
         id: sharedBackground
-
         anchors.fill: parent
         color: Colors.surface_container
         radius: Appearance.rounding.full
@@ -38,82 +38,77 @@ Item {
 
     RowLayout {
         id: inputRow
-
         anchors.fill: parent
         spacing: 6
 
         Item {
             id: passwordField
-
             implicitHeight: parent.height
             implicitWidth: 219
             Layout.rightMargin: -Layout.leftMargin
 
             Rectangle {
                 id: fieldBackground
-
                 anchors.fill: parent
                 anchors.margins: 8
                 color: Colors.surface_container_low
                 radius: Appearance.rounding.full
-                clip: true
+                
+                // CLIP ARROTONDATO: Questo permette alla password di sparire seguendo il radius
+                layer.enabled: true
+                layer.effect: OpacityMask {
+                    maskSource: Rectangle {
+                        width: fieldBackground.width
+                        height: fieldBackground.height
+                        radius: fieldBackground.radius
+                    }
+                }
 
                 Text {
                     id: customPlaceholder
-
                     visible: usePasswordChars && password.text.length === 0
                     anchors.fill: parent
-                    anchors.leftMargin: 10.7
+                    anchors.leftMargin: 10
                     verticalAlignment: Text.AlignVCenter
                     text: loginContainer.loginFailed ? "Incorrect password" : "Enter password"
                     color: loginContainer.loginFailed ? Colors.error : Qt.rgba(Colors.on_surface.r, Colors.on_surface.g, Colors.on_surface.b, 0.6)
                     font.family: Appearance.font_family_main
-                    font.pixelSize: Appearance.font.pixelSize.normal
+                    font.pixelSize: Appearance.font.pixelSize.small
                 }
 
                 TextField {
                     id: password
-
                     anchors.fill: parent
-                    anchors.margins: 0
-                    anchors.rightMargin: 3
                     anchors.leftMargin: 3
+                    anchors.rightMargin: 3
                     color: usePasswordChars ? "transparent" : Colors.colOnLayer1
                     focus: true
                     focusPolicy: Qt.StrongFocus
-                    Component.onCompleted: {
-                        password.forceActiveFocus();
-                    }
+                    Component.onCompleted: password.forceActiveFocus()
                     echoMode: TextInput.Password
                     placeholderText: loginContainer.loginFailed ? "Incorrect password" : "Enter password"
                     placeholderTextColor: loginContainer.loginFailed ? Colors.error : Qt.rgba(Colors.on_surface.r, Colors.on_surface.g, Colors.on_surface.b, 0.6)
                     font.family: Appearance.font_family_main
                     font.pixelSize: Appearance.font.pixelSize.normal
-                    cursorVisible: !usePasswordChars //it has no effect on sddm, only in test mode,hidden with opacity
+                    cursorVisible: !usePasswordChars
                     opacity: usePasswordChars ? 0 : 1
-                    selectByMouse: true
-                    selectionColor: Colors.primary_container
-                    selectedTextColor: Colors.on_primary_container
                     enabled: !loginContainer.isLoggingIn
+                    
                     onTextChanged: {
-                        if (loginContainer.loginFailed && text.length > 0)
-                            loginContainer.loginFailed = false;
-
-                        if (!usePasswordChars)
-                            return ;
+                        if (loginContainer.loginFailed && text.length > 0) loginContainer.loginFailed = false;
+                        if (!usePasswordChars) return;
 
                         var currentLength = passwordCharsModel.count;
                         var newLength = text.length;
                         if (newLength > currentLength) {
                             for (var i = currentLength; i < newLength; i++) {
-                                passwordCharsModel.append({
-                                    "index": i
-                                });
+                                passwordCharsModel.append({"index": i});
                             }
                         } else if (newLength < currentLength) {
-                            while (passwordCharsModel.count > newLength)passwordCharsModel.remove(passwordCharsModel.count - 1)
+                            while (passwordCharsModel.count > newLength) passwordCharsModel.remove(passwordCharsModel.count - 1);
                         }
                     }
+                    
                     onAccepted: {
                         if (!loginContainer.isLoggingIn && (config.AllowEmptyPassword == "true" || password.text !== "")) {
                             loginContainer.isLoggingIn = true;
@@ -121,92 +116,35 @@ Item {
                             sddm.login(user, password.text, inputContainer.selectedSession);
                         }
                     }
-                    KeyNavigation.right: loginButton
 
                     background: Rectangle {
                         id: fieldRect
-
                         color: Colors.colLayer1
                         radius: Appearance.rounding.full
                     }
+                }
 
+                PasswordChars {
+                    id: passwordDisplay
+                    passwordModel: passwordCharsModel
+                    usePasswordChars: loginContainer.usePasswordChars
+                    customShapeSequence: loginContainer.customShapeSequence
+                    cursorPosition: password.cursorPosition
+                    
+                    anchors {
+                        fill: parent
+                        leftMargin: 4
+                        rightMargin: -4
+                    }
                 }
 
                 SequentialAnimation {
                     id: wrongPasswordShakeAnim
-
-                    NumberAnimation {
-                        target: passwordField
-                        property: "Layout.leftMargin"
-                        to: -30
-                        duration: 50
-                    }
-
-                    NumberAnimation {
-                        target: passwordField
-                        property: "Layout.leftMargin"
-                        to: 30
-                        duration: 50
-                    }
-
-                    NumberAnimation {
-                        target: passwordField
-                        property: "Layout.leftMargin"
-                        to: -15
-                        duration: 40
-                    }
-
-                    NumberAnimation {
-                        target: passwordField
-                        property: "Layout.leftMargin"
-                        to: 15
-                        duration: 40
-                    }
-
-                    NumberAnimation {
-                        target: passwordField
-                        property: "Layout.leftMargin"
-                        to: 0
-                        duration: 30
-                    }
-
-                }
-
-                Rectangle {
-                    id: customCursor
-
-                    visible: password.activeFocus && usePasswordChars && password.text.length === 0
-                    color: Qt.rgba(Colors.on_surface.r, Colors.on_surface.g, Colors.on_surface.b, 0.6)
-                    width: 2
-                    height: 19
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.verticalCenterOffset: 0
-                    anchors.left: password.left
-                    anchors.leftMargin: 8
-                    enabled: false
-
-                    Behavior on opacity {
-                        NumberAnimation {
-                            duration: Appearance.animation.elementMoveFast.duration
-                            easing.type: Appearance.animation.elementMoveFast.type
-                            easing.bezierCurve: Appearance.animation.elementMoveFast.bezierCurve
-                        }
-
-                    }
-
-                }
-
-                PasswordChars {
-                    passwordModel: passwordCharsModel
-                    usePasswordChars: loginContainer.usePasswordChars
-                    customShapeSequence: loginContainer.customShapeSequence
-
-                    anchors {
-                        fill: parent
-                        leftMargin: 10
-                        rightMargin: 10
-                    }
-
+                    NumberAnimation { target: passwordField; property: "Layout.leftMargin"; to: -30; duration: 50 }
+                    NumberAnimation { target: passwordField; property: "Layout.leftMargin"; to: 30; duration: 50 }
+                    NumberAnimation { target: passwordField; property: "Layout.leftMargin"; to: -15; duration: 40 }
+                    NumberAnimation { target: passwordField; property: "Layout.leftMargin"; to: 15; duration: 40 }
+                    NumberAnimation { target: passwordField; property: "Layout.leftMargin"; to: 0; duration: 30 }
                 }
 
                 Item {
@@ -530,17 +468,6 @@ Item {
 
         }
 
-    }
-
-    Timer {
-        id: cursorBlinkTimer
-
-        interval: 530
-        running: password.activeFocus && loginContainer.usePasswordChars && password.text.length === 0
-        repeat: true
-        onTriggered: {
-            customCursor.opacity = (customCursor.opacity === 0) ? 1 : 0;
-        }
     }
 
     Connections {
