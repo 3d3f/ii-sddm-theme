@@ -7,6 +7,7 @@ QtObject {
     property string panelFamily: "ii" // "ii", "waffle"
     property string time_format: "h:mm ap" // "hh:mm","h:mm ap","h:mm AP"
     property string background_widgets_clock_styleLocked: "digital" // "none", "digital", "cookie"
+    property string background_widgets_clock_digital_font_family: "Google Sans Flex" // "any font installed systemwide"
     property real background_widgets_clock_digital_font_roundness: 1.45 
     property real background_widgets_clock_digital_font_size: 90
     property real background_widgets_clock_digital_font_weight: 350

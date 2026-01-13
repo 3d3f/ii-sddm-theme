@@ -11,7 +11,7 @@ import QtQml.Models
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import Qt5Compat.GraphicalEffects // Necessario per l'effetto di ritaglio arrotondato
+import Qt5Compat.GraphicalEffects 
 
 Item {
     id: loginContainer
@@ -54,7 +54,7 @@ Item {
                 color: Colors.surface_container_low
                 radius: Appearance.rounding.full
                 
-                // CLIP ARROTONDATO: Questo permette alla password di sparire seguendo il radius
+                // overkill way to make password chars respect the radius
                 layer.enabled: true
                 layer.effect: OpacityMask {
                     maskSource: Rectangle {
