@@ -6,7 +6,7 @@ https://github.com/user-attachments/assets/a03e1628-3438-4390-bb62-96e18308a8e0
 
 [ii-sddm-theme](https://github.com/3d3f/ii-sddm-theme) is a custom theme for the [SDDM](https://github.com/sddm/sddm/) display manager that tries to replicate the lockscreen aesthetic and settings of [illogical impulse](https://github.com/end-4/dots-hyprland). It can be used with ii dotfiles, with [Matugen](https://github.com/InioX/matugen) only, or as a standalone theme.
 
-I only have a basic understanding of Qt QML, so this project is a learning experience and mostly about together code from various sources while figuring things out along the way. I also get a ton of help from ai models.
+I only have a basic understanding of Qt QML, so this project is a learning experience and mostly about piecing together code from various sources while figuring things out along the way. I also get a ton of help from ai models.
 
 **Currently supports:** Arch Linux + Hyprland, to be extended
 
@@ -207,22 +207,30 @@ sudo cp -rf . /usr/share/sddm/themes/ii-sddm-theme/
 
 #### 6. Configure SDDM
 
-Edit `/etc/sddm.conf` with your preferred editor:
+Create the configuration directory (if it doesn't exist):
 
 ```bash
-sudo nano /etc/sddm.conf
+sudo mkdir -p /etc/sddm.conf.d
 ```
 
-Ensure these options are set:
+Create the theme configuration file:
+
+```bash
+sudo nano /etc/sddm.conf.d/ii-sddm-theme.conf
+```
+
+Paste the following content:
 
 ```ini
 [General]
 InputMethod=qtvirtualkeyboard
-GreeterEnvironment=QML2_IMPORT_PATH=/usr/share/sddm/themes/ii-sddm-theme/Components/,QT_IM_MODULE=qtvirtualkeyboard
+GreeterEnvironment=QML2_IMPORT_PATH=/usr/share/sddm/themes/ii-sddm.theme/Components/,QT_IM_MODULE=qtvirtualkeyboard
 
 [Theme]
-Current=ii-sddm-theme
+Current=ii-sddm.theme
 ```
+
+Save and exit (Ctrl+O, Enter, Ctrl+X).
 
 #### 7. Configure Matugen
 
@@ -360,23 +368,11 @@ nano ~/.config/matugen/config.toml
 
 Remove the `[templates.iisddmtheme]` section.
 
-### 5. Restore Default SDDM Theme
-Edit `/etc/sddm.conf`:
+### 5. Remove theme configuration file
+
 ```bash
-sudo nano /etc/sddm.conf
+sudo rm /etc/sddm.conf.d/ii-sddm-theme.conf
 ```
-
-Change or remove these lines:
-```ini
-[General]
-InputMethod=
-GreeterEnvironment=
-
-[Theme]
-Current=
-```
-
-Or set `Current=` to your preferred theme (you can check available themes in `/usr/share/sddm/themes`).
 
 ### 6. Optional: Remove Dependencies
  

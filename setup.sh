@@ -352,44 +352,23 @@ install_theme() {
 configure_sddm() {
     step "Configuring SDDM"
 
-    # Ensure [General] section exists and add InputMethod/GreeterEnvironment
-    if ! grep -q "^\[General\]" "$SDDM_CONF" 2>/dev/null; then
-        echo "[General]" | sudo tee -a "$SDDM_CONF" > /dev/null
-        info "Added [General] section to $SDDM_CONF"
-    fi
+    readonly SDDM_CONF_DIR="/etc/sddm.conf.d"
+    readonly SDDM_THEME_CONF="$SDDM_CONF_DIR/ii-sddm-theme.conf"
 
-    # Update or add InputMethod under [General]
-    if grep -q "^\[General\]" "$SDDM_CONF" && grep -q "InputMethod=" "$SDDM_CONF"; then
-        sudo sed -i "/^\[General\]/,/^\[/ s|^InputMethod=.*|InputMethod=$VIRTUAL_KEYBOARD|" "$SDDM_CONF"
-    else
-        sudo sed -i "/^\[General\]/a InputMethod=$VIRTUAL_KEYBOARD" "$SDDM_CONF"
-    fi
-    info "SDDM InputMethod set to $VIRTUAL_KEYBOARD"
+    info "Creating SDDM configuration drop-in file..."
 
-    # Update or add GreeterEnvironment under [General]
-    local greeter_env="QML2_IMPORT_PATH=$QML_PATH,QT_IM_MODULE=$VIRTUAL_KEYBOARD"
-    if grep -q "^\[General\]" "$SDDM_CONF" && grep -q "GreeterEnvironment=" "$SDDM_CONF"; then
-        sudo sed -i "/^\[General\]/,/^\[/ s|^GreeterEnvironment=.*|GreeterEnvironment=$greeter_env|" "$SDDM_CONF"
-    else
-        sudo sed -i "/^\[General\]/a GreeterEnvironment=$greeter_env" "$SDDM_CONF"
-    fi
-    info "SDDM GreeterEnvironment set to $greeter_env"
+    sudo mkdir -p "$SDDM_CONF_DIR"
 
-    # Ensure [Theme] section exists
-    if ! grep -q "^\[Theme\]" "$SDDM_CONF" 2>/dev/null; then
-        echo -e "\n[Theme]" | sudo tee -a "$SDDM_CONF" > /dev/null
-        info "Added [Theme] section to $SDDM_CONF"
-    fi
+    sudo tee "$SDDM_THEME_CONF" > /dev/null <<EOF
+[General]
+InputMethod=qtvirtualkeyboard
+GreeterEnvironment=QML2_IMPORT_PATH=/usr/share/sddm/themes/ii-sddm.theme/Components/,QT_IM_MODULE=qtvirtualkeyboard
 
-    # Set Current theme under [Theme]
-    if grep -q "^\[Theme\]" "$SDDM_CONF" && grep -q "Current=" "$SDDM_CONF"; then
-        sudo sed -i "/^\[Theme\]/,/^\[/ s|^Current=.*|Current=$THEME_NAME|" "$SDDM_CONF"
-    else
-        sudo sed -i "/^\[Theme\]/a Current=$THEME_NAME" "$SDDM_CONF"
-    fi
-    info "SDDM theme set to $THEME_NAME"
+[Theme]
+Current=ii-sddm.theme
+EOF
 
-    info "SDDM configured successfully"
+    info "SDDM configuration written to $SDDM_THEME_CONF"
 }
 
 # === MATUGEN CONFIGURATION ===
