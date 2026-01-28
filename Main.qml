@@ -166,7 +166,7 @@ Pane {
             id: screenCornersLoader
             anchors.fill: parent
             active: config.ScreenCorners == "true" && !Appearance.highContrastEnabled 
-            source: "Components/RoundCorner.qml"
+            source: "Components/Commons/RoundCorner.qml"
             z: 10
             
             onLoaded: {
