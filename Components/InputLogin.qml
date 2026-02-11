@@ -29,6 +29,16 @@ Item {
         id: passwordCharsModel
     }
 
+    Loader {
+        active: config.Shadow == "true"
+        anchors.fill: sharedBackground
+        z: -1
+        sourceComponent: StyledRectangularShadow {
+            target: sharedBackground
+            anchors.fill: undefined
+        }
+    }
+
     Rectangle {
         id: sharedBackground
         anchors.fill: parent

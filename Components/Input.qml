@@ -18,6 +18,7 @@ RowLayout {
     clip: false
     spacing: 10
 
+
     Item {
         id: usernameFieldContainer
 
@@ -34,6 +35,16 @@ RowLayout {
             anchors.fill: parent
             color: Colors.surface_container
             radius: Appearance.rounding.full
+        }
+
+        Loader {
+        active: config.Shadow == "true"
+            anchors.fill: usernameFieldContainer
+            z: -1
+            sourceComponent: StyledRectangularShadow {
+                target: usernameFieldContainer
+                anchors.fill: undefined
+            }
         }
 
         RowLayout {
@@ -59,7 +70,6 @@ RowLayout {
 
     InputLogin {
         id: loginContainer
-
         Layout.alignment: Qt.AlignBottom
     }
 

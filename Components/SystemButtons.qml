@@ -12,21 +12,34 @@ import QtQuick.Layouts
 import "Commons"
 
 Item {
+    id: root
     property var shutdown: ["power_settings_new", config.TranslateShutdown || textConstants.shutdown, sddm.canPowerOff]
     property var reboot: ["restart_alt", config.TranslateReboot || textConstants.reboot, sddm.canReboot]
     property var suspend: ["dark_mode", config.TranslateSuspend || textConstants.suspend, sddm.canSuspend]
     property var hibernate: ["bedtime", config.TranslateHibernate || textConstants.hibernate, sddm.canHibernate]
+
 
     Layout.preferredHeight: Appearance.formRowHeight
     implicitWidth: buttonRow.implicitWidth + 10
     Layout.preferredWidth: implicitWidth
 
     Rectangle {
+        id: systemButtonsRect
         anchors.fill: parent
         color: Colors.surface_container
         border.color: "transparent"
         border.width: 0
         radius: height / 2
+    }
+
+    Loader {
+        active: config.Shadow == "true"
+        anchors.fill: systemButtonsRect
+         z: -1
+        sourceComponent: StyledRectangularShadow {
+            target: systemButtonsRect
+            anchors.fill: undefined
+        }
     }
 
     RowLayout {

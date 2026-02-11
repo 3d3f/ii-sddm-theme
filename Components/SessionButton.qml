@@ -72,6 +72,16 @@ FocusScope {
         }
     }
 
+    Loader {
+        active: config.Shadow == "true"
+        anchors.fill: sessionIsland
+        sourceComponent: StyledRectangularShadow {
+            target: sessionIsland
+            anchors.fill: undefined
+        }
+    }
+
+
     Rectangle {
         id: animatedContainer
 
@@ -182,7 +192,6 @@ FocusScope {
             }
 
         }
-
     }
 
     Behavior on implicitWidth {

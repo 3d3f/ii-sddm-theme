@@ -10,9 +10,19 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 Item {
+    id: keyboardButtonRoot
     Layout.preferredHeight: Appearance.formRowHeight
     Layout.preferredWidth: Layout.preferredHeight
-
+    
+    Loader {
+        active: config.Shadow == "true"
+        anchors.fill: virtualKeyboardButton
+        z: -1
+        sourceComponent: StyledRectangularShadow {
+             target: virtualKeyboardButton
+             anchors.fill: undefined
+            }
+        }
     Button {
         id: virtualKeyboardButton
 
