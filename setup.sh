@@ -148,8 +148,15 @@ install_fonts() {
     if [[ -d "$LOCAL_FONTS_SRC" ]]; then
         info "Copying fonts from $LOCAL_FONTS_SRC to /usr/share/fonts/..."
         sudo cp -r "$LOCAL_FONTS_SRC" /usr/share/fonts/
+        
+        info "Setting correct ownership and permissions..."
+        sudo chown -R root:root /usr/share/fonts/ii-sddm-theme-fonts
+        sudo find /usr/share/fonts/ii-sddm-theme-fonts -type d -exec chmod 755 {} \;
+        sudo find /usr/share/fonts/ii-sddm-theme-fonts -type f -exec chmod 644 {} \;
+        
         info "Updating font cache..."
-        sudo fc-cache -f
+        sudo fc-cache -fv
+        
         info "Fonts installed successfully."
     else
         warn "Local font folder not found at $LOCAL_FONTS_SRC. Skipping font copy."
