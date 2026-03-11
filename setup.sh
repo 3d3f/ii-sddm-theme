@@ -448,18 +448,21 @@ input_path = '$input_path_tilde'
 output_path = '$output_path_tilde'
 post_hook = '$post_hook_command'
 EOF
-
   info "New SDDM template block added to Matugen config: $MATUGEN_CONF"
 
   # Run matugen to initialize the theme for the first time
   if command -v matugen &>/dev/null; then
-    local current_wallpaper
-    current_wallpaper=$(cat "$HOME/.local/state/quickshell/user/generated/wallpaper/path.txt" 2>/dev/null || echo "")
-    if [[ -f "$current_wallpaper" ]]; then
-      info "Running matugen with current wallpaper to initialize SDDM theme: $current_wallpaper"
-      matugen image "$current_wallpaper"
-    else
-      warn "Could not detect current wallpaper. You may need to change your wallpaper once to trigger Matugen for SDDM theme synchronization."
+    if [[ "$INSTALLATION_TYPE" == "ii-matugen" ]]; then
+      local current_wallpaper
+      current_wallpaper=$(cat "$HOME/.local/state/quickshell/user/generated/wallpaper/path.txt" 2>/dev/null || echo "")
+      if [[ -f "$current_wallpaper" ]]; then
+        info "Running matugen with current wallpaper to initialize SDDM theme: $current_wallpaper"
+        matugen image "$current_wallpaper"
+      else
+        warn "Could not detect current wallpaper. You may need to change your wallpaper once to trigger Matugen for SDDM theme synchronization."
+      fi
+    elif [[ "$INSTALLATION_TYPE" == "matugen-only" ]]; then
+      info "Run 'matugen image <your-wallpaper-path>' once to initialize the SDDM theme."
     fi
   fi
 
