@@ -1,372 +1,372 @@
-#!/bin/bash
-
-## TODO support for other distros
-
+#!/usr/bin/env bash
 set -euo pipefail
 
 # === CONFIGURATION ===
+
 readonly THEME_NAME="ii-sddm-theme"
 readonly THEME_REPO="https://github.com/3d3f/ii-sddm-theme"
 
-# Local fonts directory
 readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-readonly LOCAL_FONTS_SRC="$SCRIPT_DIR/fonts/ii-sddm-theme-fonts"
+readonly LOCAL_FONTS_SRC="${SCRIPT_DIR}/fonts/ii-sddm-theme-fonts"
 
-# SDDM directory
 readonly SDDM_THEMES_DIR="/usr/share/sddm/themes"
-readonly SDDM_THEME_DEST="$SDDM_THEMES_DIR/$THEME_NAME"
+readonly SDDM_THEME_DEST="${SDDM_THEMES_DIR}/${THEME_NAME}"
+readonly SDDM_CONF_DIR="/etc/sddm.conf.d"
+readonly SDDM_THEME_CONF="${SDDM_CONF_DIR}/ii-sddm-theme.conf"
 
-# Theme's local copy directory (for specific files)
-readonly HYPR_SCRIPTS_BASE="$HOME/.config"
-# The destination inside HYPR_SCRIPTS_BASE for theme-related files
-readonly HYPR_THEME_SCRIPTS_DEST="$HYPR_SCRIPTS_BASE/$THEME_NAME"
+readonly HYPR_SCRIPTS_BASE="${HOME}/.config"
+readonly HYPR_THEME_SCRIPTS_DEST="${HYPR_SCRIPTS_BASE}/${THEME_NAME}"
 
-# Temp directory
 readonly DATE=$(date +%s)
-readonly CLONE_DIR="/tmp/$THEME_NAME-repo-$DATE"
+readonly CLONE_DIR="/tmp/${THEME_NAME}-repo-${DATE}"
 
-readonly SDDM_CONF="/etc/sddm.conf"
-readonly QML_PATH="$SDDM_THEME_DEST/Components/"
-readonly VIRTUAL_KEYBOARD="qtvirtualkeyboard"
+readonly USERNAME="${USER}"
+readonly APPLY_SCRIPT="${HYPR_THEME_SCRIPTS_DEST}/sddm-theme-apply.sh"
+readonly SUDOERS_FILE="/etc/sudoers.d/sddm-theme-${USERNAME}"
 
-# Sudoers configuration
-readonly USERNAME="$USER"
-readonly APPLY_SCRIPT="$HYPR_THEME_SCRIPTS_DEST/sddm-theme-apply.sh"
-readonly SUDOERS_FILE="/etc/sudoers.d/sddm-theme-$USERNAME"
+readonly MATUGEN_QML_INPUT_TEMPLATE="${HYPR_THEME_SCRIPTS_DEST}/SddmColors.qml"
+readonly MATUGEN_GENERATE_SETTINGS_SCRIPT="${HYPR_THEME_SCRIPTS_DEST}/generate_settings.py"
+readonly MATUGEN_CONF="${HOME}/.config/matugen/config.toml"
 
-# Matugen configuration
-readonly MATUGEN_QML_INPUT_TEMPLATE="$HYPR_THEME_SCRIPTS_DEST/SddmColors.qml"
-readonly MATUGEN_QML_OUTPUT_FILE="$SDDM_THEME_DEST/Components/Colors.qml"
-readonly MATUGEN_GENERATE_SETTINGS_SCRIPT="$HYPR_THEME_SCRIPTS_DEST/generate_settings.py"
-readonly MATUGEN_CONF="$HOME/.config/matugen/config.toml"
-
-# ii configuration files
-readonly II_CONFIG_JSON="$HOME/.config/illogical-impulse/config.json"
+readonly II_CONFIG_JSON="${HOME}/.config/illogical-impulse/config.json"
 
 # === COLORS ===
-readonly RED='\033[0;31m'
-readonly GREEN='\033[0;32m'
-readonly YELLOW='\033[1;33m'
-readonly BLUE='\033[0;34m'
-readonly NC='\033[0m'
+
+STY_CYAN='\e[36m'
+STY_GREEN='\e[32m'
+STY_YELLOW='\e[33m'
+STY_RED='\e[31m'
+STY_RST='\e[0m'
 
 # === LOGGING ===
-info() { echo -e "${GREEN}✅ $*${NC}"; }
-warn() { echo -e "${YELLOW}⚠  $*${NC}" >&2; }
-error() { echo -e "${RED}❌ $*${NC}" >&2; }
-step() { echo -e "\n${BLUE}━━━ $* ━━━${NC}"; }
 
-# Global flags to control integration types
+log_info()  { printf "  [INFO] %s\n" "$*"; }
+log_ok()    { printf "  ${STY_GREEN}[OK]   %s${STY_RST}\n" "$*"; }
+log_warn()  { printf "  ${STY_YELLOW}[WARN] %s${STY_RST}\n" "$*" >&2; }
+log_error() { printf "  ${STY_RED}[ERR]  %s${STY_RST}\n" "$*" >&2; }
+log_step()  { printf "\n-- %s\n" "$*"; }
+
+# Global flags
+
 II_CONFIG_FOUND=false
 MATUGEN_CONFIG_FOUND=false
 INSTALLATION_TYPE="no-matugen"
 
-# === INTRODUCTION ===
-introduction() {
-  clear
-  echo -e "${BLUE}"
-  echo "╔═════════════════════════════════════════════════════════╗"
-  echo "║                ii-sddm-theme Installer                  ║"
-  echo "╚═════════════════════════════════════════════════════════╝"
-  echo -e "${NC}"
-  echo -e "This script will install the ii-sddm-theme."
-  echo
-  echo -e "${YELLOW}Note:${NC} Please check what the script will do before running it."
-  echo
-  read -p "Do you want to proceed with the installation? (y/n): " -n 1 -r
-  echo
-  if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-    error "Installation aborted by user."
-    exit 0
-  fi
+# === BANNER ===
+
+show_banner() {
+    local title=" SETUP ii-sddm-theme "
+    local width=${#title}
+    local border
+    border=$(printf '─%.0s' $(seq 1 $width))
+    printf "\n"
+    printf "${STY_CYAN}┌%s┐${STY_RST}\n" "${border}"
+    printf "${STY_CYAN}│%s│${STY_RST}\n" "${title}"
+    printf "${STY_CYAN}└%s┘${STY_RST}\n" "${border}"
+    printf "\n"
 }
 
-# === PRELIMINARY CHECKS ===
+# === INTRODUCTION ===
+
+introduction() {
+    show_banner
+    printf "This script will install ii-sddm-theme.\n"
+    printf "\n"
+    printf "  ${STY_YELLOW}Note:${STY_RST} Please check what the script will do before running it.\n"
+    printf "\n"
+    read -r -p "===> Continue? [y/n]: " p
+    case $p in
+        y|Y) ;;
+        *)
+            log_error "Installation aborted by user."
+            exit 0
+            ;;
+    esac
+}
+
+# === GUARDS ===
+
 check_requirements() {
-  step "Preliminary checks"
-  if [[ $EUID -eq 0 ]]; then
-    error "Do not run this script as root. It will use sudo when needed."
-    exit 1
-  fi
-  info "Environment check passed"
+    log_step "Preliminary checks"
+    if [[ $EUID -eq 0 ]]; then
+        log_error "Do not run this script as root. It will use sudo when needed."
+        exit 1
+    fi
+    if ! sudo -v; then
+        log_error "sudo authentication failed."
+        exit 1
+    fi
+    log_ok "Environment check passed"
 }
 
 # === AUR HELPER DETECTION ===
+
 get_aur_helper() {
-  step "Checking for AUR helper"
-  if command -v yay &>/dev/null; then
-    info "AUR helper 'yay' found."
-    echo "yay"
-  elif command -v paru &>/dev/null; then
-    info "AUR helper 'paru' found."
-    echo "paru"
-  else
-    error "No AUR helper (yay or paru) found. Please install one to proceed."
-    exit 1
-  fi
+    log_step "Checking for AUR helper"
+    if command -v yay &>/dev/null; then
+        log_ok "AUR helper 'yay' found."
+    elif command -v paru &>/dev/null; then
+        log_ok "AUR helper 'paru' found."
+    else
+        log_error "No AUR helper (yay or paru) found. Please install one to proceed."
+        exit 1
+    fi
 }
 
 # === GIT CHECK ===
+
 check_git() {
-  step "Checking for git"
-  if ! command -v git &>/dev/null; then
-    warn "git is not installed."
-    read -p "git is required to clone the theme. Do you want to install it now? (y/n): " -n 1 -r
-    echo
-    if [[ $REPLY =~ ^[Yy]$ ]]; then
-      sudo pacman -S --needed git
-      info "git installed successfully."
+    log_step "Checking for git"
+    if ! command -v git &>/dev/null; then
+        log_warn "git is not installed."
+        read -r -p "===> git is required to clone the theme. Install it now? [y/n]: " p
+        case $p in
+            y|Y)
+                sudo pacman -S --needed git
+                log_ok "git installed successfully."
+                ;;
+            *)
+                log_error "git is required. Installation aborted."
+                exit 1
+                ;;
+        esac
     else
-      error "git is required. Installation aborted."
-      exit 1
+        log_ok "git is already installed."
     fi
-  else
-    info "git is already installed."
-  fi
 }
 
-# === SDDM INSTALLATION CHECK ===
+# === SDDM CHECK ===
+
 check_sddm_installation() {
-  step "Checking SDDM installation"
-  if ! command -v sddm &>/dev/null; then
-    warn "SDDM is not currently installed on your system."
-    warn "The script will proceed to install and configure SDDM along with the theme."
-    read -p "Do you wish to continue with SDDM installation and theme setup? (y/n): " -n 1 -r
-    echo
-    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-      error "Installation aborted by user. SDDM is required for this theme."
-      exit 0
-    fi
-  else
-    info "SDDM is already installed."
-  fi
-}
-
-# === FONT INSTALLATION (LOCAL COPY) ===
-install_fonts() {
-  step "Installing fonts from local folder"
-  if [[ -d "$LOCAL_FONTS_SRC" ]]; then
-    info "Copying fonts from $LOCAL_FONTS_SRC to /usr/share/fonts/..."
-    sudo cp -r "$LOCAL_FONTS_SRC" /usr/share/fonts/
-
-    info "Setting correct ownership and permissions..."
-    sudo chown -R root:root /usr/share/fonts/ii-sddm-theme-fonts
-    sudo find /usr/share/fonts/ii-sddm-theme-fonts -type d -exec chmod 755 {} \;
-    sudo find /usr/share/fonts/ii-sddm-theme-fonts -type f -exec chmod 644 {} \;
-
-    info "Updating font cache..."
-    sudo fc-cache -fv
-
-    info "Fonts installed successfully."
-  else
-    warn "Local font folder not found at $LOCAL_FONTS_SRC. Skipping font copy."
-  fi
-}
-
-# === CONFIGURATION FILE DETECTION AND INSTALLATION TYPE SELECTION ===
-detect_configs_and_select_installation_type() {
-  step "Detecting existing configurations for optional features"
-
-  # Detect configuration files
-  if [[ -f "$II_CONFIG_JSON" ]]; then
-    II_CONFIG_FOUND=true
-    info "ii config file found: $II_CONFIG_JSON"
-  else
-    info "ii config file not found."
-  fi
-
-  if [[ -f "$MATUGEN_CONF" ]]; then
-    MATUGEN_CONFIG_FOUND=true
-    info "Matugen config file found: $MATUGEN_CONF"
-  else
-    info "Matugen config file not found."
-  fi
-
-  # Display installation options menu
-  echo
-  echo -e "${BLUE}╔═══════════════════════════════════════════════════════════════════════════╗${NC}"
-  echo -e "${BLUE}║                      INSTALLATION TYPE SELECTION                          ║${NC}"
-  echo -e "${BLUE}╚═══════════════════════════════════════════════════════════════════════════╝${NC}"
-  echo
-  echo -e "Please select your preferred installation mode:"
-  echo
-
-  local option_num=1
-  declare -A option_map
-
-  # Build menu based on available configurations
-  if "$II_CONFIG_FOUND" && "$MATUGEN_CONFIG_FOUND"; then
-    echo -e "${GREEN}  [$option_num]${NC} ${BLUE}ii + Matugen Integration${NC}"
-    echo -e "      └─ Settings, wallpaper and colors generated from ii app"
-    option_map[$option_num]="ii-matugen"
-    ((option_num++))
-    echo
-
-    echo -e "${GREEN}  [$option_num]${NC} ${BLUE}Matugen Integration Only${NC}"
-    echo -e "      └─ Wallpaper and colors generated through matugen, manual settings configuration"
-    option_map[$option_num]="matugen-only"
-    ((option_num++))
-    echo
-
-    echo -e "${GREEN}  [$option_num]${NC} ${BLUE}Manual Configuration${NC}"
-    echo -e "      └─ Manual background, colors and settings configuration"
-    option_map[$option_num]="no-matugen"
-    ((option_num++))
-
-  elif "$MATUGEN_CONFIG_FOUND"; then
-    echo -e "${GREEN}  [$option_num]${NC} ${BLUE}Matugen Integration${NC}"
-    echo -e "      └─ Wallpaper and colors generated through matugen, manual settings configuration"
-    option_map[$option_num]="matugen-only"
-    ((option_num++))
-    echo
-
-    echo -e "${GREEN}  [$option_num]${NC} ${BLUE}Manual Configuration${NC}"
-    echo -e "      └─ Full manual control: background, colors and settings"
-    option_map[$option_num]="no-matugen"
-    ((option_num++))
-
-  else
-    echo -e "${GREEN}  [$option_num]${NC} ${BLUE}Manual Configuration${NC}"
-    echo -e "      └─ Manual background, colors and settings configuration"
-    option_map[$option_num]="no-matugen"
-    ((option_num++))
-  fi
-
-  echo
-  echo -e "${BLUE}───────────────────────────────────────────────────────────────────────────${NC}"
-  echo
-
-  # Get user selection
-  local selected_option
-  local max_option=$((option_num - 1))
-
-  while true; do
-    read -p "$(echo -e "${YELLOW}→${NC} Enter your choice [1-$max_option]: ")" selected_option
-
-    if [[ "$selected_option" =~ ^[0-9]+$ ]] && [[ -n "${option_map[$selected_option]}" ]]; then
-      INSTALLATION_TYPE="${option_map[$selected_option]}"
-      echo
-      info "Selected installation type: ${BLUE}$INSTALLATION_TYPE${NC}"
-      break
+    log_step "Checking SDDM installation"
+    if ! command -v sddm &>/dev/null; then
+        log_warn "SDDM is not currently installed on your system."
+        log_warn "The script will proceed to install and configure SDDM along with the theme."
+        read -r -p "===> Continue with SDDM installation and theme setup? [y/n]: " p
+        case $p in
+            y|Y) ;;
+            *)
+                log_error "Installation aborted by user. SDDM is required for this theme."
+                exit 0
+                ;;
+        esac
     else
-      error "Invalid choice. Please enter a number between 1 and $max_option."
+        log_ok "SDDM is already installed."
     fi
-  done
+}
 
-  echo
+# === FONT INSTALLATION ===
+
+install_fonts() {
+    log_step "Installing fonts"
+    if [[ -d "${LOCAL_FONTS_SRC}" ]]; then
+        log_info "Copying ii-sddm-theme-fonts to /usr/share/fonts/..."
+        sudo rm -rf /usr/share/fonts/ii-sddm-theme-fonts
+        sudo cp -r "${LOCAL_FONTS_SRC}" /usr/share/fonts/
+        log_info "Setting permissions..."
+        sudo chown -R root:root /usr/share/fonts/ii-sddm-theme-fonts
+        sudo find /usr/share/fonts/ii-sddm-theme-fonts -type d -exec chmod 755 {} \;
+        sudo find /usr/share/fonts/ii-sddm-theme-fonts -type f -exec chmod 644 {} \;
+        log_info "Updating font cache..."
+        sudo fc-cache -f > /dev/null
+        log_ok "Fonts installed."
+    else
+        log_warn "Local font folder not found at ${LOCAL_FONTS_SRC}. Skipping."
+    fi
+}
+
+# === INSTALLATION TYPE SELECTION ===
+
+detect_configs_and_select_installation_type() {
+    log_step "Detecting existing configurations for optional features"
+
+    if [[ -f "${II_CONFIG_JSON}" ]]; then
+        II_CONFIG_FOUND=true
+        log_ok "ii config file found: ${II_CONFIG_JSON}"
+    else
+        log_info "ii config file not found."
+    fi
+
+    if [[ -f "${MATUGEN_CONF}" ]]; then
+        MATUGEN_CONFIG_FOUND=true
+        log_ok "Matugen config file found: ${MATUGEN_CONF}"
+    else
+        log_info "Matugen config file not found."
+    fi
+
+    printf "\n"
+    printf -- "-- Installation type\n"
+    printf "\n"
+    printf "Please select your preferred installation mode:\n"
+    printf "\n"
+
+    local option_num=1
+    declare -A option_map
+
+    if "${II_CONFIG_FOUND}" && "${MATUGEN_CONFIG_FOUND}"; then
+        printf "  ${STY_GREEN}[%s]${STY_RST} ii + Matugen Integration\n" "${option_num}"
+        printf "      └─ Sync ii settings, wallpaper and colors automatically\n"
+        option_map[$option_num]="ii-matugen"
+        ((option_num++))
+        printf "\n"
+
+        printf "  ${STY_GREEN}[%s]${STY_RST} Matugen Integration Only\n" "${option_num}"
+        printf "      └─ Wallpaper and colors generated through matugen, manual settings configuration\n"
+        option_map[$option_num]="matugen-only"
+        ((option_num++))
+        printf "\n"
+
+        printf "  ${STY_GREEN}[%s]${STY_RST} Manual Configuration\n" "${option_num}"
+        printf "      └─ Manual background, colors and settings configuration\n"
+        option_map[$option_num]="no-matugen"
+        ((option_num++))
+
+    elif "${MATUGEN_CONFIG_FOUND}"; then
+        printf "  ${STY_GREEN}[%s]${STY_RST} Matugen Integration\n" "${option_num}"
+        printf "      └─ Wallpaper and colors generated through matugen, manual settings configuration\n"
+        option_map[$option_num]="matugen-only"
+        ((option_num++))
+        printf "\n"
+
+        printf "  ${STY_GREEN}[%s]${STY_RST} Manual Configuration\n" "${option_num}"
+        printf "      └─ Full manual control: background, colors and settings\n"
+        option_map[$option_num]="no-matugen"
+        ((option_num++))
+
+    else
+        printf "  ${STY_GREEN}[%s]${STY_RST} Manual Configuration\n" "${option_num}"
+        printf "      └─ Manual background, colors and settings configuration\n"
+        option_map[$option_num]="no-matugen"
+        ((option_num++))
+    fi
+
+    printf "\n"
+
+    local selected_option
+    local max_option=$((option_num - 1))
+    local range_str
+    range_str=$(seq -s "-" 1 $((option_num - 1)))
+
+    while true; do
+        read -r -p "===> [${range_str}]: " selected_option
+        if [[ "${selected_option}" =~ ^[0-9]+$ ]] && [[ -n "${option_map[$selected_option]:-}" ]]; then
+            INSTALLATION_TYPE="${option_map[$selected_option]}"
+            printf "\n"
+            log_ok "Selected installation type: ${INSTALLATION_TYPE}"
+            break
+        else
+            log_error "Invalid choice. Please enter a number between 1 and ${max_option}."
+        fi
+    done
+
+    printf "\n"
 }
 
 # === DEPENDENCIES INSTALLATION ===
+
 install_deps() {
-  step "Installing dependencies"
-  info "Installing official Arch repositories packages..."
-  sudo pacman -S --needed sddm qt6-svg qt6-virtualkeyboard qt6-multimedia-ffmpeg
+    log_step "Installing dependencies"
+    log_info "Installing official Arch repositories packages..."
+    sudo pacman -S --needed sddm qt6-svg qt6-virtualkeyboard qt6-multimedia-ffmpeg
 
-  # Install local fonts
-  install_fonts
+    install_fonts
 
-  info "Dependencies installed successfully"
+    log_ok "Dependencies installed successfully"
 }
 
-# === REPO CLONING (only to temp) ===
+# === REPO CLONING ===
+
 clone_repo_to_temp() {
-  step "Cloning repository to temporary directory"
+    log_step "Cloning repository to temporary directory"
 
-  info "Cloning $THEME_REPO into temporary directory $CLONE_DIR..."
-  git clone --depth 1 "$THEME_REPO" "$CLONE_DIR"
-  if [[ $? -ne 0 ]]; then
-    error "Failed to clone theme repository. Please check your internet connection and the repository URL."
-    exit 1
-  fi
-  info "Theme repository cloned successfully to $CLONE_DIR."
+    log_info "Cloning ${THEME_REPO} into temporary directory ${CLONE_DIR}..."
+    if ! git clone --depth 1 "${THEME_REPO}" "${CLONE_DIR}"; then
+        log_error "Failed to clone theme repository. Please check your internet connection and the repository URL."
+        exit 1
+    fi
+    log_ok "Theme repository cloned successfully to ${CLONE_DIR}."
 }
 
-# === COPY SPECIFIC FILES TO HYPR CUSTOM SCRIPTS ===
+# === COPY SPECIFIC FILES TO HYPR SCRIPTS ===
+
 copy_specific_files_to_hypr() {
-  step "Copying specific files to Hyprland custom scripts ($HYPR_THEME_SCRIPTS_DEST)"
+    log_step "Copying specific files to Hyprland custom scripts (${HYPR_THEME_SCRIPTS_DEST})"
 
-  # Delete existing directory if it exists
-  if [[ -d "$HYPR_THEME_SCRIPTS_DEST" ]]; then
-    warn "Existing theme scripts directory found at $HYPR_THEME_SCRIPTS_DEST. Removing it before copying new files."
-    rm -rf "$HYPR_THEME_SCRIPTS_DEST"
-    info "Old theme scripts directory removed."
-  fi
+    if [[ -d "${HYPR_THEME_SCRIPTS_DEST}" ]]; then
+        log_warn "Existing theme scripts directory found at ${HYPR_THEME_SCRIPTS_DEST}. Removing it before copying new files."
+        rm -rf "${HYPR_THEME_SCRIPTS_DEST}"
+        log_ok "Old theme scripts directory removed."
+    fi
 
-  mkdir -p "$HYPR_THEME_SCRIPTS_DEST"
+    mkdir -p "${HYPR_THEME_SCRIPTS_DEST}"
 
-  # Source directories are now relative to CLONE_DIR
-  local source_dir=""
-  case "$INSTALLATION_TYPE" in
-  "ii-matugen")
-    source_dir="$CLONE_DIR/iiMatugen"
-    info "Copying files for 'ii + Matugen Integration' from $source_dir..."
-    ;;
-  "matugen-only")
-    source_dir="$CLONE_DIR/Matugen"
-    info "Copying files for 'Matugen Integration Only' from $source_dir..."
-    ;;
-  "no-matugen")
-    source_dir="$CLONE_DIR/noMatugen"
-    info "Copying files for 'No Matugen Integration' from $source_dir..."
-    ;;
-  *)
-    error "Unknown installation type: $INSTALLATION_TYPE. No files copied to Hyprland scripts."
-    return 1
-    ;;
-  esac
+    local source_dir=""
+    case "${INSTALLATION_TYPE}" in
+        "ii-matugen")
+            source_dir="${CLONE_DIR}/iiMatugen"
+            log_info "Copying files for 'ii + Matugen Integration' from ${source_dir}..."
+            ;;
+        "matugen-only")
+            source_dir="${CLONE_DIR}/Matugen"
+            log_info "Copying files for 'Matugen Integration Only' from ${source_dir}..."
+            ;;
+        "no-matugen")
+            source_dir="${CLONE_DIR}/noMatugen"
+            log_info "Copying files for 'No Matugen Integration' from ${source_dir}..."
+            ;;
+        *)
+            log_error "Unknown installation type: ${INSTALLATION_TYPE}. No files copied to Hyprland scripts."
+            return 1
+            ;;
+    esac
 
-  # Copy files from the source directory
-  if [[ -d "$source_dir" ]]; then
-    cp -r "$source_dir"/* "$HYPR_THEME_SCRIPTS_DEST/"
-    info "All files from '$source_dir' copied to '$HYPR_THEME_SCRIPTS_DEST'."
-  else
-    error "Source directory '$source_dir' not found. Cannot copy files for '$INSTALLATION_TYPE'."
-    return 1
-  fi
+    if [[ -d "${source_dir}" ]]; then
+        cp -r "${source_dir}"/* "${HYPR_THEME_SCRIPTS_DEST}/"
+        log_ok "All files from '${source_dir}' copied to '${HYPR_THEME_SCRIPTS_DEST}'."
+    else
+        log_error "Source directory '${source_dir}' not found. Cannot copy files for '${INSTALLATION_TYPE}'."
+        return 1
+    fi
 
-  # Ensure relevant scripts are executable
-  if [[ -f "$APPLY_SCRIPT" ]]; then
-    chmod +x "$APPLY_SCRIPT"
-    info "Made $APPLY_SCRIPT executable."
-  fi
-  # Only make generate_settings.py executable if ii-matugen was chosen
-  if [[ "$INSTALLATION_TYPE" == "ii-matugen" ]] && [[ -f "$MATUGEN_GENERATE_SETTINGS_SCRIPT" ]]; then
-    chmod +x "$MATUGEN_GENERATE_SETTINGS_SCRIPT"
-    info "Made $MATUGEN_GENERATE_SETTINGS_SCRIPT executable."
-  fi
+    if [[ -f "${APPLY_SCRIPT}" ]]; then
+        chmod +x "${APPLY_SCRIPT}"
+        log_ok "Made ${APPLY_SCRIPT} executable."
+    fi
 
-  info "Specific files copied and permissions set in $HYPR_THEME_SCRIPTS_DEST."
+    if [[ "${INSTALLATION_TYPE}" == "ii-matugen" ]] && [[ -f "${MATUGEN_GENERATE_SETTINGS_SCRIPT}" ]]; then
+        chmod +x "${MATUGEN_GENERATE_SETTINGS_SCRIPT}"
+        log_ok "Made ${MATUGEN_GENERATE_SETTINGS_SCRIPT} executable."
+    fi
+
+    log_ok "Specific files copied and permissions set in ${HYPR_THEME_SCRIPTS_DEST}."
 }
 
-# === SDDM THEME INSTALLATION (from temp directory) ===
+# === SDDM THEME INSTALLATION ===
+
 install_theme() {
-  step "Installing SDDM theme files to SDDM directory"
+    log_step "Installing SDDM theme files to SDDM directory"
 
-  # Check if the theme directory already exists
-  if [[ -d "$SDDM_THEME_DEST" ]]; then
-    warn "Existing SDDM theme '$THEME_NAME' detected in $SDDM_THEMES_DIR. Overwriting it."
-    sudo rm -rf "$SDDM_THEME_DEST"
-  fi
+    if [[ -d "${SDDM_THEME_DEST}" ]]; then
+        log_warn "Existing SDDM theme '${THEME_NAME}' detected in ${SDDM_THEMES_DIR}. Overwriting it."
+        sudo rm -rf "${SDDM_THEME_DEST}"
+    fi
 
-  # Create the destination directory and copy the theme
-  sudo mkdir -p "$SDDM_THEME_DEST"
-  sudo cp -r "$CLONE_DIR"/* "$SDDM_THEME_DEST/"
+    sudo mkdir -p "${SDDM_THEME_DEST}"
+    sudo cp -r "${CLONE_DIR}"/* "${SDDM_THEME_DEST}/"
 
-  info "SDDM theme '$THEME_NAME' installed to $SDDM_THEME_DEST."
+    log_ok "SDDM theme '${THEME_NAME}' installed to ${SDDM_THEME_DEST}."
 }
 
 # === SDDM CONFIGURATION ===
+
 configure_sddm() {
-  step "Configuring SDDM"
+    log_step "Configuring SDDM"
 
-  readonly SDDM_CONF_DIR="/etc/sddm.conf.d"
-  readonly SDDM_THEME_CONF="$SDDM_CONF_DIR/ii-sddm-theme.conf"
+    log_info "Creating SDDM configuration drop-in file..."
 
-  info "Creating SDDM configuration drop-in file..."
+    sudo mkdir -p "${SDDM_CONF_DIR}"
 
-  sudo mkdir -p "$SDDM_CONF_DIR"
-
-  sudo tee "$SDDM_THEME_CONF" >/dev/null <<EOF
+    sudo tee "${SDDM_THEME_CONF}" >/dev/null <<EOF
 [General]
 InputMethod=qtvirtualkeyboard
 GreeterEnvironment=QML2_IMPORT_PATH=/usr/share/sddm/themes/ii-sddm-theme/Components/,QT_IM_MODULE=qtvirtualkeyboard
@@ -375,231 +375,201 @@ GreeterEnvironment=QML2_IMPORT_PATH=/usr/share/sddm/themes/ii-sddm-theme/Compone
 Current=ii-sddm-theme
 EOF
 
-  info "SDDM configuration written to $SDDM_THEME_CONF"
-}
-
-# === MATUGEN CONFIGURATION ===
-configure_matugen() {
-  step "Matugen integration"
-
-  # Verify the matugen input template (SddmColors.qml) exists in the HYPR_THEME_SCRIPTS_DEST
-  if [[ ! -f "$MATUGEN_QML_INPUT_TEMPLATE" ]]; then
-    error "Matugen input template file not found in $HYPR_THEME_SCRIPTS_DEST: $MATUGEN_QML_INPUT_TEMPLATE."
-    error "This indicates an issue with copying selected Matugen files or an unexpected installation type."
-    return 1
-  fi
-  info "Verified Matugen color input template exists: $MATUGEN_QML_INPUT_TEMPLATE"
-
-  # Ensure Matugen config directory and file exist
-  mkdir -p "$(dirname "$MATUGEN_CONF")"
-  touch "$MATUGEN_CONF"
-
-  # Define the Matugen config block to add with tilde paths
-  local input_path_tilde="~/.config/$THEME_NAME/SddmColors.qml"
-  local output_path_tilde="~/.config/$THEME_NAME/Colors.qml"
-  local post_hook_command=""
-
-  if [[ "$INSTALLATION_TYPE" == "ii-matugen" ]]; then
-    # For ii-matugen, both generate_settings.py and apply.sh are needed
-    if [[ ! -f "$MATUGEN_GENERATE_SETTINGS_SCRIPT" ]]; then
-      error "Python script $MATUGEN_GENERATE_SETTINGS_SCRIPT not found for ii-matugen integration. Skipping Matugen post-hook configuration."
-      return 1
-    fi
-    if [[ ! -f "$APPLY_SCRIPT" ]]; then
-      error "Apply script $APPLY_SCRIPT not found for ii-matugen integration. Skipping Matugen post-hook configuration."
-      return 1
-    fi
-    # The post-hook now explicitly calls generate_settings.py before sddm-theme-apply.sh
-    post_hook_command="python3 ~/.config/$THEME_NAME/generate_settings.py && sudo ~/.config/$THEME_NAME/sddm-theme-apply.sh &"
-    info "Matugen post-hook will include ii clock and time settings generation via generate_settings.py."
-  elif [[ "$INSTALLATION_TYPE" == "matugen-only" ]]; then
-    # For matugen-only, only apply.sh is included in files_to_copy, so just use it
-    if [[ ! -f "$APPLY_SCRIPT" ]]; then
-      error "Apply script $APPLY_SCRIPT not found for Matugen-only integration. Skipping Matugen post-hook configuration."
-      return 1
-    fi
-    post_hook_command="sudo ~/.config/$THEME_NAME/sddm-theme-apply.sh &"
-    info "Matugen post-hook will apply theme changes via sddm-theme-apply.sh."
-  fi
-
-  # Remove existing [templates.iisddmtheme] block more robustly
-  if grep -q "^\[templates\.iisddmtheme\]" "$MATUGEN_CONF"; then
-    info "Found existing [templates.iisddmtheme] block. Removing it more robustly..."
-
-    local temp_file
-    temp_file=$(mktemp)
-    # Use awk to delete the section more safely: from [templates.iisddmtheme] until the next [ section or EOF
-    awk '
-            /^\[templates\.iisddmtheme\]/ { skip=1; next }
-            /^\[/ { skip=0 }
-            !skip { print }
-        ' "$MATUGEN_CONF" >"$temp_file"
-    # Remove trailing empty lines to prevent accumulation
-    sed -i -e :a -e '/^\n*$/{$d;N;ba' -e '}' "$temp_file"
-    mv "$temp_file" "$MATUGEN_CONF"
-    info "Previous [templates.iisddmtheme] block removed."
-  fi
-
-  # Add the new block at the end of the file with proper spacing
-  cat >>"$MATUGEN_CONF" <<EOF
-
-[templates.iisddmtheme]
-input_path = '$input_path_tilde'
-output_path = '$output_path_tilde'
-post_hook = '$post_hook_command'
-EOF
-  info "New SDDM template block added to Matugen config: $MATUGEN_CONF"
-
-  # Run matugen to initialize the theme for the first time
-  if command -v matugen &>/dev/null; then
-    if [[ "$INSTALLATION_TYPE" == "ii-matugen" ]]; then
-      local current_wallpaper
-      current_wallpaper=$(cat "$HOME/.local/state/quickshell/user/generated/wallpaper/path.txt" 2>/dev/null || echo "")
-      if [[ -f "$current_wallpaper" ]]; then
-        info "Running matugen with current wallpaper to initialize SDDM theme: $current_wallpaper"
-        matugen image "$current_wallpaper"
-      else
-        warn "Could not detect current wallpaper. You may need to change your wallpaper once to trigger Matugen for SDDM theme synchronization."
-      fi
-    elif [[ "$INSTALLATION_TYPE" == "matugen-only" ]]; then
-      info "Run 'matugen image <your-wallpaper-path>' once to initialize the SDDM theme."
-    fi
-  fi
-
-  return 0
+    log_ok "SDDM configuration written to ${SDDM_THEME_CONF}"
 }
 
 # === ENABLE SDDM ===
+
 enable_sddm() {
-  step "Enabling SDDM"
-  info "Attempting to disable other display managers (if active)..."
-  sudo systemctl disable display-manager.service 2>/dev/null || true
-  info "Enabling sddm.service..."
-  sudo systemctl enable sddm.service
-  info "SDDM enabled successfully. It will start on next boot."
+    log_step "Enabling SDDM"
+    sudo systemctl disable display-manager.service 2>/dev/null || true
+    sudo systemctl enable sddm.service
+    log_ok "SDDM enabled. It will start on next boot."
+}
+
+# === MATUGEN CONFIGURATION ===
+
+configure_matugen() {
+    log_step "Matugen integration"
+
+    if [[ ! -f "${MATUGEN_QML_INPUT_TEMPLATE}" ]]; then
+        log_error "Matugen input template file not found in ${HYPR_THEME_SCRIPTS_DEST}: ${MATUGEN_QML_INPUT_TEMPLATE}."
+        log_error "This indicates an issue with copying selected Matugen files or an unexpected installation type."
+        return 1
+    fi
+
+    mkdir -p "$(dirname "${MATUGEN_CONF}")"
+    touch "${MATUGEN_CONF}"
+
+    local input_path_tilde="~/.config/${THEME_NAME}/SddmColors.qml"
+    local output_path_tilde="~/.config/${THEME_NAME}/Colors.qml"
+    local post_hook_command=""
+
+    if [[ "${INSTALLATION_TYPE}" == "ii-matugen" ]]; then
+        if [[ ! -f "${MATUGEN_GENERATE_SETTINGS_SCRIPT}" ]]; then
+            log_error "Python script ${MATUGEN_GENERATE_SETTINGS_SCRIPT} not found for ii-matugen integration. Skipping Matugen post-hook configuration."
+            return 1
+        fi
+        if [[ ! -f "${APPLY_SCRIPT}" ]]; then
+            log_error "Apply script ${APPLY_SCRIPT} not found for ii-matugen integration. Skipping Matugen post-hook configuration."
+            return 1
+        fi
+        post_hook_command="python3 ~/.config/${THEME_NAME}/generate_settings.py && sudo ~/.config/${THEME_NAME}/sddm-theme-apply.sh &"
+    elif [[ "${INSTALLATION_TYPE}" == "matugen-only" ]]; then
+        if [[ ! -f "${APPLY_SCRIPT}" ]]; then
+            log_error "Apply script ${APPLY_SCRIPT} not found for Matugen-only integration. Skipping Matugen post-hook configuration."
+            return 1
+        fi
+        post_hook_command="sudo ~/.config/${THEME_NAME}/sddm-theme-apply.sh &"
+    fi
+
+    # Remove existing [templates.iisddmtheme] block
+    if grep -q "^\[templates\.iisddmtheme\]" "${MATUGEN_CONF}"; then
+        log_info "Found existing [templates.iisddmtheme] block. Removing it..."
+
+        local temp_file
+        temp_file=$(mktemp)
+        awk '
+            /^\[templates\.iisddmtheme\]/ { skip=1; next }
+            /^\[/ { skip=0 }
+            !skip { print }
+        ' "${MATUGEN_CONF}" >"${temp_file}"
+        sed -i -e :a -e '/^\n*$/{$d;N;ba' -e '}' "${temp_file}"
+        mv "${temp_file}" "${MATUGEN_CONF}"
+        log_ok "Previous [templates.iisddmtheme] block removed."
+    fi
+
+    cat >>"${MATUGEN_CONF}" <<EOF
+
+[templates.iisddmtheme]
+input_path = '${input_path_tilde}'
+output_path = '${output_path_tilde}'
+post_hook = '${post_hook_command}'
+EOF
+    log_ok "New SDDM template block added to Matugen config: ${MATUGEN_CONF}"
+
+    if command -v matugen &>/dev/null; then
+        if [[ "${INSTALLATION_TYPE}" == "ii-matugen" ]]; then
+            local current_wallpaper
+            current_wallpaper=$(cat "${HOME}/.local/state/quickshell/user/generated/wallpaper/path.txt" 2>/dev/null || echo "")
+            if [[ -f "${current_wallpaper}" ]]; then
+                log_info "Running matugen with current wallpaper to initialize SDDM theme: ${current_wallpaper}"
+                matugen image "${current_wallpaper}" --source-color-index 0
+            else
+                log_warn "Could not detect current wallpaper. You may need to change your wallpaper once to trigger Matugen for SDDM theme synchronization."
+            fi
+        elif [[ "${INSTALLATION_TYPE}" == "matugen-only" ]]; then
+            log_info "Run 'matugen image <your-wallpaper-path>' once to initialize the SDDM theme."
+        fi
+    fi
+
+    return 0
 }
 
 # === SUDOERS CONFIGURATION ===
+
 setup_sudoers() {
-  step "Configuring sudoers for passwordless execution"
-  if [[ ! -f "$APPLY_SCRIPT" ]]; then
-    warn "Apply script not found at expected path ($APPLY_SCRIPT). Sudoers configuration cannot proceed."
-    return 0
-  fi
+    log_step "Configuring sudoers for passwordless execution"
+    if [[ ! -f "${APPLY_SCRIPT}" ]]; then
+        log_warn "Apply script not found at expected path (${APPLY_SCRIPT}). Sudoers configuration cannot proceed."
+        return 0
+    fi
 
-  local SUDOERS_RULE="$USERNAME ALL=(ALL) NOPASSWD: $APPLY_SCRIPT"
-  local TEMP_FILE
-  TEMP_FILE=$(mktemp)
+    local sudoers_rule="${USERNAME} ALL=(ALL) NOPASSWD: ${APPLY_SCRIPT}"
+    local temp_file
+    temp_file=$(mktemp)
 
-  echo "$SUDOERS_RULE" >"$TEMP_FILE"
+    printf '%s\n' "${sudoers_rule}" >"${temp_file}"
 
-  # Validate the rule with visudo before copying
-  if ! visudo -c -f "$TEMP_FILE" >/dev/null 2>&1; then
-    error "Invalid sudoers rule generated. Aborting sudoers configuration."
-    rm -f "$TEMP_FILE"
-    return 1
-  fi
+    if ! visudo -c -f "${temp_file}" >/dev/null 2>&1; then
+        log_error "Invalid sudoers rule generated. Aborting sudoers configuration."
+        rm -f "${temp_file}"
+        return 1
+    fi
 
-  # Copy the validated rule to the sudoers.d directory
-  sudo cp "$TEMP_FILE" "$SUDOERS_FILE"
-  sudo chmod 0440 "$SUDOERS_FILE"
-  rm -f "$TEMP_FILE"
+    sudo cp "${temp_file}" "${SUDOERS_FILE}"
+    sudo chmod 0440 "${SUDOERS_FILE}"
+    rm -f "${temp_file}"
 
-  info "Sudoers configured successfully. Rule added to $SUDOERS_FILE"
-  info "Your user ($USERNAME) can now execute $APPLY_SCRIPT without a password using sudo."
+    log_ok "Sudoers configured: ${USERNAME} can run ${APPLY_SCRIPT} without password."
 }
 
-# === MAIN EXECUTION ===
+# === MAIN ===
+
 main() {
-  introduction
-  check_requirements
-  get_aur_helper
-  check_git
-  check_sddm_installation
+    introduction
+    check_requirements
+    get_aur_helper
+    check_git
+    check_sddm_installation
 
-  # Clone the repository FIRST to make source files available
-  clone_repo_to_temp
+    clone_repo_to_temp
 
-  # Now, detect configurations and select the installation type
-  detect_configs_and_select_installation_type
+    detect_configs_and_select_installation_type
 
-  install_deps
-  install_theme # Full theme installation to the SDDM directory
+    install_deps
+    install_theme
 
-  configure_sddm
-  enable_sddm
+    configure_sddm
+    enable_sddm
 
-  # Copy specific files to Hyprland scripts based on the selected type
-  copy_specific_files_to_hypr
+    copy_specific_files_to_hypr
 
-  if [[ "$INSTALLATION_TYPE" == "ii-matugen" || "$INSTALLATION_TYPE" == "matugen-only" ]]; then
-    configure_matugen
-    setup_sudoers
+    if [[ "${INSTALLATION_TYPE}" == "ii-matugen" || "${INSTALLATION_TYPE}" == "matugen-only" ]]; then
+        configure_matugen
+        setup_sudoers
 
-    # Apply the theme immediately for Matugen integrations
-    step "Applying SDDM theme"
-    if [[ -f "$APPLY_SCRIPT" ]]; then
-      info "Executing sddm-theme-apply.sh to apply theme settings..."
-      if [[ "$INSTALLATION_TYPE" == "ii-matugen" ]]; then
-        info "Executing generate_settings.py for ii-matugen integration..."
-        if python3 "$MATUGEN_GENERATE_SETTINGS_SCRIPT"; then
-          info "generate_settings.py executed successfully."
+        log_step "Applying SDDM theme"
+        if [[ -f "${APPLY_SCRIPT}" ]]; then
+            if [[ "${INSTALLATION_TYPE}" == "ii-matugen" ]]; then
+                if ! python3 "${MATUGEN_GENERATE_SETTINGS_SCRIPT}" > /dev/null 2>&1; then
+                    log_warn "generate_settings.py failed. Theme application might be incomplete."
+                fi
+            fi
+
+            if sudo bash "${APPLY_SCRIPT}" >/dev/null 2>&1 || true; then
+                log_ok "Theme applied."
+            else
+                log_warn "Failed to apply theme automatically. Run manually: sudo ${APPLY_SCRIPT}"
+            fi
         else
-          warn "Failed to execute generate_settings.py. Theme application might be incomplete."
+            log_warn "Apply script not found at ${APPLY_SCRIPT}. Theme will be applied on next Matugen run."
         fi
-      fi
 
-      # Use 'sudo bash' and ignore non-critical exit codes
-      if sudo bash "$APPLY_SCRIPT" >/dev/null 2>&1 || true; then
-        info "Theme applied."
-      else
-        warn "Failed to apply theme automatically. You can run it manually later with: sudo $APPLY_SCRIPT"
-      fi
-    else
-      warn "Apply script not found at $APPLY_SCRIPT. Theme will be applied on next Matugen run."
+    elif [[ "${INSTALLATION_TYPE}" == "no-matugen" ]]; then
+        log_step "Applying SDDM theme"
+        if [[ -f "${APPLY_SCRIPT}" ]]; then
+            if sudo bash "${APPLY_SCRIPT}" >/dev/null 2>&1 || true; then
+                log_ok "Theme applied."
+            else
+                log_warn "Failed to apply theme automatically. Run manually: sudo ${APPLY_SCRIPT}"
+            fi
+        else
+            log_warn "Apply script not found at ${APPLY_SCRIPT}. Theme application skipped."
+        fi
     fi
-  elif [[ "$INSTALLATION_TYPE" == "no-matugen" ]]; then
-    # no-matugen: no sudoers but theme apply yes
-    step "Applying SDDM theme (no-matugen mode)"
-    if [[ -f "$APPLY_SCRIPT" ]]; then
-      info "Executing sddm-theme-apply.sh to apply theme settings..."
-      # exec with sudo, it will ask for password
-      if sudo bash "$APPLY_SCRIPT" >/dev/null 2>&1 || true; then
-        info "Theme applied successfully."
-      else
-        warn "Failed to apply theme automatically. You can run it manually later with: sudo $APPLY_SCRIPT"
-      fi
-    else
-      warn "Apply script not found at $APPLY_SCRIPT. Theme application skipped."
+    
+    local msg=" Installation completed successfully "
+    local width=${#msg}
+    local border
+    border=$(printf '─%.0s' $(seq 1 $width))
+    printf "\n"
+    printf "  ${STY_GREEN}┌%s┐${STY_RST}\n" "${border}"
+    printf "  ${STY_GREEN}│%s│${STY_RST}\n" "${msg}"
+    printf "  ${STY_GREEN}└%s┘${STY_RST}\n" "${border}"
+    printf "\n"
+
+    printf -- "-- Optional: Test the theme with the following command:\n"
+    printf "   ${STY_YELLOW}sddm-greeter-qt6 --test-mode --theme %s${STY_RST}\n" "${SDDM_THEME_DEST}"
+    log_info "Test mode will open fullscreen. Appearance may have minor differences from the actual login screen."
+    printf "\n"
+
+    printf -- "-- Reboot your system\n"
+    log_warn "Please REBOOT your system to apply the new SDDM theme and configurations."
+
+    if [[ -d "${CLONE_DIR}" ]]; then
+        rm -rf "${CLONE_DIR}"
     fi
-    info "Sudoers configuration skipped for no-matugen installation."
-  fi
-
-  echo
-  echo -e "${GREEN}╔══════════════════════════════════════════════════╗"
-  echo -e "${GREEN}║       Installation completed successfully!       ║"
-  echo -e "${GREEN}╚══════════════════════════════════════════════════╝${NC}"
-  echo
-
-  # Suggest to test the theme
-  local test_script="$SDDM_THEME_DEST/test.sh"
-  if [[ -f "$test_script" ]]; then
-    echo -e "${BLUE}━━━ Optional: Test the theme ━━━${NC}"
-    info "You can test the SDDM theme before rebooting by running:"
-    echo -e "  ${YELLOW}sddm-greeter-qt6 --test-mode --theme $SDDM_THEME_DEST${NC}"
-    echo "This command allows you to preview the theme. Theme appearance in test mode might have minor differences from the actual login screen, but it will confirm if the theme loads correctly."
-    echo "Test mode will open fullscreen"
-  fi
-
-  echo -e "${BLUE}━━━ Reboot your system ━━━${NC}"
-  warn "Please REBOOT your system to apply the new SDDM theme and configurations."
-
-  # Clean up the temporary directory
-  if [[ -d "$CLONE_DIR" ]]; then
-    info "Cleaning up temporary clone directory: $CLONE_DIR"
-    rm -rf "$CLONE_DIR"
-  fi
 }
 
 main "$@"
-

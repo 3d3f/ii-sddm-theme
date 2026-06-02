@@ -1,25 +1,23 @@
+#!/usr/bin/env python3
 import json
-import os
-import sys
 import shutil
+import sys
+import re
+from pathlib import Path
+from typing import Any, Dict, Tuple
 
-# --- Path Definitions ---
-script_dir = os.path.dirname(os.path.abspath(__file__))
-DEST_CONFIG_PATH = os.path.join(script_dir, "config.json")
-OUTPUT_PATH = os.path.join(script_dir, "Settings.qml")
+# --- Configuration ---
+PROJECT_NAME = "illogical-impulse"
+SOURCE_CONFIG = Path.home() / ".config" / PROJECT_NAME / "config.json"
+SCRIPT_DIR = Path(__file__).parent.resolve()
+LOCAL_CONFIG = SCRIPT_DIR / "config.json"
+OUTPUT_QML = SCRIPT_DIR / "Settings.qml"
 
-# --- Modify here for SOURCE_CONFIG_PATH portability using $HOME ---
-# Get the user's home directory. os.path.expanduser('~') is the most robust and cross-platform way.
-# Alternatively, you could use os.environ.get('HOME') but expanduser handles Windows and other shells better.
-home_dir = os.path.expanduser('~')
 
-# Construct the source config file path based on the home directory
-SOURCE_CONFIG_PATH = os.path.join(home_dir, ".config", "illogical-impulse", "config.json")
-# -------------------------------------------------------------------
-
-# --- Functions (remain unchanged) ---
-def flatten_dict(d, parent_key='', sep='_'):
-    """Flattens a nested dictionary."""
+def flatten_dict(d: Dict[str, Any], parent_key: str = '', sep: str = '_') -> Dict[str, Any]:
+    """
+    Recursively flattens a nested dictionary into a single-level dictionary.
+    """
     items = []
     for k, v in d.items():
         new_key = f"{parent_key}{sep}{k}" if parent_key else k
@@ -31,73 +29,111 @@ def flatten_dict(d, parent_key='', sep='_'):
             items.append((new_key, v))
     return dict(items)
 
-def qml_value(val):
-    """Converts a Python value to a valid QML representation."""
-    if isinstance(val, str):
-        s = val.replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n")
-        return f'"{s}"'
-    elif isinstance(val, bool):
-        return "true" if val else "false"
-    elif isinstance(val, (int, float)):
-        return str(val)
-    elif val is None:
-        return "null"
-    else:
-        return qml_value(str(val))
 
-def qml_type(val):
-    """Determines the most appropriate QML type."""
+def sanitise_identifier(key: str) -> str:
+    """
+    Ensures the key is a valid QML/JS identifier.
+    1. Replaces any non-alphanumeric character with an underscore.
+    2. Prepends an underscore if the key starts with a digit.
+    """
+    # Replace all non-alphanumeric chars (except underscore) with '_'
+    clean_key = re.sub(r'[^a-zA-Z0-9_]', '_', key)
+    
+    # QML identifiers cannot start with a digit
+    if clean_key and clean_key[0].isdigit():
+        clean_key = f"_{clean_key}"
+        
+    return clean_key
+
+
+def get_qml_type(val: Any) -> str:
+    """
+    Maps Python types to QML property types.
+    """
+    if isinstance(val, bool):
+        return "bool"
+    if isinstance(val, int):
+        return "int"
+    if isinstance(val, float):
+        return "real"
     if isinstance(val, str):
         return "string"
-    elif isinstance(val, bool):
-        return "bool"
-    elif isinstance(val, int):
-        return "int"
-    elif isinstance(val, float):
-        return "real"
-    else:
-        return "var"
+    return "var"
 
-# --- Debug logging for paths ---
-print(f"Script directory: {script_dir}")
-print(f"Source config path: {SOURCE_CONFIG_PATH}")
-print(f"Destination config path: {DEST_CONFIG_PATH}")
-print(f"QML output path: {OUTPUT_PATH}")
 
-# --- Copy operation ---
-print(f"Attempting to copy {SOURCE_CONFIG_PATH} to {DEST_CONFIG_PATH}...")
-if not os.path.exists(SOURCE_CONFIG_PATH):
-    print(f"❌ Error: Source file not found at {SOURCE_CONFIG_PATH}. Cannot copy.")
-    sys.exit(1)
+def format_qml_value(val: Any) -> str:
+    """
+    Formats Python values into QML-compliant strings.
+    """
+    if isinstance(val, bool):
+        return "true" if val else "false"
+    if isinstance(val, str):
+        # Escape backslashes, quotes, and newlines
+        safe_str = val.replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n")
+        return f'"{safe_str}"'
+    if val is None:
+        return "null"
+    return str(val)
 
-os.makedirs(os.path.dirname(DEST_CONFIG_PATH), exist_ok=True)
 
-try:
-    shutil.copy2(SOURCE_CONFIG_PATH, DEST_CONFIG_PATH)
-    print(f"✅ File successfully copied from {SOURCE_CONFIG_PATH} to {DEST_CONFIG_PATH}")
-except Exception as e:
-    print(f"❌ Error copying file: {e}")
-    sys.exit(1)
+def generate_qml_content(data: Dict[str, Any]) -> Tuple[str, int]:
+    """
+    Builds the Settings.qml file content.
+    Returns a tuple containing the formatted string and the total property count.
+    """
+    flat_data = flatten_dict(data)
+    
+    lines = [
+        "pragma Singleton",
+        "import QtQuick",
+        "",
+        "QtObject {"
+    ]
 
-# --- Proceed with reading and generation (using DEST_CONFIG_PATH) ---
-if not os.path.exists(DEST_CONFIG_PATH):
-    print(f"❌ Error: {DEST_CONFIG_PATH} not found after copy.")
-    sys.exit(1)
+    for key in sorted(flat_data.keys()):
+        val = flat_data[key]
+        safe_key = sanitise_identifier(key)
+        prop_type = get_qml_type(val)
+        prop_val = format_qml_value(val)
+        lines.append(f"    property {prop_type} {safe_key}: {prop_val}")
 
-with open(DEST_CONFIG_PATH, "r", encoding="utf-8") as f:
-    data = json.load(f)
+    lines.append("}\n")
+    return "\n".join(lines), len(flat_data)
 
-flat = flatten_dict(data)
 
-with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
-    f.write("""pragma Singleton
-import QtQuick
-QtObject {
-""")
-    for key, value in sorted(flat.items()):
-        safe_key = key.replace("-", "_").replace(".", "_").replace("/", "_")
-        prop_type = qml_type(value)
-        prop_value = qml_value(value)
-        f.write(f"    property {prop_type} {safe_key}: {prop_value}\n")
-    f.write("}\n")
-print(f"✅ {OUTPUT_PATH} generated with {len(flat)} properties.")
+def main() -> None:
+    """
+    Main execution flow.
+    """
+    # 1. Source verification
+    if not SOURCE_CONFIG.exists():
+        print(f"ERROR: Source configuration not found: {SOURCE_CONFIG}", file=sys.stderr)
+        sys.exit(1)
+
+    # 2. Synchronize local config
+    try:
+        shutil.copy2(SOURCE_CONFIG, LOCAL_CONFIG)
+    except OSError as e:
+        print(f"ERROR: Failed to copy config: {e}", file=sys.stderr)
+        sys.exit(1)
+
+    # 3. Process Data
+    try:
+        with LOCAL_CONFIG.open("r", encoding="utf-8") as f:
+            config_data = json.load(f)
+    except (json.JSONDecodeError, OSError) as e:
+        print(f"ERROR: Failed to parse JSON: {e}", file=sys.stderr)
+        sys.exit(1)
+
+    # 4. Generate and write QML
+    qml_content, property_count = generate_qml_content(config_data)
+    
+    try:
+        OUTPUT_QML.write_text(qml_content, encoding="utf-8")
+    except OSError as e:
+        print(f"ERROR: Failed to write output: {e}", file=sys.stderr)
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()
