@@ -6,9 +6,6 @@ set -euo pipefail
 readonly THEME_NAME="ii-sddm-theme"
 readonly THEME_REPO="https://github.com/3d3f/ii-sddm-theme"
 
-readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-readonly LOCAL_FONTS_SRC="${SCRIPT_DIR}/fonts/ii-sddm-theme-fonts"
-
 readonly SDDM_THEMES_DIR="/usr/share/sddm/themes"
 readonly SDDM_THEME_DEST="${SDDM_THEMES_DIR}/${THEME_NAME}"
 readonly SDDM_CONF_DIR="/etc/sddm.conf.d"
@@ -159,10 +156,13 @@ check_sddm_installation() {
 
 install_fonts() {
     log_step "Installing fonts"
-    if [[ -d "${LOCAL_FONTS_SRC}" ]]; then
-        log_info "Copying ii-sddm-theme-fonts to /usr/share/fonts/..."
+
+    local repo_fonts="${CLONE_DIR}/fonts/ii-sddm-theme-fonts"
+
+    if [[ -d "${repo_fonts}" ]]; then
+        log_info "Copying fonts from ${repo_fonts} to /usr/share/fonts/..."
         sudo rm -rf /usr/share/fonts/ii-sddm-theme-fonts
-        sudo cp -r "${LOCAL_FONTS_SRC}" /usr/share/fonts/
+        sudo cp -r "${repo_fonts}" /usr/share/fonts/
         log_info "Setting permissions..."
         sudo chown -R root:root /usr/share/fonts/ii-sddm-theme-fonts
         sudo find /usr/share/fonts/ii-sddm-theme-fonts -type d -exec chmod 755 {} \;
@@ -171,7 +171,7 @@ install_fonts() {
         sudo fc-cache -f > /dev/null
         log_ok "Fonts installed."
     else
-        log_warn "Local font folder not found at ${LOCAL_FONTS_SRC}. Skipping."
+        log_warn "Fonts folder not found in the repository. Skipping font installation."
     fi
 }
 
