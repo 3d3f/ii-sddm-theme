@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-## TODO: Video wallpaper path from matugen points to thumbnail from matugen in ii, find a way to get the original video path
 set -euo pipefail
 
 # --- Security: Validate and sanitize paths ---
@@ -39,8 +38,9 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SRC="$USER_HOME/.config/ii-sddm-theme"
 DEST="/usr/share/sddm/themes/ii-sddm-theme"
 
-# --- Colors.qml source ---
+# --- QML Sources ---
 COLORS_QML_SOURCE="$SCRIPT_DIR/Colors.qml"
+SETTINGS_QML_SOURCE="$SCRIPT_DIR/Settings.qml"
 
 # Validate source directory
 if [ ! -d "$SRC" ]; then
@@ -54,16 +54,25 @@ if [ ! -d "$(dirname "$(dirname "$DEST")")" ]; then
     exit 2
 fi
 
-# --- Extract wallpaper path (line 5) ---
-if [ ! -f "$COLORS_QML_SOURCE" ]; then
-    echo "Error: Colors.qml not found at: $COLORS_QML_SOURCE" >&2
-    exit 3
+# --- Extract wallpaper path ---
+WALLPAPER_PATH=""
+
+# Extract wallpaper path from generated Settings.qml
+if [ -f "$SETTINGS_QML_SOURCE" ]; then
+    WALLPAPER_PATH=$(grep "background_wallpaperPath:" "$SETTINGS_QML_SOURCE" | cut -d '"' -f 2 || true)
 fi
 
-WALLPAPER_PATH=$(sed -n '5p' "$COLORS_QML_SOURCE" | sed 's/^\/\/\s*//' | xargs)
-
+# Fallback from Colors.qml
 if [ -z "$WALLPAPER_PATH" ]; then
-    echo "Error: Could not extract wallpaper path from line 5 of $COLORS_QML_SOURCE." >&2
+    if [ -f "$COLORS_QML_SOURCE" ]; then
+        echo "Warning: wallpaper path not found in Settings.qml, using fallback from Colors.qml" >&2
+        WALLPAPER_PATH=$(sed -n '5p' "$COLORS_QML_SOURCE" | sed 's/^\/\/\s*//' | xargs || true)
+    fi
+fi
+
+# Final check
+if [ -z "$WALLPAPER_PATH" ]; then
+    echo "Error: Could not extract wallpaper path from Settings.qml or Colors.qml." >&2
     exit 4
 fi
 
@@ -121,6 +130,7 @@ if [ "$IS_IMAGE" = true ]; then
         -e "s|^Background=\"Backgrounds/background\.[^\"]+\"|Background=\"Backgrounds/${BACKGROUND_FILENAME}\"|" \
         "$CONF_FILE"
 else
+    # Se è un video, generiamo una miniatura temporanea come placeholder
     PLACEHOLDER_FILENAME="placeholder.png"
     PLACEHOLDER_TEMP="/tmp/sddm_placeholder_$$.png"
     ffmpeg -y -i "$WALLPAPER_PATH" -ss 00:00:01.000 -vframes 1 "$PLACEHOLDER_TEMP" >/dev/null 2>&1 || {
@@ -135,8 +145,8 @@ fi
 
 # --- Validate required files ---
 REQUIRED_FILES=(
-    "$SCRIPT_DIR/Colors.qml"
-    "$SCRIPT_DIR/Settings.qml"
+    "$COLORS_QML_SOURCE"
+    "$SETTINGS_QML_SOURCE"
     "$CONF_FILE"
 )
 
@@ -157,8 +167,8 @@ sudo mkdir -p -m 755 "$DEST/Components"
 sudo mkdir -p -m 755 "$DEST/Backgrounds"
 sudo mkdir -p -m 755 "$DEST/Themes"
 
-sudo cp --no-dereference --preserve=mode,timestamps "$SCRIPT_DIR/Colors.qml" "$DEST/Components/Colors.qml"
-sudo cp --no-dereference --preserve=mode,timestamps "$SCRIPT_DIR/Settings.qml" "$DEST/Components/Settings.qml"
+sudo cp --no-dereference --preserve=mode,timestamps "$COLORS_QML_SOURCE" "$DEST/Components/Colors.qml"
+sudo cp --no-dereference --preserve=mode,timestamps "$SETTINGS_QML_SOURCE" "$DEST/Components/Settings.qml"
 sudo cp --no-dereference --preserve=mode,timestamps "$WALLPAPER_PATH" "$DEST/Backgrounds/$BACKGROUND_FILENAME"
 sudo cp --no-dereference --preserve=mode,timestamps "$CONF_FILE" "$DEST/Themes/ii-sddm.conf"
 
